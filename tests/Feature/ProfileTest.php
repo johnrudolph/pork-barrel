@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+
+uses(DatabaseMigrations::class);
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();

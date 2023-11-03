@@ -2,6 +2,9 @@
 
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+
+uses(DatabaseMigrations::class);
 
 test('login screen can be rendered', function () {
     $response = $this->get('/login');
