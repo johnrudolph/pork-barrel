@@ -1,6 +1,9 @@
 <?php
 
 use App\Providers\RouteServiceProvider;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+
+uses(DatabaseMigrations::class);
 
 test('registration screen can be rendered', function () {
     $response = $this->get('/register');
