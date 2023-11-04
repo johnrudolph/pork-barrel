@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\GameCreated;
 use App\Models\Game;
 use App\Models\User;
 use Thunk\Verbs\Facades\Verbs;
@@ -8,16 +9,16 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 uses(DatabaseMigrations::class);
 
-it('returns a successful response', function () {
+it('creates a game and player when a game is created', function () {
     $user = User::factory()->create();
-    $game = Game::factory()->create();
 
-    PlayerJoinedGame::fire(
-        game_id: $game->id,
+    GameCreated::fire(
         user_id: $user->id,
     );
 
     Verbs::commit();
 
+    $game = Game::first();
+    
     $this->assertCount(1, $game->players);
 });
