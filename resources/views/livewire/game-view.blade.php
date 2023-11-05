@@ -1,8 +1,7 @@
-<div>
-<x-app-layout>
+<div wire:poll>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Game code: ') }} 
+            {{ __('Game code: ') . $game->code}} 
         </h2>
     </x-slot>
 
@@ -16,12 +15,14 @@
                         Waiting for players to join
                     </h2>
                     <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-600">
-                        
+                        Who's in: {{ $this->game->players->map(fn($p) => $p->user->name)->join(', ') }}
                     </p>
                     <div class="mt-10 flex items-center justify-center gap-x-6">
+                        @if ($this->game->players->count() > 1)
                         <a href="" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                             Everyone's here, let's start
                         </a>
+                        @endif
                     </div>
                     </div>
                 </div>
@@ -29,5 +30,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
 </div>

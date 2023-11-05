@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    @if(Auth::user()->current_game_id === null)
+
         <livewire:initialize-game/>
-    @endif
+
 </x-app-layout>

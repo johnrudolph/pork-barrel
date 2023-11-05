@@ -3,23 +3,28 @@
 namespace App\Events;
 
 use App\Models\Game;
-use App\Models\Player;
 use Thunk\Verbs\Event;
+use App\States\GameState;
 use Illuminate\Support\Str;
+use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class GameCreated extends Event
 {
+    #[StateId(GameState::class)]
+    public ?int $game_id = null;
+
     public $user_id;
 
     public function onFire()
     {
-        $game = Game::create([
+        Game::create([
+            'id' => $this->game_id,
             'code' => Str::random(4),
         ]);
+    }
 
-        PlayerJoinedGame::fire(
-            game_id: $game->id,
-            user_id: $this->user_id,
-        );
+    public function apply(GameState $state)
+    {
+        $state->status = 'awaiting-players';
     }
 }

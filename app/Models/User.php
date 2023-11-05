@@ -29,4 +29,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function currentGame()
+    {
+        return $this->belongsTo(Game::class, 'current_game_id');
+    }
 }
