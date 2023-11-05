@@ -1,12 +1,12 @@
 <?php
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
 use App\Events\GameCreated;
-use Thunk\Verbs\Facades\Verbs;
 use App\Events\PlayerJoinedGame;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
@@ -25,7 +25,7 @@ it('creates a game and player when a game is created', function () {
     Verbs::commit();
 
     $game = Game::find($event->game_id);
-    
+
     $this->assertCount(1, $game->players);
 
     $this->assertEquals(
@@ -40,7 +40,7 @@ it('changes a players currentGame when they join a new game', function () {
     $event = GameCreated::fire(
         user_id: $user->id,
     );
-    
+
     PlayerJoinedGame::fire(
         game_id: $event->game_id,
         user_id: $user->id,
