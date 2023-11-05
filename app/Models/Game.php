@@ -2,9 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Round;
+use App\Models\Player;
+use App\States\GameState;
+use App\Events\GameStarted;
+use App\Events\RoundStarted;
+use Thunk\Verbs\Facades\Verbs;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Game extends Model
 {
@@ -15,5 +21,33 @@ class Game extends Model
     public function players()
     {
         return $this->hasMany(Player::class);
+    }
+
+    public function rounds()
+    {
+        return $this->hasMany(Round::class);
+    }
+
+    public function state()
+    {
+        return GameState::load($this->id);
+    }
+
+    public function start()
+    {
+        GameStarted::fire(game_id: $this->id);
+
+        Verbs::commit();
+
+        RoundStarted::fire(
+            game_id: $this->id,
+            round_number: 1,
+            round_id: $this->rounds->first()->id
+        );
+    }
+
+    public function currentRound()
+    {
+        return Round::find($this->state()->current_round_id);
     }
 }

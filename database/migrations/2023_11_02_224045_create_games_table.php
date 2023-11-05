@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();
+            $table->integer('code')->unique();
             $table->timestamps();
         });
     }

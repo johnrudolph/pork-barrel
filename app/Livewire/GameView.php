@@ -26,6 +26,8 @@ class GameView extends Component
 
     public function render()
     {
-        return view('livewire.game-view');
+        return view('livewire.game-view', [
+            'game' => $this->game,
+        ]);
     }
 }

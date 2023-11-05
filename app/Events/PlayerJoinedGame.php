@@ -14,10 +14,10 @@ class PlayerJoinedGame extends Event
     public $user_id;
 
     #[StateId(GameState::class)]
-    public ?int $game_id = null;
+    public int $game_id;
 
     #[StateId(PlayerState::class)]
-    public ?int $player_id = null;
+    public int $player_id;
 
     public function validate(GameState $state): bool
     {
@@ -52,13 +52,13 @@ class PlayerJoinedGame extends Event
         $user->save();
     }
 
-    public function applyToGameState(GameState $state)
-    {
-        $state->players[] = $this->player_id;
-    }
+    // public function applyToGameState(GameState $state)
+    // {
+    //     $state->players[] = $this->player_id;
+    // }
 
-    public function applyToPlayerState(PlayerState $state)
-    {
-        $state->name = User::firstWhere('id', $this->user_id)->name;
-    }
+    // public function applyToPlayerState(PlayerState $state)
+    // {
+    //     $state->name = User::firstWhere('id', $this->user_id)->name;
+    // }
 }

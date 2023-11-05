@@ -1,12 +1,14 @@
 <?php
 
-use App\Events\GameCreated;
-use App\Events\PlayerJoinedGame;
 use App\Models\Game;
-use App\Models\Player;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use App\Models\Player;
+use App\States\GameState;
+use App\Events\GameCreated;
+use App\Events\GameStarted;
 use Thunk\Verbs\Facades\Verbs;
+use App\Events\PlayerJoinedGame;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 uses(DatabaseMigrations::class);
 
@@ -66,4 +68,32 @@ it('changes a players currentGame when they join a new game', function () {
     $game2 = Game::find($event2->game_id);
 
     $this->assertEquals($game2->id, $user->fresh()->currentGame->id);
+});
+
+it('seeds rounds for new games', function () {
+    $user = User::factory()->create();
+
+    $event = GameCreated::fire(
+        user_id: $user->id,
+    );
+
+    Verbs::commit();
+
+    $game = Game::find($event->game_id);
+
+    $game->start();
+
+    Verbs::commit();
+
+    $game_state = GameState::load($event->game_id);
+
+    $this->assertEquals(
+        $game->rounds->count(),
+        8
+    );
+
+    $this->assertEquals(
+        $game_state->current_round_number,
+        1
+    );
 });

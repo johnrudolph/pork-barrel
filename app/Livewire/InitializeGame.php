@@ -29,6 +29,7 @@ class InitializeGame extends Component
 
         PlayerJoinedGame::fire(
             game_id: $event->game_id,
+            player_id: Snowflake::make()->id(),
             user_id: $this->user()->id,
         );
 
@@ -37,16 +38,13 @@ class InitializeGame extends Component
 
     public function joinGame()
     {
-        try {
-            $game = Game::firstWhere('code', $this->game_code);
+        $game = Game::firstWhere('code', $this->game_code);
 
-            PlayerJoinedGame::fire(
-                game_id: $game->id,
-                user_id: $this->user()->id,
-            );
-        } catch (\Exception $e) {
-
-        }
+        PlayerJoinedGame::fire(
+            game_id: $game->id,
+            player_id: Snowflake::make()->id(),
+            user_id: $this->user()->id,
+        );
 
         return redirect()->route('games.show', ['game' => $game->id]);
     }
