@@ -1,11 +1,11 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Support\Facades\Event;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 
 uses(DatabaseMigrations::class);
 

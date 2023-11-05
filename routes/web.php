@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\GameController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\GameView;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------

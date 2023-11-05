@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Game;
-use App\Models\User;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Player extends Model
 {

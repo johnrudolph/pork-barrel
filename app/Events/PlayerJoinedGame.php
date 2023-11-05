@@ -2,12 +2,12 @@
 
 namespace App\Events;
 
-use App\Models\User;
 use App\Models\Player;
-use Thunk\Verbs\Event;
+use App\Models\User;
 use App\States\GameState;
 use App\States\PlayerState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class PlayerJoinedGame extends Event
 {
