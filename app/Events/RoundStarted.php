@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Bureaucrats\Bureaucrat;
 use App\Models\Round;
 use Thunk\Verbs\Event;
 use App\States\GameState;
@@ -21,6 +22,8 @@ class RoundStarted extends Event
     public function applyToRoundState(RoundState $state)
     {
         $state->status = 'in-progress';
+        $state->phase = 'auction';
+        $state->bureaucrats = Bureaucrat::all()->random(5);
     }
 
     public function applyToGameState(GameState $state)

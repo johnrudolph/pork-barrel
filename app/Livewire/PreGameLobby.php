@@ -15,6 +15,6 @@ class PreGameLobby extends Component
 
     public function render()
     {
-        return view('livewire.pre-game-lobby', []);
+        return view('livewire.pre-game-lobby');
     }
 }

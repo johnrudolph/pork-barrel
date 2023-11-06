@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Game;
+use App\States\RoundState;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,11 @@ class Round extends Model
     public function game()
     {
         return $this->belongsTo(Game::class);
+    }
+
+    public function state()
+    {
+        return RoundState::load($this->id);
     }
 
     public function next()
