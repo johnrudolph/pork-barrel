@@ -39,7 +39,7 @@ class PlayerJoinedGame extends Event
     //     return true;
     // }
 
-    public function onFire()
+    public function handle()
     {
         Player::create([
             'id' => $this->player_id,
@@ -52,13 +52,8 @@ class PlayerJoinedGame extends Event
         $user->save();
     }
 
-    // public function applyToGameState(GameState $state)
-    // {
-    //     $state->players[] = $this->player_id;
-    // }
-
-    // public function applyToPlayerState(PlayerState $state)
-    // {
-    //     $state->name = User::firstWhere('id', $this->user_id)->name;
-    // }
+    public function applyToGameState(GameState $state)
+    {
+        $state->players->push($this->player_id);
+    }
 }

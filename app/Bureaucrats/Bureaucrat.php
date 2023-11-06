@@ -6,6 +6,8 @@ class Bureaucrat
 {
     const NAME = '';
 
+    const SLUG = '';
+
     const SHORT_DESCRIPTION = '';
 
     const DIALOG = '';

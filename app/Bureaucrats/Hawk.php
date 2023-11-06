@@ -6,6 +6,8 @@ class Hawk extends Bureaucrat
 {
     const NAME = "Hawk";
 
+    const SLUG = 'hawk';
+
     const SHORT_DESCRIPTION = "Start a war.";
 
     const DIALOG = "What we need is a common enemy, and some good old fashioned fear mongering.";

@@ -6,6 +6,8 @@ class GamblinGoat extends Bureaucrat
 {
     const NAME = "Gamblin' Goat";
 
+    const SLUG = 'gamblin-goat';
+
     const SHORT_DESCRIPTION = 'Gamble your bid, double or nothing.';
 
     const DIALOG = "I've got a hair-brained scheme in the works. I'll invest the money from highest bidder and see how things shake out.";

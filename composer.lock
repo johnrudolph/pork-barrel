@@ -1803,7 +1803,7 @@
             "dist": {
                 "type": "path",
                 "url": "/Users/johndrexler/code/verbs",
-                "reference": "a0da4a1b1d0a0466a83943aef375e86b52f32715"
+                "reference": "f81136ca3d3aac835551602fc01711f2734a17b1"
             },
             "require": {
                 "glhd/bits": "^0.1.1",
@@ -1847,6 +1847,9 @@
             "autoload-dev": {
                 "psr-4": {
                     "Thunk\\Verbs\\Tests\\": "tests/",
+                    "Thunk\\Verbs\\Examples\\Counter\\": "examples/Counter/src/",
+                    "Thunk\\Verbs\\Examples\\Counter\\Tests\\": "examples/Counter/tests/",
+                    "Thunk\\Verbs\\Examples\\Counter\\Database\\Factories\\": "examples/Counter/database/factories/",
                     "Thunk\\Verbs\\Examples\\Bank\\": "examples/Bank/src/",
                     "Thunk\\Verbs\\Examples\\Bank\\Tests\\": "examples/Bank/tests/",
                     "Thunk\\Verbs\\Examples\\Bank\\Database\\Factories\\": "examples/Bank/database/factories/",

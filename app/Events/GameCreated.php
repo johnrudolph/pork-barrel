@@ -14,7 +14,7 @@ class GameCreated extends Event
 
     public $user_id;
 
-    public function onFire()
+    public function handle()
     {
         Game::create([
             'id' => $this->game_id,
@@ -25,5 +25,7 @@ class GameCreated extends Event
     public function apply(GameState $state)
     {
         $state->status = 'awaiting-players';
+
+        $state->players = collect();
     }
 }

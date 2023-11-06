@@ -12,13 +12,13 @@ class GameStarted extends Event
     #[StateId(GameState::class)]
     public ?int $game_id = null;
 
-    public function onFire()
+    public function handle()
     {
         collect(range(1, 8))->each(fn ($n) => 
             Round::create([
                 'game_id' => $this->game_id,
                 'round_number' => $n,
-            ])
+            ])->state()->bureaucrats = collect()
         );
     }
 

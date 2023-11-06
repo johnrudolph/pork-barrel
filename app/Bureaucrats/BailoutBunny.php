@@ -4,7 +4,9 @@ namespace App\Bureaucrats;
 
 class BailoutBunny extends Bureaucrat
 {
-    const TITLE  = "Bailout Bunny";
+    const NAME  = "Bailout Bunny";
+
+    const SLUG = 'bailout-bunny';
 
     const SHORT_DESCRIPTION  = 'Get a bailout if you ever go broke.';
 

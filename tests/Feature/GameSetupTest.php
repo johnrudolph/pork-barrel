@@ -3,6 +3,7 @@
 use App\Models\Game;
 use App\Models\User;
 use App\Models\Player;
+use Glhd\Bits\Snowflake;
 use App\States\GameState;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
@@ -17,10 +18,12 @@ it('creates a game and player when a game is created', function () {
 
     $event = GameCreated::fire(
         user_id: $user->id,
+        game_id: Snowflake::make()->id(),
     );
 
     PlayerJoinedGame::fire(
         game_id: $event->game_id,
+        player_id: Snowflake::make()->id(),
         user_id: $user->id,
     );
 
@@ -41,10 +44,12 @@ it('changes a players currentGame when they join a new game', function () {
 
     $event = GameCreated::fire(
         user_id: $user->id,
+        game_id: Snowflake::make()->id(),
     );
 
     PlayerJoinedGame::fire(
         game_id: $event->game_id,
+        player_id: Snowflake::make()->id(),
         user_id: $user->id,
     );
 
@@ -56,10 +61,12 @@ it('changes a players currentGame when they join a new game', function () {
 
     $event2 = GameCreated::fire(
         user_id: $user->id,
+        game_id: Snowflake::make()->id(),
     );
 
     PlayerJoinedGame::fire(
         game_id: $event2->game_id,
+        player_id: Snowflake::make()->id(),
         user_id: $user->id,
     );
 

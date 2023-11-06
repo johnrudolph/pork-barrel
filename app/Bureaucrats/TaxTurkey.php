@@ -6,6 +6,8 @@ class TaxTurkey extends Bureaucrat
 {
     const NAME = "Treasury Chicken";
 
+    const SLUG = 'treasury-chicken';
+
     const SHORT_DESCRIPTION = "Buy a treasury bond, and earn interest later.";
 
     const DIALOG = "A penny saved is a penny earned.";

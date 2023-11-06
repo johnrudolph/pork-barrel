@@ -4,7 +4,9 @@ namespace App\Bureaucrats;
 
 class DisruptiveDonkey extends Bureaucrat
 {
-    const TITLE = "Disruptive Donkey";
+    const NAME = "Disruptive Donkey";
+
+    const SLUG = 'disruptive-donkey';
 
     const SHORT_DESCRIPTION = "Cancel another player's action.";
 
