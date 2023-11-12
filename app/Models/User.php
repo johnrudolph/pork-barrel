@@ -34,4 +34,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Game::class, 'current_game_id');
     }
+
+    public function currentPlayer()
+    {
+        return $this->currentGame->players()->where('user_id', $this->id)->first();
+    }
 }

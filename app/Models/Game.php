@@ -8,6 +8,7 @@ use App\States\GameState;
 use App\Events\GameStarted;
 use App\Events\RoundStarted;
 use Thunk\Verbs\Facades\Verbs;
+use App\Bureaucrats\Bureaucrat;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,8 +43,11 @@ class Game extends Model
         RoundStarted::fire(
             game_id: $this->id,
             round_number: 1,
-            round_id: $this->rounds->first()->id
+            round_id: $this->rounds->first()->id,
+            bureaucrats: Bureaucrat::all()->random(5)
         );
+
+        Verbs::commit();
     }
 
     public function currentRound()

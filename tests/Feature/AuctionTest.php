@@ -38,6 +38,8 @@ beforeEach(function () {
 
     $this->game->start();
 
+    Verbs::commit();
+
     $this->john = Player::first();
     $this->daniel = Player::get()->last();
 });

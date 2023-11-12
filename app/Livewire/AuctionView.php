@@ -2,23 +2,53 @@
 
 namespace App\Livewire;
 
+use App\Models\Round;
+use App\Models\Player;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Auth;
 
 class AuctionView extends Component
 {
+    public $player_id;
+
     public $game;
 
     public $bids;
 
-    public function mount()
+    #[Computed]
+    public function bureacrats()
     {
-        $this->bids = $this->game->currentRound()->state()->bureaucrats
-            ->map(fn ($b) => [
-                'class' => $b,
-                'slug' => $b::SLUG,
-                'bid' => 0
-            ]);
+        return $this->game->currentRound()->state()->bureaucrats;
     }
+
+    #[Computed]
+    public function player()
+    {
+        return Auth::user()->currentPlayer();
+    }
+
+    public function mount(Player $player)
+    {
+        $this->initializeProperties($player, $this->game->currentRound());
+    }
+
+    public function initializeProperties(Player $player, Round $round)
+    {
+        $this->player_id = $player->id;
+
+        $this->bids = $round->state()->bureaucrats->map(function ($b) {
+            return [
+                'slug' => $b::SLUG,
+                'class' => $b,
+                'bid' => 0,
+            ];
+        });
+    }
+
+
+
+
 
     public function increment($bureacrat_slug)
     {

@@ -2,28 +2,28 @@
 
 namespace App\Events;
 
-use App\Bureaucrats\Bureaucrat;
 use Thunk\Verbs\Event;
 use App\States\GameState;
 use App\States\RoundState;
+use App\Bureaucrats\Bureaucrat;
+use Illuminate\Support\Collection;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class RoundStarted extends Event
 {
-    #[StateId(GameState::class)]
-    public int $game_id;
-
-    #[StateId(RoundState::class)]
-    public int $round_id;
-
-    public int $round_number;
+    public function __construct(
+        #[StateId(GameState::class)] public int $game_id,
+        #[StateId(RoundState::class)] public int $round_id,
+        public int $round_number,
+        public $bureaucrats
+    ) {
+    }
 
     public function applyToRoundState(RoundState $state)
     {
         $state->status = 'in-progress';
         $state->phase = 'auction';
-        Bureaucrat::all()->random(5)
-            ->each(fn ($b) => $state->bureaucrats->push($b));
+        $state->bureaucrats= collect($this->bureaucrats);
     }
 
     public function applyToGameState(GameState $state)
