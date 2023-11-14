@@ -8,16 +8,19 @@
                     <div class="flex">
                         <button 
                             class="text-slate-600 font-extrabold text-m w-8 h-6"
-                            wire:click="decrement('{{ $b['slug'] }}')"
+                            wire:click="decrement('{{ $b['class']::SLUG }}')"
                         >
                             -
                         </button>
-                        <p class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20">
+                        <span 
+                            wire:model="bids.{{ $b['class']::SLUG }}.bid"
+                            class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20"
+                        >
                             {{ $b['bid'] }}
-                        </p>
+                        </span>
                         <button 
                             class="text-slate-600 font-extrabold text-m w-8 h-6"
-                            wire:click="increment('{{ $b['slug'] }}')"
+                            wire:click="increment('{{ $b['class']::SLUG }}')"
                         >
                             +
                         </button>
@@ -29,5 +32,17 @@
                 </div>
             </li>
         @endforeach
+        <div class="mt-4 flex flex-col">
+            <p class="text-sm font-semibold leading-6 text-gray-900">
+                Total Bid: {{ collect($bids)->sum('bid') }}
+            </p>
+            <p class="text-sm font-semibold leading-6 text-gray-900">
+                Money Available for Bids: {{ $money - collect($bids)->sum('bid') }}
+            </p>
+        </div>
+
+        <button wire:click="submit">
+            Submit
+        </button>
     </ul>
 </div>

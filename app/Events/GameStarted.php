@@ -21,7 +21,7 @@ class GameStarted extends Event
             ]);
 
             $round->state()->burueaucrats = collect();
-    });
+        });
     }
 
     public function apply(GameState $state)

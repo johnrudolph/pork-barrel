@@ -5,8 +5,6 @@ namespace App\Events;
 use Thunk\Verbs\Event;
 use App\States\GameState;
 use App\States\RoundState;
-use App\Bureaucrats\Bureaucrat;
-use Illuminate\Support\Collection;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class RoundStarted extends Event
