@@ -17,7 +17,7 @@ class PlayerReceivedMoney extends Event
 
     public function handle()
     {
-        // activity feed shit? 
+        // activity feed shit?
     }
 
     public function apply(PlayerState $state)

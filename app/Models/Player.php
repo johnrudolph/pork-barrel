@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\States\PlayerState;
 use App\Events\OffersSubmitted;
 use App\Events\PlayerReceivedMoney;
+use App\States\PlayerState;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Player extends Model
 {
@@ -53,7 +53,7 @@ class Player extends Model
         );
 
         // @todo this is temporary until the game has timers and advances automatically
-        if (collect($round->state()->offers)->count() === $round->game->players()->count()) {            
+        if (collect($round->state()->offers)->count() === $round->game->players()->count()) {
             $round->advancePhase();
         }
     }

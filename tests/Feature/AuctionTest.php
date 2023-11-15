@@ -1,14 +1,13 @@
 <?php
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
-use Glhd\Bits\Snowflake;
 use App\Events\GameCreated;
-use App\Events\OffersSubmitted;
-use Thunk\Verbs\Facades\Verbs;
 use App\Events\PlayerJoinedGame;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\User;
+use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
@@ -45,7 +44,7 @@ beforeEach(function () {
     $this->daniel = Player::get()->last();
 });
 
-it('provides 5 options to bid on in a round', function() {
+it('provides 5 options to bid on in a round', function () {
     $this->assertEquals(
         5,
         collect($this->game->currentRound()->state()->bureaucrats)
@@ -56,7 +55,7 @@ it('provides 5 options to bid on in a round', function() {
 
 it('records offers made to the state', function () {
     $offers = collect($this->game->currentRound()->state()->bureaucrats)
-        ->mapWithKeys(fn($b) => [$b => 2])
+        ->mapWithKeys(fn ($b) => [$b => 2])
         ->toArray();
 
     $this->john->submitOffers($this->game->currentRound(), $offers);
@@ -67,7 +66,7 @@ it('records offers made to the state', function () {
     );
 
     $offers = collect($this->game->currentRound()->state()->bureaucrats)
-        ->mapWithKeys(fn($b) => [$b => 1])
+        ->mapWithKeys(fn ($b) => [$b => 1])
         ->toArray();
 
     $this->daniel->submitOffers($this->game->currentRound(), $offers);
@@ -78,14 +77,14 @@ it('records offers made to the state', function () {
     );
 });
 
-it('records winners to the state when the auction phase ends', function() {
+it('records winners to the state when the auction phase ends', function () {
     $bureaucrats = collect($this->game->currentRound()->state()->bureaucrats);
 
-    $offers = $bureaucrats->mapWithKeys(fn($b) => [$b => 2])->toArray();
+    $offers = $bureaucrats->mapWithKeys(fn ($b) => [$b => 2])->toArray();
 
     $this->john->submitOffers($this->game->currentRound(), $offers);
 
-    $offers = $bureaucrats->mapWithKeys(fn($b) => [$b => 1])->toArray();
+    $offers = $bureaucrats->mapWithKeys(fn ($b) => [$b => 1])->toArray();
 
     $this->daniel->submitOffers($this->game->currentRound(), $offers);
 

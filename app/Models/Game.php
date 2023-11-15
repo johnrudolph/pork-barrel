@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Round;
-use App\Models\Player;
-use App\States\GameState;
+use App\Bureaucrats\Bureaucrat;
 use App\Events\GameStarted;
 use App\Events\RoundStarted;
-use Thunk\Verbs\Facades\Verbs;
-use App\Bureaucrats\Bureaucrat;
+use App\States\GameState;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Thunk\Verbs\Facades\Verbs;
 
 class Game extends Model
 {
@@ -49,7 +47,7 @@ class Game extends Model
             bureaucrats: Bureaucrat::all()->random(5)->toArray()
         );
 
-        $this->players->each(fn($p) => $p->receiveMoney(10));
+        $this->players->each(fn ($p) => $p->receiveMoney(10));
 
         Verbs::commit();
     }

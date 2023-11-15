@@ -3,7 +3,6 @@
 namespace App\States;
 
 use Thunk\Verbs\State;
-use Illuminate\Support\Collection;
 
 class RoundState extends State
 {

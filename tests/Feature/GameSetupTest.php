@@ -1,15 +1,14 @@
 <?php
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
-use Glhd\Bits\Snowflake;
-use App\States\GameState;
 use App\Events\GameCreated;
-use App\Events\GameStarted;
-use Thunk\Verbs\Facades\Verbs;
 use App\Events\PlayerJoinedGame;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\User;
+use App\States\GameState;
+use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 

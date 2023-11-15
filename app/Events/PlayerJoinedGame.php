@@ -54,6 +54,6 @@ class PlayerJoinedGame extends Event
 
     public function applyToGameState(GameState $state)
     {
-        $state->players->push($this->player_id);
+        $state->players[] = $this->player_id;
     }
 }

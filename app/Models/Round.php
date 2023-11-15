@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\Game;
+use App\Events\CalculatedAuctionWinners;
 use App\States\RoundState;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Model;
-use App\Events\CalculatedAuctionWinners;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Round extends Model
 {

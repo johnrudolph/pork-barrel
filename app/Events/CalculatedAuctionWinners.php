@@ -2,13 +2,13 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class CalculatedAuctionWinners extends Event
 {
-    #[StateId(RoundState::class)] 
+    #[StateId(RoundState::class)]
     public int $round_id;
 
     public function applyToRoundState(RoundState $state)

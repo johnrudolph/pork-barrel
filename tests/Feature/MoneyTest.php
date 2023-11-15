@@ -1,13 +1,13 @@
 <?php
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
-use Glhd\Bits\Snowflake;
 use App\Events\GameCreated;
-use Thunk\Verbs\Facades\Verbs;
 use App\Events\PlayerJoinedGame;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\User;
+use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 use Thunk\Verbs\Lifecycle\StateManager;
 
 uses(DatabaseMigrations::class);
@@ -45,7 +45,7 @@ beforeEach(function () {
     $this->daniel = Player::get()->last();
 });
 
-it('gives players 10 money to start the game', function() {
+it('gives players 10 money to start the game', function () {
     $this->assertEquals(10, $this->john->state()->money);
     app(StateManager::class)->reset();
     $this->assertEquals(10, $this->john->state()->money);
