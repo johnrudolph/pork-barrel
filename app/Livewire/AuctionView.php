@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Events\OffersSubmitted;
 use App\Models\Game;
 use App\Models\Round;
 use App\Models\Player;
@@ -15,15 +16,9 @@ class AuctionView extends Component
 
     public Game $game;
 
-    public array $bids;
+    public array $bureaucrats;
 
     public int $money;
-
-    #[Computed]
-    public function bureacrats()
-    {
-        return $this->game->currentRound()->state()->bureaucrats;
-    }
 
     #[Computed]
     public function player()
@@ -42,35 +37,28 @@ class AuctionView extends Component
 
         $this->money = $this->player()->state()->money;
 
-        dd($round->state());
-        $this->bids = $round->state()->bureaucrats->mapWithKeys(function ($b) {
-            return [$b::SLUG => ['class' => $b, 'bid' => 0]];
+        $this->bureaucrats = collect($round->state()->bureaucrats)->mapWithKeys(function ($b) {
+            return [$b::SLUG => ['class' => $b, 'offer' => 0]];
         })->toArray();
     }
 
     public function increment($bureacrat_slug)
     {
-        if (collect($this->bids)->sum('bid') < $this->money) {
-            $this->bids[$bureacrat_slug]['bid']++;
+        if (collect($this->bureaucrats)->sum('offer') < $this->money) {
+            $this->bureaucrats[$bureacrat_slug]['offer']++;
         }
     }
 
     public function decrement($bureacrat_slug)
     {
-        if  ($this->bids[$bureacrat_slug]['bid'] > 0) {
-            $this->bids[$bureacrat_slug]['bid']--;
+        if ($this->bureaucrats[$bureacrat_slug]['offer'] > 0) {
+            $this->bureaucrats[$bureacrat_slug]['offer']--;
         }
     }
 
     public function submit()
     {
-        dd($this->player->state(), $this->bids);
-
-        BidSubmitted::fire(
-            player_id: $this->player_id,
-            round_id: $this->round_id,
-            bids: $this->bids
-        );
+        $this->player()->submitOffers($this->game->currentRound(), $this->bureaucrats);
     }
     
     public function render()

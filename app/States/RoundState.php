@@ -13,5 +13,9 @@ class RoundState extends State
 
     public int $round_number;
 
-    public Collection $bureaucrats;
+    public $bureaucrats;
+
+    public $offers;
+
+    public $auction_winners;
 }

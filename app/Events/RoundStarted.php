@@ -21,7 +21,7 @@ class RoundStarted extends Event
     {
         $state->status = 'in-progress';
         $state->phase = 'auction';
-        $state->bureaucrats= collect($this->bureaucrats);
+        $state->bureaucrats = $this->bureaucrats;
     }
 
     public function applyToGameState(GameState $state)

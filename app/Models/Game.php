@@ -41,12 +41,12 @@ class Game extends Model
         // @todo: put rounds into an array on GameState and just get ids from there
 
         Verbs::commit();
-        
+
         RoundStarted::fire(
             game_id: $this->id,
             round_number: 1,
             round_id: $this->rounds->first()->id,
-            bureaucrats: Bureaucrat::all()->random(5)
+            bureaucrats: Bureaucrat::all()->random(5)->toArray()
         );
 
         $this->players->each(fn($p) => $p->receiveMoney(10));

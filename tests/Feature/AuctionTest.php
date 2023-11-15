@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Models\Player;
 use Glhd\Bits\Snowflake;
 use App\Events\GameCreated;
+use App\Events\OffersSubmitted;
 use Thunk\Verbs\Facades\Verbs;
 use App\Events\PlayerJoinedGame;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -47,9 +48,58 @@ beforeEach(function () {
 it('provides 5 options to bid on in a round', function() {
     $this->assertEquals(
         5,
-        $this->game->currentRound()->state()
-            ->bureaucrats
+        collect($this->game->currentRound()->state()->bureaucrats)
             ->unique()
             ->count()
+    );
+});
+
+it('records offers made to the state', function () {
+    $offers = collect($this->game->currentRound()->state()->bureaucrats)
+        ->mapWithKeys(fn($b) => [$b => 2])
+        ->toArray();
+
+    $this->john->submitOffers($this->game->currentRound(), $offers);
+
+    $this->assertEquals(
+        $offers,
+        $this->game->currentRound()->state()->offers[$this->john->id]
+    );
+
+    $offers = collect($this->game->currentRound()->state()->bureaucrats)
+        ->mapWithKeys(fn($b) => [$b => 1])
+        ->toArray();
+
+    $this->daniel->submitOffers($this->game->currentRound(), $offers);
+
+    $this->assertEquals(
+        $offers,
+        $this->game->currentRound()->state()->offers[$this->daniel->id]
+    );
+});
+
+it('records winners to the state when the auction phase ends', function() {
+    $bureaucrats = collect($this->game->currentRound()->state()->bureaucrats);
+
+    $offers = $bureaucrats->mapWithKeys(fn($b) => [$b => 2])->toArray();
+
+    $this->john->submitOffers($this->game->currentRound(), $offers);
+
+    $offers = $bureaucrats->mapWithKeys(fn($b) => [$b => 1])->toArray();
+
+    $this->daniel->submitOffers($this->game->currentRound(), $offers);
+
+    $this->game->currentRound()->advancePhase();
+
+    $this->assertEquals(
+        true,
+        collect($this->game->currentRound()->state()->auction_winners[$bureaucrats->first()]['winning_player_ids'])
+            ->contains($this->john->id)
+    );
+
+    $this->assertEquals(
+        false,
+        collect($this->game->currentRound()->state()->auction_winners[$bureaucrats->first()]['winning_player_ids'])
+            ->contains($this->daniel->id)
     );
 });

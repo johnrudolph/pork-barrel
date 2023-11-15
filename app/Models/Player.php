@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Events\PlayerReceivedMoney;
 use App\States\PlayerState;
+use App\Events\OffersSubmitted;
+use App\Events\PlayerReceivedMoney;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,5 +37,24 @@ class Player extends Model
             round_id: $this->game->currentRound()->id,
             amount: $amount
         );
+    }
+
+    public function getMoneyAttribute()
+    {
+        return $this->state()->money;
+    }
+
+    public function submitOffers(Round $round, array $offers)
+    {
+        OffersSubmitted::fire(
+            player_id: $this->id,
+            round_id: $round->id,
+            offers: $offers,
+        );
+
+        // @todo this is temporary until the game has timers and advances automatically
+        if (collect($round->state()->offers)->count() === $round->game->players()->count()) {            
+            $round->advancePhase();
+        }
     }
 }
