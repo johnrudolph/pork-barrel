@@ -6,5 +6,7 @@ use Thunk\Verbs\State;
 
 class PlayerState extends State
 {
-    public string $name = '';
+    public $name = '';
+
+    public $money = 0;
 }

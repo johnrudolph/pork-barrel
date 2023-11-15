@@ -14,32 +14,32 @@ class PlayerJoinedGame extends Event
     public $user_id;
 
     #[StateId(GameState::class)]
-    public ?int $game_id = null;
+    public int $game_id;
 
     #[StateId(PlayerState::class)]
-    public ?int $player_id = null;
+    public int $player_id;
 
-    public function validate(GameState $state): bool
-    {
-        if (collect($state->players)->count() > 3) {
-            return false;
-            // return 'the game is full.';
-        }
+    // public function validate(GameState $state): bool
+    // {
+    //     if (collect($state->players)->count() > 3) {
+    //         return false;
+    //         // return 'the game is full.';
+    //     }
 
-        if ($state->status !== 'awaiting-players') {
-            return false;
-            // return 'The game has already started.';
-        }
+    //     if ($state->status !== 'awaiting-players') {
+    //         return false;
+    //         // return 'The game has already started.';
+    //     }
 
-        if (collect($state->players)->contains($this->player_id)) {
-            return false;
-            // return 'That player is already in this game.';
-        }
+    //     if (collect($state->players)->contains($this->player_id)) {
+    //         return false;
+    //         // return 'That player is already in this game.';
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    public function onFire()
+    public function handle()
     {
         Player::create([
             'id' => $this->player_id,
@@ -55,10 +55,5 @@ class PlayerJoinedGame extends Event
     public function applyToGameState(GameState $state)
     {
         $state->players[] = $this->player_id;
-    }
-
-    public function applyToPlayerState(PlayerState $state)
-    {
-        $state->name = User::firstWhere('id', $this->user_id)->name;
     }
 }
