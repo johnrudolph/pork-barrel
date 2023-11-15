@@ -13,4 +13,6 @@ class Watchdog extends Bureaucrat
     const DIALOG = "Corruption is rampant around here. I'll sniff it out if it's the last thing I do.";
 
     const EFFECT = 'Select another action this round, and learn who won the bid for it.';
+
+    const EFFECT_REQUIRES_DECISION = true;
 }

@@ -14,6 +14,8 @@ class Bureaucrat
 
     const EFFECT = '';
 
+    const EFFECT_REQUIRES_DECISION = false;
+
     public static function all()
     {
         return collect([
