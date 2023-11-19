@@ -2,17 +2,31 @@
 
 namespace App\Bureaucrats;
 
+use App\Models\Round;
+use App\Models\Player;
+
 class DisruptiveDonkey extends Bureaucrat
 {
     const NAME = 'Disruptive Donkey';
 
     const SLUG = 'disruptive-donkey';
 
-    const SHORT_DESCRIPTION = "Cancel another player's action.";
+    const SHORT_DESCRIPTION = "Cancel a bureaucrat's action.";
 
     const DIALOG = 'Obstructionism is the only way to not get things done in this town.';
 
-    const EFFECT = 'Select another action this round, and cancel it.';
+    const EFFECT = 'Select another bureaucrat this round, and cancel its action.';
 
     const EFFECT_REQUIRES_DECISION = true;
+
+    const SELECT_PROMPT = 'Select a bureaucrat';
+
+    public static function options(Round $round, Player $player)
+    {
+        return collect($round->state()->bureaucrats)
+            ->reject(fn ($b) => $b === static::class)
+            ->mapWithKeys(fn ($b) =>
+                [$b => $b::NAME]
+            );
+    }
 }

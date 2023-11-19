@@ -47,7 +47,7 @@ class Game extends Model
             bureaucrats: Bureaucrat::all()->random(5)->toArray()
         );
 
-        $this->players->each(fn ($p) => $p->receiveMoney(10));
+        $this->players->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
 
         Verbs::commit();
     }

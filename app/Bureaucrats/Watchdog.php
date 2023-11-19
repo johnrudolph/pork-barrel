@@ -15,4 +15,6 @@ class Watchdog extends Bureaucrat
     const EFFECT = 'Select another action this round, and learn who won the bid for it.';
 
     const EFFECT_REQUIRES_DECISION = true;
+
+    const SELECT_PROMPT = 'Select a bureaucrat';
 }

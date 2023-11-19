@@ -57,7 +57,12 @@ class AuctionView extends Component
 
     public function submit()
     {
-        $this->player()->submitOffers($this->game->currentRound(), $this->bureaucrats);
+        $offers = collect($this->bureaucrats)->mapWithKeys(function ($b) {
+            return [$b['class'] => $b['offer']];
+        })->toArray();
+
+        // @todo: give them some kind confirmation and remove the UI for bids so it's not confusing
+        $this->player()->submitOffers($this->game->currentRound(), $offers);
     }
 
     public function render()

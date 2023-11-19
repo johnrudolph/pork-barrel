@@ -2,6 +2,8 @@
 
 namespace App\Bureaucrats;
 
+use App\Events\PlayerReceivedMoney;
+
 class GamblinGoat extends Bureaucrat
 {
     const NAME = "Gamblin' Goat";
@@ -12,5 +14,15 @@ class GamblinGoat extends Bureaucrat
 
     const DIALOG = "I've got a hair-brained scheme in the works. No promises, but I think it'll pay off big time.";
 
-    const EFFECT = "Get a random return of 1-10 money.";
+    const EFFECT = 'Get a random return of 1-10 money.';
+
+    public static function resolveFor(int $player_id, int $round_id, array $options = null)
+    {
+        PlayerReceivedMoney::fire(
+            player_id: $player_id,
+            round_id: $round_id,
+            amount: rand(1, 10),
+            activity_feed_description: "The Gamlin' Goat's scheme paid off!"
+        );
+    }
 }

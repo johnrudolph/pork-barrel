@@ -7,7 +7,7 @@ use App\States\PlayerState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
-class PlayerReceivedMoney extends Event
+class PlayerSpentMoney extends Event
 {
     #[StateId(PlayerState::class)]
     public int $player_id;
@@ -23,13 +23,13 @@ class PlayerReceivedMoney extends Event
         MoneyLogEntry::create([
             'player_id' => $this->player_id,
             'round_id' => $this->round_id,
-            'amount' => $this->amount,
+            'amount' => -$this->amount,
             'description' => $this->activity_feed_description,
         ]);
     }
 
     public function apply(PlayerState $state)
     {
-        $state->money += $this->amount;
+        $state->money -= $this->amount;
     }
 }

@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Events\CalculatedAuctionWinners;
+use App\Events\AdvancedToDecisionPhase;
+use App\Events\EndedDecisionPhase;
 use App\States\RoundState;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,10 +42,15 @@ class Round extends Model
     public function advancePhase()
     {
         if ($this->state()->phase === 'auction') {
-            // calculate winners
-            CalculatedAuctionWinners::fire(round_id: $this->id);
+            AdvancedToDecisionPhase::fire(round_id: $this->id);
 
-            // @todo advance to decisions phase
+            return;
+        }
+
+        if ($this->state()->phase === 'decision') {
+            EndedDecisionPhase::fire(round_id: $this->id);
+
+            // @todo advance to next round
         }
     }
 }

@@ -13,6 +13,7 @@ class CalculatedAuctionWinners extends Event
 
     public function applyToRoundState(RoundState $state)
     {
+        dd($state);
         $auction_winners = collect($state->bureaucrats)
             ->mapWithKeys(function ($b) use ($state) {
                 $top_offer = collect($state->offers)

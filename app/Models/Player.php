@@ -30,12 +30,13 @@ class Player extends Model
         return PlayerState::load($this->id);
     }
 
-    public function receiveMoney(int $amount)
+    public function receiveMoney(int $amount, string $activity_feed_description)
     {
         PlayerReceivedMoney::fire(
             player_id: $this->id,
             round_id: $this->game->currentRound()->id,
-            amount: $amount
+            amount: $amount,
+            activity_feed_description: $activity_feed_description
         );
     }
 
