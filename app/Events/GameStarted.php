@@ -4,28 +4,42 @@ namespace App\Events;
 
 use App\Models\Round;
 use App\States\GameState;
+use App\States\RoundState;
+use Glhd\Bits\Snowflake;
+use Illuminate\Support\Collection;
+use Thunk\Verbs\Attributes\Autodiscovery\AppliesToState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
+#[AppliesToState(GameState::class)]
+#[AppliesToState(RoundState::class)]
 class GameStarted extends Event
 {
-    #[StateId(GameState::class)]
-    public ?int $game_id = null;
-
-    public function handle()
+	public function __construct(
+		public int $game_id,
+		public ?array $round_ids = null,
+	) {
+		$this->round_ids ??= Collection::times(8, fn() => Snowflake::make()->id())->values()->all();
+	}
+	
+	public function applyToGame(GameState $state)
+	{
+		$state->status = 'in-progress';
+	}
+	
+	public function applyToRound(RoundState $state)
+	{
+		$state->bureaucrats = collect();
+	}
+	
+	public function handle()
     {
-        collect(range(1, 8))->each(function ($n) {
-            $round = Round::create([
-                'game_id' => $this->game_id,
-                'round_number' => $n,
-            ]);
-
-            $round->state()->burueaucrats = collect();
-        });
-    }
-
-    public function apply(GameState $state)
-    {
-        $state->status = 'in-progress';
+		foreach ($this->round_ids as $index => $round_id) {
+			Round::create([
+				'id' => $round_id,
+				'game_id' => $this->game_id,
+				'round_number' => $index + 1,
+			]);
+		}
     }
 }
