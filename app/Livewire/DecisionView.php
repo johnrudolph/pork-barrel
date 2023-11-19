@@ -42,6 +42,8 @@ class DecisionView extends Component
             ->pluck('class')
             ->toArray();
 
+        $this->actions = $round->state->actionsAvailableTo($this->player()->id)->toArray();
+
         $this->decisions = collect($round->state()->actions[$this->player()->id])
             ->filter(fn ($a) => $a['class']::EFFECT_REQUIRES_DECISION)
             ->mapWithKeys(fn ($a) => [$a['class'] => null])

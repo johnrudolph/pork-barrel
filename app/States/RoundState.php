@@ -28,4 +28,9 @@ class RoundState extends State
     {
         return GameState::load($this->game_id);
     }
+
+    public function actionsAvailableTo(int $player_id)
+    {
+        // return a nice collection of bureaucrats with their winning player ids
+    }
 }
