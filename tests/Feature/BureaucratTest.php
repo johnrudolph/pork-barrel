@@ -61,18 +61,16 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
     $this->game->players
         ->each(fn ($p) => $p->receiveMoney(1, 'Received starting money.'));
 
-    $this->john->submitOffers($this->game->currentRound(), [
-        GamblinGoat::class => 1,
-    ]);
+    $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
 
     $this->assertEquals(1, $this->john->state()->money);
 
-    $this->game->currentRound()->advancePhase();
+    $this->game->currentRound()->endAuctionPhase();
     Verbs::commit();
 
     $this->assertEquals(0, $this->john->state()->money);
 
-    $this->game->currentRound()->advancePhase();
+    $this->game->currentRound()->endDecisionPhase();
     Verbs::commit();
 
     $amount_earned = $this->john->state()->money;

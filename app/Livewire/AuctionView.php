@@ -2,12 +2,13 @@
 
 namespace App\Livewire;
 
+use App\DTOs\Offer;
 use App\Models\Game;
-use App\Models\Player;
 use App\Models\Round;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
+use App\Models\Player;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Auth;
 
 class AuctionView extends Component
 {
@@ -18,6 +19,8 @@ class AuctionView extends Component
     public array $bureaucrats;
 
     public int $money;
+
+    public array $offers;
 
     #[Computed]
     public function player()
@@ -39,6 +42,11 @@ class AuctionView extends Component
         $this->bureaucrats = collect($round->state()->bureaucrats)->mapWithKeys(function ($b) {
             return [$b::SLUG => ['class' => $b, 'offer' => 0]];
         })->toArray();
+
+        $this->offers = collect($round->state()->offers)
+            ->filter(fn ($o) => $o['player_id'] === $this->player()->id)
+            ->mapWithKeys(fn ($o) => [$o['bureaucrat'] => $o['amount']])
+            ->toArray();
     }
 
     public function increment($bureacrat_slug)
@@ -57,12 +65,23 @@ class AuctionView extends Component
 
     public function submit()
     {
-        $offers = collect($this->bureaucrats)->mapWithKeys(function ($b) {
-            return [$b['class'] => $b['offer']];
-        })->toArray();
+        collect($this->bureaucrats)
+            ->filter(fn ($b) => $b['offer'] > 0)
+            ->each(fn ($b) => 
+                $this->player
+                    ->submitOffer($this->game->currentRound(), $b['class'],$b['offer'],)
+            );
 
-        // @todo: give them some kind confirmation and remove the UI for bids so it's not confusing
-        $this->player()->submitOffers($this->game->currentRound(), $offers);
+        if (
+            collect($this->game->currentRound()->state()->offers)
+                ->pluck('player_id')
+                ->unique()
+                ->count() === $this->game->players->count()
+        ) {
+            $this->game->currentRound()->endAuctionPhase();
+        }
+        
+        $this->initializeProperties($this->player(), $this->game->currentRound());
     }
 
     public function render()

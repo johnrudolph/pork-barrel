@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Bureaucrats\Bureaucrat;
+use App\DTOs\Offer;
+use App\States\PlayerState;
+use App\Events\OfferSubmitted;
 use App\Events\OffersSubmitted;
 use App\Events\PlayerReceivedMoney;
-use App\States\PlayerState;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Player extends Model
 {
@@ -45,17 +48,13 @@ class Player extends Model
         return $this->state()->money;
     }
 
-    public function submitOffers(Round $round, array $offers)
+    public function submitOffer(Round $round, $bureaucrat, $amount)
     {
-        OffersSubmitted::fire(
+        OfferSubmitted::fire(
             player_id: $this->id,
             round_id: $round->id,
-            offers: $offers,
+            bureaucrat: $bureaucrat,
+            amount: $amount
         );
-
-        // @todo this is temporary until the game has timers and advances automatically
-        if (collect($round->state()->offers)->count() === $round->game->players()->count()) {
-            $round->advancePhase();
-        }
     }
 }

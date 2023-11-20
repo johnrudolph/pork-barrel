@@ -36,8 +36,6 @@ class Game extends Model
     {
         GameStarted::fire(game_id: $this->id);
 
-        // @todo: put rounds into an array on GameState and just get ids from there
-
         Verbs::commit();
 
         RoundStarted::fire(

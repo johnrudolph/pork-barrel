@@ -83,6 +83,12 @@ it('seeds rounds for new games', function () {
         user_id: $user->id,
     );
 
+    PlayerJoinedGame::fire(
+        game_id: $event->game_id,
+        player_id: Snowflake::make()->id(),
+        user_id: $user->id,
+    );
+
     Verbs::commit();
 
     $game = Game::find($event->game_id);

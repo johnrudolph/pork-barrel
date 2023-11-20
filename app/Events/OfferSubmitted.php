@@ -7,7 +7,7 @@ use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
-class OffersSubmitted extends Event
+class OfferSubmitted extends Event
 {
     #[StateId(PlayerState::class)]
     public int $player_id;
@@ -15,10 +15,16 @@ class OffersSubmitted extends Event
     #[StateId(RoundState::class)]
     public int $round_id;
 
-    public array $offers;
+    public $bureaucrat;
+
+    public $amount;
 
     public function applyToRoundState(RoundState $state)
     {
-        $state->offers[$this->player_id] = $this->offers;
+        $state->offers[] = [
+            'player_id' => $this->player_id,
+            'bureaucrat' => $this->bureaucrat,
+            'amount' => $this->amount,
+        ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\States;
 
 use Thunk\Verbs\State;
+use App\States\GameState;
 
 class RoundState extends State
 {
@@ -18,19 +19,27 @@ class RoundState extends State
 
     public $offers;
 
-    public $auction_winners;
-
-    public $actions;
-
     public $blocked_actions;
 
-    public function gameState()
+    public function gameState(): GameState
     {
         return GameState::load($this->game_id);
     }
 
     public function actionsAvailableTo(int $player_id)
     {
-        // return a nice collection of bureaucrats with their winning player ids
+        return collect($this->bureaucrats)
+            ->filter(function ($b) use ($player_id) {
+                $top_offer = collect($this->offers)
+                    ->filter(fn ($o) => $o['bureaucrat'] === $b)
+                    ->max(fn ($o) => $o['amount']);
+                
+                $player_offer = collect($this->offers)
+                    ->filter(fn ($o) => $o['bureaucrat'] === $b && $o['player_id'] === $player_id)
+                    ->max(fn ($o) => $o['amount']);
+
+                return $top_offer === $player_offer
+                    && $top_offer;
+            });
     }
 }

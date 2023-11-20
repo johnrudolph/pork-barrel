@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Events\AdvancedToDecisionPhase;
+use App\Events\EndedAuctionPhase;
 use App\Events\EndedDecisionPhase;
 use App\States\RoundState;
 use Glhd\Bits\Database\HasSnowflakes;
@@ -39,18 +39,13 @@ class Round extends Model
             ->first();
     }
 
-    public function advancePhase()
+    public function endAuctionPhase()
     {
-        if ($this->state()->phase === 'auction') {
-            AdvancedToDecisionPhase::fire(round_id: $this->id);
+        EndedAuctionPhase::fire(round_id: $this->id);
+    }
 
-            return;
-        }
-
-        if ($this->state()->phase === 'decision') {
-            EndedDecisionPhase::fire(round_id: $this->id);
-
-            // @todo advance to next round
-        }
+    public function endDecisionPhase()
+    {
+        EndedDecisionPhase::fire(round_id: $this->id);
     }
 }

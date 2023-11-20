@@ -2,6 +2,9 @@
 
 namespace App\Bureaucrats;
 
+use App\Models\Round;
+use App\Models\Player;
+
 class Watchdog extends Bureaucrat
 {
     const NAME = 'Watchdog';
@@ -17,4 +20,13 @@ class Watchdog extends Bureaucrat
     const EFFECT_REQUIRES_DECISION = true;
 
     const SELECT_PROMPT = 'Select a bureaucrat';
+
+    public static function options(Round $round, Player $player)
+    {
+        return collect($round->state()->bureaucrats)
+            ->reject(fn ($b) => $b === static::class)
+            ->mapWithKeys(fn ($b) =>
+                [$b => $b::NAME]
+            );
+    }
 }

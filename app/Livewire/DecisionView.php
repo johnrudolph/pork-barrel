@@ -15,11 +15,11 @@ class DecisionView extends Component
 
     public Game $game;
 
-    public array $actions;
+    public $actions;
 
     public int $money;
 
-    public array $decisions = [];
+    public array $decisions;
 
     #[Computed]
     public function player()
@@ -30,6 +30,7 @@ class DecisionView extends Component
     public function mount(Player $player)
     {
         $this->initializeProperties($player, $this->game->currentRound());
+
     }
 
     public function initializeProperties(Player $player, Round $round)
@@ -38,15 +39,11 @@ class DecisionView extends Component
 
         $this->money = $this->player()->state()->money;
 
-        $this->actions = collect($round->state()->actions[$this->player()->id])
-            ->pluck('class')
-            ->toArray();
+        $this->actions = $round->state()->actionsAvailableTo($this->player()->id);
 
-        $this->actions = $round->state->actionsAvailableTo($this->player()->id)->toArray();
-
-        $this->decisions = collect($round->state()->actions[$this->player()->id])
-            ->filter(fn ($a) => $a['class']::EFFECT_REQUIRES_DECISION)
-            ->mapWithKeys(fn ($a) => [$a['class'] => null])
+        $this->decisions = $this->actions
+            ->filter(fn ($a) => $a::EFFECT_REQUIRES_DECISION)
+            ->mapWithKeys(fn ($a) => [$a => null])
             ->toArray();
     }
 
@@ -55,6 +52,7 @@ class DecisionView extends Component
         // @todo: give them some kind confirmation and remove the UI for bids so it's not confusing
         // @todo: submit actions
     }
+
     public function render()
     {
         return view('livewire.decision-view');
