@@ -16,7 +16,7 @@ class GamblinGoat extends Bureaucrat
 
     const EFFECT = 'Get a random return of 1-10 money.';
 
-    public static function resolveFor(int $player_id, int $round_id, array $options = null)
+    public static function resolveAtEndOfRoundFor(int $player_id, int $round_id, array $data = null)
     {
         PlayerReceivedMoney::fire(
             player_id: $player_id,

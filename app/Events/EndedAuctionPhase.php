@@ -21,15 +21,14 @@ class EndedAuctionPhase extends Event
         collect($state->gameState()->players)
             ->each(function ($player_id) use ($state) {
                 collect($state->actionsAvailableTo($player_id))
-                    ->each(fn ($action) =>
-                        PlayerSpentMoney::fire(
-                            player_id: $player_id,
-                            round_id: $this->round_id,
-                            activity_feed_description: "You had the highest bid for ".$action::NAME,
-                            amount: collect($state->offers)
-                                ->filter(fn ($o) => $o['player_id'] === $player_id && $o['bureaucrat'] === $action)
-                                ->first()['amount']
-                        )
+                    ->each(fn ($action) => PlayerSpentMoney::fire(
+                        player_id: $player_id,
+                        round_id: $this->round_id,
+                        activity_feed_description: 'You had the highest bid for '.$action::NAME,
+                        amount: collect($state->offers)
+                            ->filter(fn ($o) => $o['player_id'] === $player_id && $o['bureaucrat'] === $action)
+                            ->first()['amount']
+                    )
                     );
             });
     }

@@ -1,6 +1,5 @@
 <?php
 
-use App\DTOs\Offer;
 use App\Events\GameCreated;
 use App\Events\PlayerJoinedGame;
 use App\Models\Game;
@@ -148,7 +147,7 @@ it('spends the money offerred by winners', function () {
     $this->daniel->submitOffer($round, $bureaucrats[1], 1);
     $this->daniel->submitOffer($round, $bureaucrats[2], 2);
     $this->daniel->submitOffer($round, $bureaucrats[3], 0);
-    
+
     $round->endAuctionPhase();
 
     // John spends 3, because he didn't win the second bureaucrat

@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use App\Bureaucrats\Bureaucrat;
-use App\DTOs\Offer;
-use App\States\PlayerState;
+use App\Events\DecisionSubmitted;
 use App\Events\OfferSubmitted;
-use App\Events\OffersSubmitted;
 use App\Events\PlayerReceivedMoney;
+use App\States\PlayerState;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Player extends Model
 {
@@ -55,6 +53,16 @@ class Player extends Model
             round_id: $round->id,
             bureaucrat: $bureaucrat,
             amount: $amount
+        );
+    }
+
+    public function submitDecision(Round $round, $bureaucrat, array $data = null)
+    {
+        DecisionSubmitted::fire(
+            player_id: $this->id,
+            round_id: $round->id,
+            bureaucrat: $bureaucrat,
+            data: $data
         );
     }
 }

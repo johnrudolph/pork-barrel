@@ -2,8 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\Models\Round;
 use App\Models\Player;
+use App\Models\Round;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class Bureaucrat
 {
@@ -27,7 +29,6 @@ class Bureaucrat
             BailoutBunny::class,
             DisruptiveDonkey::class,
             GamblinGoat::class,
-            Hawk::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
             OffshoreOx::class,
@@ -37,17 +38,30 @@ class Bureaucrat
         ]);
     }
 
-    public static function resolveFor(int $player_id, int $round_id, array $options = null)
+    public static function resolveAtEndOfAuctionFor(int $player_id, int $round_id, array $data = null)
+    {
+        //
+    }
+
+    public static function resolveAtEndOfRoundFor(int $player_id, int $round_id, array $data = null)
     {
         //
     }
 
     public static function options(Round $round, Player $player)
     {
-        // @todo delete this, it's bad
-
-        return $round->game->players->mapWithKeys(function ($p) {
-            return [$p->id => $p->user->name];
+        return collect(range(1, 10))->mapWithKeys(function ($i) {
+            return [$i => 'Placeholder option '.$i];
         });
+    }
+
+    public static function applyToRoundStateWhenPlayed(RoundState $state, array $data = null)
+    {
+        //
+    }
+
+    public static function applyToPlayerStateWhenPlayed(PlayerState $state, array $data = null)
+    {
+        //
     }
 }

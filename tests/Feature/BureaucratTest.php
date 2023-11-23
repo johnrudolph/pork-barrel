@@ -1,19 +1,18 @@
 <?php
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
-use App\DTOs\ActionDTO;
-use Glhd\Bits\Snowflake;
+use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\DisruptiveDonkey;
+use App\Bureaucrats\GamblinGoat;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
-use App\Events\RoundStarted;
-use Thunk\Verbs\Facades\Verbs;
-use App\Bureaucrats\GamblinGoat;
 use App\Events\PlayerJoinedGame;
-use App\Events\DecisionsSubmitted;
-use App\Bureaucrats\DisruptiveDonkey;
+use App\Events\RoundStarted;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\User;
+use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
@@ -99,50 +98,55 @@ it('blocks an action from resolving if was blocked by the Donkey', function () {
     $this->game->players
         ->each(fn ($p) => $p->receiveMoney(1, 'Received starting money.'));
 
-    $this->john->submitOffers($this->game->currentRound(), [
-        GamblinGoat::class => 0,
-        DisruptiveDonkey::class => 1,
-    ]);
-
-    $this->daniel->submitOffers($this->game->currentRound(), [
-        GamblinGoat::class => 1,
-        DisruptiveDonkey::class => 0,
-    ]);
+    $this->john->submitOffer($this->game->currentRound(), DisruptiveDonkey::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
 
     Verbs::commit();
 
-    $this->game->currentRound()->advancePhase();
+    $this->game->currentRound()->endAuctionPhase();
     Verbs::commit();
 
-    dd($this->game->currentRound()->state()->actions);
-
-    $this->assertEquals($this->game->currentRound()->state()->actions[0], [
-        [
-            'player_id' => $this->john->id,
-            'class' => GamblinGoat::class,
-            'requires_decision' => false,
-            'options' => null,
-        ],
-        [
-            'player_id' => $this->daniel->id,
-            'class' => GamblinGoat::class,
-            'requires_decision' => false,
-            'options' => null,
-        ],
-    ]);
-
-    DecisionsSubmitted::fire(
-        round_id: $this->game->currentRound()->id,
-        player_id: $this->john->id,
-        decisions: [
-            DisruptiveDonkey::class => GamblingGoat::class,
-        ],
+    $this->john->submitDecision(
+        $this->game->currentRound(),
+        DisruptiveDonkey::class,
+        ['bureaucrat' => GamblinGoat::class]
     );
 
     Verbs::commit();
 
-    $this->game->currentRound()->advancePhase();
+    $this->assertTrue(collect($this->game->currentRound()->state()->blocked_actions)
+        ->contains(GamblinGoat::class));
+
+    $this->game->currentRound()->endDecisionPhase();
     Verbs::commit();
 
     $this->assertEquals(0, $this->daniel->state()->money);
+});
+
+it('gives you a bailout if you ever reach 0 money after an auction', function () {
+    GameStarted::fire(game_id: $this->game->id);
+
+    Verbs::commit();
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->rounds->first()->id,
+        bureaucrats: [BailoutBunny::class]
+    );
+
+    $this->game->players
+        ->each(fn ($p) => $p->receiveMoney(1, 'Received starting money.'));
+
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
+
+    Verbs::commit();
+
+    $this->game->currentRound()->endAuctionPhase();
+    Verbs::commit();
+
+    $this->game->currentRound()->endDecisionPhase();
+    Verbs::commit();
+
+    $this->assertEquals(10, $this->john->state()->money);
 });

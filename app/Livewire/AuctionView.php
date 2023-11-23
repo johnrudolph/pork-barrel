@@ -2,13 +2,12 @@
 
 namespace App\Livewire;
 
-use App\DTOs\Offer;
 use App\Models\Game;
-use App\Models\Round;
 use App\Models\Player;
-use Livewire\Component;
-use Livewire\Attributes\Computed;
+use App\Models\Round;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class AuctionView extends Component
 {
@@ -67,9 +66,8 @@ class AuctionView extends Component
     {
         collect($this->bureaucrats)
             ->filter(fn ($b) => $b['offer'] > 0)
-            ->each(fn ($b) => 
-                $this->player
-                    ->submitOffer($this->game->currentRound(), $b['class'],$b['offer'],)
+            ->each(fn ($b) => $this->player
+                ->submitOffer($this->game->currentRound(), $b['class'], $b['offer'])
             );
 
         if (
@@ -80,7 +78,7 @@ class AuctionView extends Component
         ) {
             $this->game->currentRound()->endAuctionPhase();
         }
-        
+
         $this->initializeProperties($this->player(), $this->game->currentRound());
     }
 

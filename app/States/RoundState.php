@@ -3,7 +3,6 @@
 namespace App\States;
 
 use Thunk\Verbs\State;
-use App\States\GameState;
 
 class RoundState extends State
 {
@@ -33,7 +32,7 @@ class RoundState extends State
                 $top_offer = collect($this->offers)
                     ->filter(fn ($o) => $o['bureaucrat'] === $b)
                     ->max(fn ($o) => $o['amount']);
-                
+
                 $player_offer = collect($this->offers)
                     ->filter(fn ($o) => $o['bureaucrat'] === $b && $o['player_id'] === $player_id)
                     ->max(fn ($o) => $o['amount']);

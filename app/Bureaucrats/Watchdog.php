@@ -2,8 +2,8 @@
 
 namespace App\Bureaucrats;
 
-use App\Models\Round;
 use App\Models\Player;
+use App\Models\Round;
 
 class Watchdog extends Bureaucrat
 {
@@ -25,8 +25,7 @@ class Watchdog extends Bureaucrat
     {
         return collect($round->state()->bureaucrats)
             ->reject(fn ($b) => $b === static::class)
-            ->mapWithKeys(fn ($b) =>
-                [$b => $b::NAME]
+            ->mapWithKeys(fn ($b) => [$b => $b::NAME]
             );
     }
 }

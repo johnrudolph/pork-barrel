@@ -15,8 +15,8 @@ class ActionDTO
     public function __construct(
         int $player_id,
         int $round_id,
-        string $bureaucrat, 
-        ?array $options = null
+        string $bureaucrat,
+        array $options = null
     ) {
         $this->player_id = $player_id;
         $this->bureaucrat = $bureaucrat;

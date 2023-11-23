@@ -13,9 +13,9 @@ class ActionsResolved extends Event
 
     public function apply(RoundState $state)
     {
-        $state->gameState()->players->each(fn ($player_id) =>
-            $state->actionsAvailableTo($player_id)->each(fn ($action) =>
-                $action::resolveFor($player_id, $this->round_id)
+        $state->gameState()->players->each(fn ($player_id) => $state->actionsAvailableTo($player_id)
+            ->reject(fn ($a) => collect($state->blocked_actions)->contains($a))
+            ->each(fn ($action) => $action::resolveAtEndOfRoundFor($player_id, $this->round_id)
             )
         );
     }

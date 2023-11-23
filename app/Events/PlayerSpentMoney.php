@@ -31,5 +31,11 @@ class PlayerSpentMoney extends Event
     public function apply(PlayerState $state)
     {
         $state->money -= $this->amount;
+
+        if ($state->money === 0 && $state->has_bailout) {
+            $state->money = 10;
+
+            $state->has_bailout = false;
+        }
     }
 }
