@@ -38,7 +38,12 @@ class Bureaucrat
         ]);
     }
 
-    public static function resolveAtEndOfAuctionFor(int $player_id, int $round_id, array $data = null)
+    public static function applyToPlayerStateOnPurchase(PlayerState $player_state)
+    {
+        //
+    }
+
+    public static function applyToRoundStateOnPurchase(RoundState $round_state)
     {
         //
     }
@@ -55,12 +60,12 @@ class Bureaucrat
         });
     }
 
-    public static function applyToRoundStateWhenPlayed(RoundState $state, array $data = null)
+    public static function applyToRoundStateOnDecision(RoundState $state, array $data = null)
     {
         //
     }
 
-    public static function applyToPlayerStateWhenPlayed(PlayerState $state, array $data = null)
+    public static function applyToPlayerStateOnDecision(PlayerState $state, array $data = null)
     {
         //
     }

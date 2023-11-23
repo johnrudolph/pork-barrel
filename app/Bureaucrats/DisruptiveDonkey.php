@@ -30,7 +30,7 @@ class DisruptiveDonkey extends Bureaucrat
             );
     }
 
-    public static function applyToRoundStateWhenPlayed(RoundState $state, array $data = null)
+    public static function applyToRoundStateOnDecision(RoundState $state, array $data = null)
     {
         $state->blocked_actions[] = $data['bureaucrat'];
     }

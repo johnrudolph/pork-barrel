@@ -21,11 +21,11 @@ class DecisionSubmitted extends Event
 
     public function applyToRoundState(RoundState $state)
     {
-        $this->bureaucrat::applyToRoundStateWhenPlayed($state, $this->data);
+        $this->bureaucrat::applyToRoundStateOnDecision($state, $this->data);
     }
 
     public function applyToPlayerState(PlayerState $state)
     {
-        $this->bureaucrat::applyToPlayerStateWhenPlayed($state, $this->data);
+        $this->bureaucrat::applyToPlayerStateOnDecision($state, $this->data);
     }
 }

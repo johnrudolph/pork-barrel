@@ -145,8 +145,5 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
     $this->game->currentRound()->endAuctionPhase();
     Verbs::commit();
 
-    $this->game->currentRound()->endDecisionPhase();
-    Verbs::commit();
-
     $this->assertEquals(10, $this->john->state()->money);
 });
