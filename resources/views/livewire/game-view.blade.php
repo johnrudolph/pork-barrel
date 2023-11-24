@@ -15,8 +15,6 @@
                     @elseif($game->state()->status === 'in-progress')
                         @if($game->currentRound()->state()->phase === 'auction')
                             <livewire:auction-view :game="$game" />
-                        @elseif($game->currentRound()->state()->phase === 'decision')
-                            <livewire:decision-view :game="$game" />
                         @endif
                     @endif
                 </div>

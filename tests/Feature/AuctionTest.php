@@ -87,49 +87,49 @@ it('allows you to easily access which actions are available for each player', fu
 
     $this->assertEquals(
         true,
-        collect($round->state()->actionsAvailableTo($this->john->id))
+        collect($round->state()->actionsWonBy($this->john->id))
             ->contains($bureaucrats[0])
     );
 
     $this->assertEquals(
         false,
-        collect($round->state()->actionsAvailableTo($this->daniel->id))
+        collect($round->state()->actionsWonBy($this->daniel->id))
             ->contains($bureaucrats[0])
     );
 
     $this->assertEquals(
         false,
-        collect($round->state()->actionsAvailableTo($this->john->id))
+        collect($round->state()->actionsWonBy($this->john->id))
             ->contains($bureaucrats[1])
     );
 
     $this->assertEquals(
         true,
-        collect($round->state()->actionsAvailableTo($this->daniel->id))
+        collect($round->state()->actionsWonBy($this->daniel->id))
             ->contains($bureaucrats[1])
     );
 
     $this->assertEquals(
         true,
-        collect($round->state()->actionsAvailableTo($this->john->id))
+        collect($round->state()->actionsWonBy($this->john->id))
             ->contains($bureaucrats[2])
     );
 
     $this->assertEquals(
         true,
-        collect($round->state()->actionsAvailableTo($this->daniel->id))
+        collect($round->state()->actionsWonBy($this->daniel->id))
             ->contains($bureaucrats[2])
     );
 
     $this->assertEquals(
         false,
-        collect($round->state()->actionsAvailableTo($this->john->id))
+        collect($round->state()->actionsWonBy($this->john->id))
             ->contains($bureaucrats[3])
     );
 
     $this->assertEquals(
         false,
-        collect($round->state()->actionsAvailableTo($this->daniel->id))
+        collect($round->state()->actionsWonBy($this->daniel->id))
             ->contains($bureaucrats[3])
     );
 });

@@ -67,11 +67,6 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
     $this->game->currentRound()->endAuctionPhase();
     Verbs::commit();
 
-    $this->assertEquals(0, $this->john->state()->money);
-
-    $this->game->currentRound()->endDecisionPhase();
-    Verbs::commit();
-
     $amount_earned = $this->john->state()->money;
 
     $this->assertGreaterThan(0, $amount_earned);
@@ -98,7 +93,7 @@ it('blocks an action from resolving if was blocked by the Donkey', function () {
     $this->game->players
         ->each(fn ($p) => $p->receiveMoney(1, 'Received starting money.'));
 
-    $this->john->submitOffer($this->game->currentRound(), DisruptiveDonkey::class, 1);
+    $this->john->submitOffer($this->game->currentRound(), DisruptiveDonkey::class, 1, ['bureaucrat' => GamblinGoat::class]);
     $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
 
     Verbs::commit();
@@ -106,18 +101,10 @@ it('blocks an action from resolving if was blocked by the Donkey', function () {
     $this->game->currentRound()->endAuctionPhase();
     Verbs::commit();
 
-    $this->john->submitDecision(
-        $this->game->currentRound(),
-        DisruptiveDonkey::class,
-        ['bureaucrat' => GamblinGoat::class]
-    );
-
-    Verbs::commit();
-
     $this->assertTrue(collect($this->game->currentRound()->state()->blocked_actions)
         ->contains(GamblinGoat::class));
 
-    $this->game->currentRound()->endDecisionPhase();
+    $this->game->currentRound()->endRound();
     Verbs::commit();
 
     $this->assertEquals(0, $this->daniel->state()->money);
@@ -139,10 +126,12 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
         ->each(fn ($p) => $p->receiveMoney(1, 'Received starting money.'));
 
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
-
     Verbs::commit();
 
     $this->game->currentRound()->endAuctionPhase();
+    Verbs::commit();
+
+    $this->game->currentRound()->endRound();
     Verbs::commit();
 
     $this->assertEquals(10, $this->john->state()->money);

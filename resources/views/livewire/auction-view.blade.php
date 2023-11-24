@@ -8,7 +8,10 @@
     @else
         <ul role="list" class="divide-y divide-gray-100">
             @foreach($bureaucrats as $b)
-                <li class="flex items-center justify-between gap-x-6 py-5">
+                <li class="flex flex-col items-center justify-between gap-x-6 py-5"
+                    x-data="{ show: false }"
+                    {{-- :class="show ? 'bg-gray-200' : 'bg-white'" --}}
+                >
                     <div class="w-full">
                     <div class="flex justify-between">
                         <p class="text-sm font-semibold leading-6 text-gray-900">{{ $b['class']::NAME }}</p>
@@ -20,7 +23,7 @@
                                 -
                             </button>
                             <span 
-                                wire:model="bids.{{ $b['class']::SLUG }}.bid"
+                                wire:model="bureaucrats.{{ $b['class']::SLUG }}.offer"
                                 class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20"
                             >
                                 {{ $b['offer'] }}
@@ -33,9 +36,23 @@
                             </button>
                         </div>
                     </div>
-                    <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-                        <p class="whitespace-nowrap">{{ $b['class']::SHORT_DESCRIPTION }}</p>
+                        <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
+                            <p class="whitespace-nowrap">{{ $b['class']::SHORT_DESCRIPTION }}</p>
+                        </div>
                     </div>
+                    <div class="w-full mt-2 text-sm">
+                        <p>{{ $b['class']::EFFECT }}</p>
+                        @if($b['class']::EFFECT_REQUIRES_DECISION)
+                            <select
+                                wire:model="bureaucrats.{{ $b['class']::SLUG }}.data"
+                                class="mt-2 w-full text-sm"
+                            >
+                                @foreach($b['class']::options($game->currentRound(), $this->player()) as $key => $option)
+                                    <option value="{{ $key }}">{{ $option }}</option>
+                                @endforeach
+                            </select>
+                        @endif
+                        <p class="mt-2 italic text-gray-400 text-xs">{{ $b['class']::DIALOG }}</p>
                     </div>
                 </li>
             @endforeach

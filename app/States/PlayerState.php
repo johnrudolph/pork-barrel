@@ -11,4 +11,13 @@ class PlayerState extends State
     public $money = 0;
 
     public $has_bailout = false;
+
+    public function endRound()
+    {
+        if ($this->has_bailout && $this->money === 0) {
+            $this->money = 10;
+
+            $this->has_bailout = false;
+        }
+    }
 }

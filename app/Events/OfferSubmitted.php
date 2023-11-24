@@ -19,12 +19,15 @@ class OfferSubmitted extends Event
 
     public $amount;
 
+    public ?array $data = null;
+
     public function applyToRoundState(RoundState $state)
     {
         $state->offers[] = [
             'player_id' => $this->player_id,
             'bureaucrat' => $this->bureaucrat,
             'amount' => $this->amount,
+            'data' => $this->data,
         ];
     }
 }

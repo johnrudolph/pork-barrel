@@ -2,15 +2,16 @@
 
 namespace App\Bureaucrats;
 
-class TaxTurkey extends Bureaucrat
+class TreasuryChicken
+ extends Bureaucrat
 {
-    const NAME = 'Treasury Chicken';
+    const NAME = 'Tax Turkey';
 
-    const SLUG = 'treasury-chicken';
+    const SLUG = 'tax-turkey';
 
-    const SHORT_DESCRIPTION = 'Buy a treasury bond, and earn interest later.';
+    const SHORT_DESCRIPTION = 'Increase taxes on another industry.';
 
-    const DIALOG = 'A penny saved is a penny earned.';
+    const DIALOG = 'There are only two things certain in life: death and taxes.';
 
-    const EFFECT = 'The winning bidder will spend the money now, and at the end of the game will receive their money back with 50% interest (rounded down).';
+    const EFFECT = 'Choose another industry to increase their taxes. Their revenue will decrease by 1.';
 }

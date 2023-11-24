@@ -39,7 +39,7 @@ class AuctionView extends Component
         $this->money = $this->player()->state()->money;
 
         $this->bureaucrats = collect($round->state()->bureaucrats)->mapWithKeys(function ($b) {
-            return [$b::SLUG => ['class' => $b, 'offer' => 0]];
+            return [$b::SLUG => ['class' => $b, 'offer' => 0, 'data' => null]];
         })->toArray();
 
         $this->offers = collect($round->state()->offers)
@@ -67,7 +67,7 @@ class AuctionView extends Component
         collect($this->bureaucrats)
             ->filter(fn ($b) => $b['offer'] > 0)
             ->each(fn ($b) => $this->player
-                ->submitOffer($this->game->currentRound(), $b['class'], $b['offer'])
+                ->submitOffer($this->game->currentRound(), $b['class'], $b['offer'], $b['data'] ?? null)
             );
 
         if (

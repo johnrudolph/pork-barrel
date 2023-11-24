@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Events\EndedAuctionPhase;
-use App\Events\EndedDecisionPhase;
+use App\Events\RoundEnded;
 use App\States\RoundState;
+use App\Events\EndedAuctionPhase;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Round extends Model
 {
@@ -44,8 +44,8 @@ class Round extends Model
         EndedAuctionPhase::fire(round_id: $this->id);
     }
 
-    public function endDecisionPhase()
+    public function endRound()
     {
-        EndedDecisionPhase::fire(round_id: $this->id);
+        RoundEnded::fire(round_id: $this->id);
     }
 }

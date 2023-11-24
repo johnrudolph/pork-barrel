@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\States\RoundState;
 use App\States\PlayerState;
 
 class BailoutBunny extends Bureaucrat
@@ -16,7 +17,7 @@ class BailoutBunny extends Bureaucrat
 
     const EFFECT = 'If you ever have 0 money after an auction, you will receive $10.';
 
-    public static function applyToPlayerStateOnPurchase(PlayerState $state)
+    public static function applyToPlayerStateOnPurchase(PlayerState $state, RoundState $round_state, ?array $data = null)
     {
         $state->has_bailout = true;
     }

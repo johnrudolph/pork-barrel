@@ -39,7 +39,7 @@ class DecisionView extends Component
 
         $this->money = $this->player()->state()->money;
 
-        $this->actions = $round->state()->actionsAvailableTo($this->player()->id);
+        $this->actions = $round->state()->actionsWonBy($this->player()->id);
 
         $this->decisions = $this->actions
             ->filter(fn ($a) => $a::EFFECT_REQUIRES_DECISION)

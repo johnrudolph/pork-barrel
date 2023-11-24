@@ -25,20 +25,16 @@ class RoundState extends State
         return GameState::load($this->game_id);
     }
 
-    public function actionsAvailableTo(int $player_id)
+    public function actionsWonBy(int $player_id)
     {
-        return collect($this->bureaucrats)
-            ->filter(function ($b) use ($player_id) {
+        return collect($this->offers)
+            ->filter(function ($offer) use ($player_id) {
                 $top_offer = collect($this->offers)
-                    ->filter(fn ($o) => $o['bureaucrat'] === $b)
+                    ->filter(fn ($o) => $o['bureaucrat'] === $offer['bureaucrat'])
                     ->max(fn ($o) => $o['amount']);
-
-                $player_offer = collect($this->offers)
-                    ->filter(fn ($o) => $o['bureaucrat'] === $b && $o['player_id'] === $player_id)
-                    ->max(fn ($o) => $o['amount']);
-
-                return $top_offer === $player_offer
-                    && $top_offer;
+                
+                return $offer['player_id'] === $player_id
+                    && $offer['amount'] === $top_offer;
             });
     }
 }

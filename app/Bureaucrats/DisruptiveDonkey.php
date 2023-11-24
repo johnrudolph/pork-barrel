@@ -2,9 +2,11 @@
 
 namespace App\Bureaucrats;
 
-use App\Models\Player;
 use App\Models\Round;
+use App\Models\Player;
 use App\States\RoundState;
+use App\States\PlayerState;
+use App\Bureaucrats\Bureaucrat;
 
 class DisruptiveDonkey extends Bureaucrat
 {
@@ -30,7 +32,7 @@ class DisruptiveDonkey extends Bureaucrat
             );
     }
 
-    public static function applyToRoundStateOnDecision(RoundState $state, array $data = null)
+    public static function applyToRoundStateOnPurchase(RoundState $state, PlayerState $player_state, array $data = null)
     {
         $state->blocked_actions[] = $data['bureaucrat'];
     }

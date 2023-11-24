@@ -34,21 +34,27 @@ class Bureaucrat
             OffshoreOx::class,
             PolicePiggy::class,
             TaxTurkey::class,
+            TreasuryChicken::class,
             Watchdog::class,
         ]);
     }
 
-    public static function applyToPlayerStateOnPurchase(PlayerState $player_state)
+    public static function applyToPlayerStateOnPurchase(PlayerState $player_state, RoundState $round_state, array $data = null)
     {
         //
     }
 
-    public static function applyToRoundStateOnPurchase(RoundState $round_state)
+    public static function applyToRoundStateOnPurchase(RoundState $round_state, PlayerState $player_state, array $data = null)
     {
         //
     }
 
-    public static function resolveAtEndOfRoundFor(int $player_id, int $round_id, array $data = null)
+    public static function resolveRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state)
+    {
+        //
+    }
+
+    public static function resolvePlayerStateAtEndOfRound(PlayerState $player_state, RoundState $round_state)
     {
         //
     }
@@ -58,15 +64,5 @@ class Bureaucrat
         return collect(range(1, 10))->mapWithKeys(function ($i) {
             return [$i => 'Placeholder option '.$i];
         });
-    }
-
-    public static function applyToRoundStateOnDecision(RoundState $state, array $data = null)
-    {
-        //
-    }
-
-    public static function applyToPlayerStateOnDecision(PlayerState $state, array $data = null)
-    {
-        //
     }
 }

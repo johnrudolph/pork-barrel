@@ -46,23 +46,14 @@ class Player extends Model
         return $this->state()->money;
     }
 
-    public function submitOffer(Round $round, $bureaucrat, $amount)
+    public function submitOffer(Round $round, $bureaucrat, $amount, ?array $data = null)
     {
         OfferSubmitted::fire(
             player_id: $this->id,
             round_id: $round->id,
             bureaucrat: $bureaucrat,
-            amount: $amount
-        );
-    }
-
-    public function submitDecision(Round $round, $bureaucrat, array $data = null)
-    {
-        DecisionSubmitted::fire(
-            player_id: $this->id,
-            round_id: $round->id,
-            bureaucrat: $bureaucrat,
-            data: $data
+            amount: $amount,
+            data: $data,
         );
     }
 }
