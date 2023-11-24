@@ -13,4 +13,6 @@ class PolicePiggy extends Bureaucrat
     const DIALOG = 'TBD';
 
     const EFFECT = 'TBD';
+
+    const EFFECT_REQUIRES_DECISION = false;
 }

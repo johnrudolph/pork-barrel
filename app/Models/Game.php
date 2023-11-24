@@ -36,8 +36,6 @@ class Game extends Model
     {
         GameStarted::fire(game_id: $this->id);
 
-        // @todo: put rounds into an array on GameState and just get ids from there
-
         Verbs::commit();
 
         RoundStarted::fire(
@@ -47,7 +45,7 @@ class Game extends Model
             bureaucrats: Bureaucrat::all()->random(5)->toArray()
         );
 
-        $this->players->each(fn ($p) => $p->receiveMoney(10));
+        $this->players->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
 
         Verbs::commit();
     }

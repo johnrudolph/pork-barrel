@@ -6,6 +6,8 @@ use Thunk\Verbs\State;
 
 class RoundState extends State
 {
+    public int $game_id;
+
     public string $status = 'upcoming';
 
     public string $phase = '';
@@ -16,5 +18,23 @@ class RoundState extends State
 
     public $offers;
 
-    public $auction_winners;
+    public $blocked_actions;
+
+    public function gameState(): GameState
+    {
+        return GameState::load($this->game_id);
+    }
+
+    public function actionsWonBy(int $player_id)
+    {
+        return collect($this->offers)
+            ->filter(function ($offer) use ($player_id) {
+                $top_offer = collect($this->offers)
+                    ->filter(fn ($o) => $o['bureaucrat'] === $offer['bureaucrat'])
+                    ->max(fn ($o) => $o['amount']);
+                
+                return $offer['player_id'] === $player_id
+                    && $offer['amount'] === $top_offer;
+            });
+    }
 }

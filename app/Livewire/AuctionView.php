@@ -19,6 +19,8 @@ class AuctionView extends Component
 
     public int $money;
 
+    public array $offers;
+
     #[Computed]
     public function player()
     {
@@ -37,8 +39,13 @@ class AuctionView extends Component
         $this->money = $this->player()->state()->money;
 
         $this->bureaucrats = collect($round->state()->bureaucrats)->mapWithKeys(function ($b) {
-            return [$b::SLUG => ['class' => $b, 'offer' => 0]];
+            return [$b::SLUG => ['class' => $b, 'offer' => 0, 'data' => null]];
         })->toArray();
+
+        $this->offers = collect($round->state()->offers)
+            ->filter(fn ($o) => $o['player_id'] === $this->player()->id)
+            ->mapWithKeys(fn ($o) => [$o['bureaucrat'] => $o['amount']])
+            ->toArray();
     }
 
     public function increment($bureacrat_slug)
@@ -57,7 +64,22 @@ class AuctionView extends Component
 
     public function submit()
     {
-        $this->player()->submitOffers($this->game->currentRound(), $this->bureaucrats);
+        collect($this->bureaucrats)
+            ->filter(fn ($b) => $b['offer'] > 0)
+            ->each(fn ($b) => $this->player
+                ->submitOffer($this->game->currentRound(), $b['class'], $b['offer'], $b['data'] ?? null)
+            );
+
+        if (
+            collect($this->game->currentRound()->state()->offers)
+                ->pluck('player_id')
+                ->unique()
+                ->count() === $this->game->players->count()
+        ) {
+            $this->game->currentRound()->endAuctionPhase();
+        }
+
+        $this->initializeProperties($this->player(), $this->game->currentRound());
     }
 
     public function render()

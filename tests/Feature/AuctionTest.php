@@ -54,51 +54,105 @@ it('provides 5 options to bid on in a round', function () {
 });
 
 it('records offers made to the state', function () {
-    $offers = collect($this->game->currentRound()->state()->bureaucrats)
-        ->mapWithKeys(fn ($b) => [$b => 2])
-        ->toArray();
+    $round = $this->game->currentRound();
 
-    $this->john->submitOffers($this->game->currentRound(), $offers);
+    $this->john->submitOffer($round, $round->state()->bureaucrats[0], 1);
 
     $this->assertEquals(
-        $offers,
-        $this->game->currentRound()->state()->offers[$this->john->id]
-    );
-
-    $offers = collect($this->game->currentRound()->state()->bureaucrats)
-        ->mapWithKeys(fn ($b) => [$b => 1])
-        ->toArray();
-
-    $this->daniel->submitOffers($this->game->currentRound(), $offers);
-
-    $this->assertEquals(
-        $offers,
-        $this->game->currentRound()->state()->offers[$this->daniel->id]
+        1,
+        collect($round->state()->offers)
+            ->filter(fn ($o) => $o['player_id'] === $this->john->id
+                && $o['bureaucrat'] === $round->state()->bureaucrats[0]
+                && $o['amount'] === 1
+            )
+            ->count()
     );
 });
 
-it('records winners to the state when the auction phase ends', function () {
-    $bureaucrats = collect($this->game->currentRound()->state()->bureaucrats);
+it('allows you to easily access which actions are available for each player', function () {
+    $round = $this->game->currentRound();
+    $bureaucrats = $round->state()->bureaucrats;
 
-    $offers = $bureaucrats->mapWithKeys(fn ($b) => [$b => 2])->toArray();
+    $this->john->submitOffer($round, $bureaucrats[0], 1);
+    $this->john->submitOffer($round, $bureaucrats[1], 0);
+    $this->john->submitOffer($round, $bureaucrats[2], 2);
+    $this->john->submitOffer($round, $bureaucrats[3], 0);
 
-    $this->john->submitOffers($this->game->currentRound(), $offers);
+    $this->daniel->submitOffer($round, $bureaucrats[0], 0);
+    $this->daniel->submitOffer($round, $bureaucrats[1], 1);
+    $this->daniel->submitOffer($round, $bureaucrats[2], 2);
+    $this->daniel->submitOffer($round, $bureaucrats[3], 0);
 
-    $offers = $bureaucrats->mapWithKeys(fn ($b) => [$b => 1])->toArray();
-
-    $this->daniel->submitOffers($this->game->currentRound(), $offers);
-
-    $this->game->currentRound()->advancePhase();
+    $round->endAuctionPhase();
 
     $this->assertEquals(
         true,
-        collect($this->game->currentRound()->state()->auction_winners[$bureaucrats->first()]['winning_player_ids'])
-            ->contains($this->john->id)
+        collect($round->state()->actionsWonBy($this->john->id))
+            ->contains($bureaucrats[0])
     );
 
     $this->assertEquals(
         false,
-        collect($this->game->currentRound()->state()->auction_winners[$bureaucrats->first()]['winning_player_ids'])
-            ->contains($this->daniel->id)
+        collect($round->state()->actionsWonBy($this->daniel->id))
+            ->contains($bureaucrats[0])
     );
+
+    $this->assertEquals(
+        false,
+        collect($round->state()->actionsWonBy($this->john->id))
+            ->contains($bureaucrats[1])
+    );
+
+    $this->assertEquals(
+        true,
+        collect($round->state()->actionsWonBy($this->daniel->id))
+            ->contains($bureaucrats[1])
+    );
+
+    $this->assertEquals(
+        true,
+        collect($round->state()->actionsWonBy($this->john->id))
+            ->contains($bureaucrats[2])
+    );
+
+    $this->assertEquals(
+        true,
+        collect($round->state()->actionsWonBy($this->daniel->id))
+            ->contains($bureaucrats[2])
+    );
+
+    $this->assertEquals(
+        false,
+        collect($round->state()->actionsWonBy($this->john->id))
+            ->contains($bureaucrats[3])
+    );
+
+    $this->assertEquals(
+        false,
+        collect($round->state()->actionsWonBy($this->daniel->id))
+            ->contains($bureaucrats[3])
+    );
+});
+
+it('spends the money offerred by winners', function () {
+    $round = $this->game->currentRound();
+    $bureaucrats = $round->state()->bureaucrats;
+
+    $this->john->submitOffer($round, $bureaucrats[0], 1);
+    $this->john->submitOffer($round, $bureaucrats[1], 0);
+    $this->john->submitOffer($round, $bureaucrats[2], 2);
+    $this->john->submitOffer($round, $bureaucrats[3], 0);
+
+    $this->daniel->submitOffer($round, $bureaucrats[0], 0);
+    $this->daniel->submitOffer($round, $bureaucrats[1], 1);
+    $this->daniel->submitOffer($round, $bureaucrats[2], 2);
+    $this->daniel->submitOffer($round, $bureaucrats[3], 0);
+
+    $round->endAuctionPhase();
+
+    // John spends 3, because he didn't win the second bureaucrat
+    $this->assertEquals(7, $this->john->state()->money);
+
+    // Daniel spends 3, because he didn't win the first bureaucrat
+    $this->assertEquals(7, $this->daniel->state()->money);
 });

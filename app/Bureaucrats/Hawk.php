@@ -8,9 +8,11 @@ class Hawk extends Bureaucrat
 
     const SLUG = 'hawk';
 
-    const SHORT_DESCRIPTION = 'Start a war.';
+    const SHORT_DESCRIPTION = 'Decide whether or not to start a war.';
 
     const DIALOG = 'What we need is a common enemy, and some good old fashioned fear mongering.';
 
-    const EFFECT = 'Start a war. This will ...';
+    const EFFECT = 'You will decide in the next phase whether we go to war. Starting a war increases military spending and increases fear.';
+
+    const EFFECT_REQUIRES_DECISION = true;
 }
