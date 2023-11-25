@@ -49,8 +49,4 @@ it('gives players 10 money to start the game', function () {
     $this->assertEquals(10, $this->john->state()->money);
     app(StateManager::class)->reset();
     $this->assertEquals(10, $this->john->state()->money);
-    $this->assertEquals(10, $this->john->state()->money);
-    $this->assertEquals(10, $this->john->state()->money);
-    $this->assertEquals(10, $this->john->state()->money);
-    $this->assertEquals(10, $this->john->state()->money);
 });

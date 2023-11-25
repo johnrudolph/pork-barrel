@@ -1,7 +1,14 @@
 <?php
 
+use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\GamblinGoat;
+use App\Bureaucrats\MajorityLeaderMare;
+use App\Bureaucrats\MinorityLeaderMink;
 use App\Events\GameCreated;
+use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
+use App\Events\RoundStarted;
+use App\Headlines\TaxTheRich;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
@@ -36,7 +43,20 @@ beforeEach(function () {
 
     $this->game = Game::find($event->game_id);
 
-    $this->game->start();
+    GameStarted::fire(game_id: $this->game->id);
+
+    Verbs::commit();
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->rounds->first()->id,
+        bureaucrats: [GamblinGoat::class, BailoutBunny::class, MinorityLeaderMink::class, MajorityLeaderMare::class, TaxTurkey::class],
+        headline: TaxTheRich::class,
+    );
+
+    $this->game->players
+        ->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
 
     Verbs::commit();
 
@@ -73,65 +93,25 @@ it('allows you to easily access which actions are available for each player', fu
     $round = $this->game->currentRound();
     $bureaucrats = $round->state()->bureaucrats;
 
-    $this->john->submitOffer($round, $bureaucrats[0], 1);
-    $this->john->submitOffer($round, $bureaucrats[1], 0);
-    $this->john->submitOffer($round, $bureaucrats[2], 2);
-    $this->john->submitOffer($round, $bureaucrats[3], 0);
+    $this->john->submitOffer($round, GamblinGoat::class, 1);
+    $this->john->submitOffer($round, MinorityLeaderMink::class, 2);
 
-    $this->daniel->submitOffer($round, $bureaucrats[0], 0);
-    $this->daniel->submitOffer($round, $bureaucrats[1], 1);
-    $this->daniel->submitOffer($round, $bureaucrats[2], 2);
-    $this->daniel->submitOffer($round, $bureaucrats[3], 0);
+    $this->daniel->submitOffer($round, BailoutBunny::class, 1);
+    $this->daniel->submitOffer($round, MinorityLeaderMink::class, 2);
 
     $round->endAuctionPhase();
 
-    $this->assertEquals(
-        true,
-        collect($round->state()->actionsWonBy($this->john->id))
-            ->contains($bureaucrats[0])
-    );
+    $johns_actions = $round->state()->actionsWonBy($this->john->id)->pluck('bureaucrat');
+    $daniels_actions = $round->state()->actionsWonBy($this->daniel->id)->pluck('bureaucrat');
 
-    $this->assertEquals(
-        false,
-        collect($round->state()->actionsWonBy($this->daniel->id))
-            ->contains($bureaucrats[0])
-    );
-
-    $this->assertEquals(
-        false,
-        collect($round->state()->actionsWonBy($this->john->id))
-            ->contains($bureaucrats[1])
-    );
-
-    $this->assertEquals(
-        true,
-        collect($round->state()->actionsWonBy($this->daniel->id))
-            ->contains($bureaucrats[1])
-    );
-
-    $this->assertEquals(
-        true,
-        collect($round->state()->actionsWonBy($this->john->id))
-            ->contains($bureaucrats[2])
-    );
-
-    $this->assertEquals(
-        true,
-        collect($round->state()->actionsWonBy($this->daniel->id))
-            ->contains($bureaucrats[2])
-    );
-
-    $this->assertEquals(
-        false,
-        collect($round->state()->actionsWonBy($this->john->id))
-            ->contains($bureaucrats[3])
-    );
-
-    $this->assertEquals(
-        false,
-        collect($round->state()->actionsWonBy($this->daniel->id))
-            ->contains($bureaucrats[3])
-    );
+    $this->assertEquals(true, $johns_actions->contains(GamblinGoat::class));
+    $this->assertEquals(false, $daniels_actions->contains(GamblinGoat::class));
+    $this->assertEquals(false, $johns_actions->contains(BailoutBunny::class));
+    $this->assertEquals(true, $daniels_actions->contains(BailoutBunny::class));
+    $this->assertEquals(true, $johns_actions->contains(MinorityLeaderMink::class));
+    $this->assertEquals(true, $daniels_actions->contains(MinorityLeaderMink::class));
+    $this->assertEquals(false, $johns_actions->contains(MajorityLeaderMare::class));
+    $this->assertEquals(false, $daniels_actions->contains(MajorityLeaderMare::class));
 });
 
 it('spends the money offerred by winners', function () {
