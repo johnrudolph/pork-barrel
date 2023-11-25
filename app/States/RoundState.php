@@ -20,6 +20,8 @@ class RoundState extends State
 
     public $blocked_actions;
 
+    public $headline;
+
     public function gameState(): GameState
     {
         return GameState::load($this->game_id);
@@ -32,7 +34,7 @@ class RoundState extends State
                 $top_offer = collect($this->offers)
                     ->filter(fn ($o) => $o['bureaucrat'] === $offer['bureaucrat'])
                     ->max(fn ($o) => $o['amount']);
-                
+
                 return $offer['player_id'] === $player_id
                     && $offer['amount'] === $top_offer;
             });

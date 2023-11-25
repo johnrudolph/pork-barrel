@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Events\DecisionSubmitted;
 use App\Events\OfferSubmitted;
 use App\Events\PlayerReceivedMoney;
 use App\States\PlayerState;
@@ -46,7 +45,7 @@ class Player extends Model
         return $this->state()->money;
     }
 
-    public function submitOffer(Round $round, $bureaucrat, $amount, ?array $data = null)
+    public function submitOffer(Round $round, $bureaucrat, $amount, array $data = null)
     {
         OfferSubmitted::fire(
             player_id: $this->id,

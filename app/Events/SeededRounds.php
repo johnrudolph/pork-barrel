@@ -9,19 +9,23 @@ use Thunk\Verbs\Attributes\Autodiscovery\AppliesToState;
 use Thunk\Verbs\Event;
 
 #[AppliesToState(GameState::class)]
-// #[AppliesToState(RoundState::class)]
 class SeededRounds extends Event
 {
     public function __construct(
         public int $game_id,
-        public array $round_ids,
+        public $round_ids,
     ) {
     }
 
-    // public function applyToRound(RoundState $state)
-    // {
-    // 	$state->bureaucrats = collect();
-    // }
+    public function applyToRound(RoundState $state)
+    {
+        $state->bureaucrats = collect();
+    }
+
+    public function applyToGame(GameState $state)
+    {
+        $state->rounds = $this->round_ids;
+    }
 
     public function handle()
     {

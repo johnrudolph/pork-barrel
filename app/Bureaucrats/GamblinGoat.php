@@ -2,10 +2,9 @@
 
 namespace App\Bureaucrats;
 
-use App\States\RoundState;
-use App\States\PlayerState;
-use App\Bureaucrats\Bureaucrat;
 use App\Events\PlayerReceivedMoney;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class GamblinGoat extends Bureaucrat
 {
@@ -19,7 +18,7 @@ class GamblinGoat extends Bureaucrat
 
     const EFFECT = 'Get a random return of 1-10 money.';
 
-    public static function applyToPlayerStateAtEndOfRound(PlayerState $state, RoundState $round_state, ?array $data = null)
+    public static function applyToPlayerStateAtEndOfRound(PlayerState $state, RoundState $round_state, array $data = null)
     {
         PlayerReceivedMoney::fire(
             player_id: $state->id,

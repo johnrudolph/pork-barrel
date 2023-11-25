@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Bureaucrats\Bureaucrat;
 use App\Events\GameStarted;
 use App\Events\RoundStarted;
+use App\Headlines\Headline;
 use App\States\GameState;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,8 +43,11 @@ class Game extends Model
             game_id: $this->id,
             round_number: 1,
             round_id: $this->rounds->first()->id,
-            bureaucrats: Bureaucrat::all()->random(5)->toArray()
+            bureaucrats: Bureaucrat::all()->random(5)->toArray(),
+            headline: Headline::all()->random(),
         );
+
+        Verbs::commit();
 
         $this->players->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
 

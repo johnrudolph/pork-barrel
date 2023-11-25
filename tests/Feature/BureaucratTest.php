@@ -7,6 +7,8 @@ use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
 use App\Events\RoundStarted;
+use App\Headlines\Headline;
+use App\Headlines\TaxTheRich;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
@@ -54,7 +56,8 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
         game_id: $this->game->id,
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
-        bureaucrats: [GamblinGoat::class]
+        bureaucrats: [GamblinGoat::class],
+        headline: Headline::class,
     );
 
     $this->game->players
@@ -65,6 +68,8 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
     $this->assertEquals(1, $this->john->state()->money);
 
     $this->game->currentRound()->endAuctionPhase();
+    Verbs::commit();
+    $this->game->currentRound()->endRound();
     Verbs::commit();
 
     $amount_earned = $this->john->state()->money;
@@ -87,7 +92,8 @@ it('blocks an action from resolving if was blocked by the Donkey', function () {
         game_id: $this->game->id,
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
-        bureaucrats: [GamblinGoat::class, DisruptiveDonkey::class]
+        bureaucrats: [GamblinGoat::class, DisruptiveDonkey::class],
+        headline: TaxTheRich::class,
     );
 
     $this->game->players
@@ -119,7 +125,8 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
         game_id: $this->game->id,
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
-        bureaucrats: [BailoutBunny::class]
+        bureaucrats: [BailoutBunny::class],
+        headline: Headline::class,
     );
 
     $this->game->players

@@ -108,4 +108,9 @@ it('seeds rounds for new games', function () {
         $game_state->current_round_number,
         1
     );
+
+    $this->assertEquals(
+        $game->currentRound()->round_number,
+        1
+    );
 });

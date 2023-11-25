@@ -30,6 +30,6 @@ class PlayerSpentMoney extends Event
 
     public function apply(PlayerState $state)
     {
-        $state->money -= $this->amount;
+        $state->money -= min($this->amount, $state->money);
     }
 }

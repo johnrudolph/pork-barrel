@@ -1,14 +1,17 @@
 <?php
 
+use App\Bureaucrats\GamblinGoat;
 use App\Events\GameCreated;
+use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
+use App\Events\RoundStarted;
+use App\Headlines\TaxTheRich;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
-use Thunk\Verbs\Lifecycle\StateManager;
 
 uses(DatabaseMigrations::class);
 
@@ -37,16 +40,31 @@ beforeEach(function () {
 
     $this->game = Game::find($event->game_id);
 
-    $this->game->start();
-
-    Verbs::commit();
-
     $this->john = Player::first();
     $this->daniel = Player::get()->last();
 });
 
-it('gives players 10 money to start the game', function () {
-    $this->assertEquals(10, $this->john->state()->money);
-    app(StateManager::class)->reset();
-    $this->assertEquals(10, $this->john->state()->money);
+it('takes 5 money from the richeset player at the end of the round', function () {
+    GameStarted::fire(game_id: $this->game->id);
+
+    Verbs::commit();
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->rounds->first()->id,
+        bureaucrats: [GamblinGoat::class],
+        headline: TaxTheRich::class,
+    );
+
+    $this->game->players
+        ->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
+
+    $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
+
+    $this->game->currentRound()->endAuctionPhase();
+    Verbs::commit();
+    $this->game->currentRound()->endRound();
+
+    $this->assertEquals(5, $this->daniel->state()->money);
 });
