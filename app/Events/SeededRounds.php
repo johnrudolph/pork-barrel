@@ -19,12 +19,12 @@ class SeededRounds extends Event
 
     public function applyToRound(RoundState $state)
     {
-    	$state->bureaucrats = collect();
+        $state->bureaucrats = collect();
     }
 
     public function applyToGame(GameState $state)
     {
-    	$state->rounds = $this->round_ids;
+        $state->rounds = $this->round_ids;
     }
 
     public function handle()

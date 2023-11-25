@@ -18,21 +18,18 @@ class TaxTheRich extends Headline
     {
         $player_ids = $round_state->gameState()->players;
 
-        $most_cash_held = $player_ids->max(fn ($player_id) => 
-            PlayerState::load($player_id)->money
+        $most_cash_held = $player_ids->max(fn ($player_id) => PlayerState::load($player_id)->money
         );
 
-        $richest_players = $player_ids->filter(fn ($player_id) => 
-            PlayerState::load($player_id)->money === $most_cash_held
+        $richest_players = $player_ids->filter(fn ($player_id) => PlayerState::load($player_id)->money === $most_cash_held
         );
 
-        $richest_players->each(fn ($player_id) => 
-            PlayerSpentMoney::fire(
-                player_id: $player_id,
-                round_id: $round_state->id,
-                activity_feed_description: 'Taxed the rich',
-                amount: 5,
-            )
+        $richest_players->each(fn ($player_id) => PlayerSpentMoney::fire(
+            player_id: $player_id,
+            round_id: $round_state->id,
+            activity_feed_description: 'Taxed the rich',
+            amount: 5,
+        )
         );
     }
 }

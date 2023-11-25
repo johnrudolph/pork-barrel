@@ -1,7 +1,5 @@
 <?php
 
-use App\Bureaucrats\BailoutBunny;
-use App\Bureaucrats\DisruptiveDonkey;
 use App\Bureaucrats\GamblinGoat;
 use App\Events\GameCreated;
 use App\Events\GameStarted;

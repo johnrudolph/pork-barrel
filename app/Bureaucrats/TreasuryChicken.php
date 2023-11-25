@@ -2,8 +2,7 @@
 
 namespace App\Bureaucrats;
 
-class TreasuryChicken
- extends Bureaucrat
+class TreasuryChicken extends Bureaucrat
 {
     const NAME = 'Treasury Chicken';
 

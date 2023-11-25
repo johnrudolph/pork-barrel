@@ -3,10 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Game;
-use App\Models\Round;
-use Livewire\Component;
-use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class GameView extends Component
 {

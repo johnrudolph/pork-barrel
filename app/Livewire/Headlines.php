@@ -8,7 +8,7 @@ use Livewire\Component;
 class Headlines extends Component
 {
     public Game $game;
-    
+
     public $headline;
 
     public function mount()
