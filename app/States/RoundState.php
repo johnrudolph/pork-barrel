@@ -20,6 +20,8 @@ class RoundState extends State
 
     public $blocked_actions;
 
+    public $headline;
+
     public function gameState(): GameState
     {
         return GameState::load($this->game_id);

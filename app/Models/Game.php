@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use App\Bureaucrats\Bureaucrat;
-use App\Events\GameStarted;
-use App\Events\RoundStarted;
+use Glhd\Bits\Snowflake;
 use App\States\GameState;
-use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Events\GameStarted;
+use App\Headlines\Headline;
+use App\Events\RoundStarted;
 use Thunk\Verbs\Facades\Verbs;
+use App\Bureaucrats\Bureaucrat;
+use Glhd\Bits\Database\HasSnowflakes;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Game extends Model
 {
@@ -42,8 +44,11 @@ class Game extends Model
             game_id: $this->id,
             round_number: 1,
             round_id: $this->rounds->first()->id,
-            bureaucrats: Bureaucrat::all()->random(5)->toArray()
+            bureaucrats: Bureaucrat::all()->random(5)->toArray(),
+            headline: Headline::all()->random(),
         );
+
+        Verbs::commit();
 
         $this->players->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
 

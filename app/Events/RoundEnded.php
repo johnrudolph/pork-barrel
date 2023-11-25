@@ -19,6 +19,8 @@ class RoundEnded extends Event
 
     public function fired(RoundState $state)
     {
+        $state->headline::applyToRoundStateAtEndOfRound($state);
+
         collect($state->gameState()->players)
             ->each(fn ($player_id) => PlayerState::load($player_id)->endRound());
     }
