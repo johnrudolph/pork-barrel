@@ -6,9 +6,9 @@ use Thunk\Verbs\State;
 
 class PlayerState extends State
 {
-    public $name = '';
-
     public $money = 0;
+
+    public $income = 10;
 
     public $has_bailout = false;
 

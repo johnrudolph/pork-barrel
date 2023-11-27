@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\States\GameState;
+use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
@@ -39,5 +40,14 @@ class RoundStarted extends Event
             round_id: $this->round_id,
             headline: $this->headline,
         );
+
+        collect($state->gameState()->players)->each(fn ($player_id) => PlayerReceivedMoney::fire(
+            player_id: $player_id,
+            round_id: $this->round_id,
+            amount: PlayerState::load($player_id)->income,
+            activity_feed_description: 'Received income',
+        )
+        );
+
     }
 }
