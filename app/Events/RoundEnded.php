@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Round;
 use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -15,6 +16,13 @@ class RoundEnded extends Event
     public function applyToRoundState(RoundState $state)
     {
         $state->status = 'complete';
+    }
+
+    public function handle()
+    {
+        $round = Round::find($this->round_id);
+        $round->status = 'complete';
+        $round->save();
     }
 
     public function fired(RoundState $state)

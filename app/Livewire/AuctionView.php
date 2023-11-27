@@ -8,6 +8,7 @@ use App\Models\Round;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Thunk\Verbs\Facades\Verbs;
 
 class AuctionView extends Component
 {
@@ -39,7 +40,9 @@ class AuctionView extends Component
         $this->money = $this->player()->state()->money;
 
         $this->bureaucrats = collect($round->state()->bureaucrats)->mapWithKeys(function ($b) {
-            return [$b::SLUG => ['class' => $b, 'offer' => 0, 'data' => null]];
+            $data_array = $b::expectedData($this->game->currentRound(), $this->player());
+
+            return [$b::SLUG => ['class' => $b, 'offer' => 0, 'data' => $data_array ?? null]];
         })->toArray();
 
         $this->offers = collect($round->state()->offers)
@@ -52,6 +55,8 @@ class AuctionView extends Component
     {
         if (collect($this->bureaucrats)->sum('offer') < $this->money) {
             $this->bureaucrats[$bureacrat_slug]['offer']++;
+        } else {
+            // @todo: tell the user they don't have enough money
         }
     }
 
@@ -65,7 +70,6 @@ class AuctionView extends Component
     public function submit()
     {
         collect($this->bureaucrats)
-            ->filter(fn ($b) => $b['offer'] > 0)
             ->each(fn ($b) => $this->player
                 ->submitOffer($this->game->currentRound(), $b['class'], $b['offer'], $b['data'] ?? null)
             );
@@ -77,6 +81,10 @@ class AuctionView extends Component
                 ->count() === $this->game->players->count()
         ) {
             $this->game->currentRound()->endAuctionPhase();
+            Verbs::commit();
+            $this->game->currentRound()->endRound();
+            Verbs::commit();
+            $this->game->currentRound()->next()->start();
         }
 
         $this->initializeProperties($this->player(), $this->game->currentRound());

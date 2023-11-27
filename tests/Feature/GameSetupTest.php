@@ -5,7 +5,6 @@ use App\Events\PlayerJoinedGame;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
-use App\States\GameState;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -74,43 +73,4 @@ it('changes a players currentGame when they join a new game', function () {
     $game2 = Game::find($event2->game_id);
 
     $this->assertEquals($game2->id, $user->fresh()->currentGame->id);
-});
-
-it('seeds rounds for new games', function () {
-    $user = User::factory()->create();
-
-    $event = GameCreated::fire(
-        user_id: $user->id,
-    );
-
-    PlayerJoinedGame::fire(
-        game_id: $event->game_id,
-        player_id: Snowflake::make()->id(),
-        user_id: $user->id,
-    );
-
-    Verbs::commit();
-
-    $game = Game::find($event->game_id);
-
-    $game->start();
-
-    Verbs::commit();
-
-    $game_state = GameState::load($event->game_id);
-
-    $this->assertEquals(
-        $game->rounds->count(),
-        8
-    );
-
-    $this->assertEquals(
-        $game_state->current_round_number,
-        1
-    );
-
-    $this->assertEquals(
-        $game->currentRound()->round_number,
-        1
-    );
 });

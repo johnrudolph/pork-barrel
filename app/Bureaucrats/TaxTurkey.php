@@ -12,5 +12,5 @@ class TaxTurkey extends Bureaucrat
 
     const DIALOG = 'There are only two things certain in life: death and taxes.';
 
-    const EFFECT = 'Choose another industry to increase their taxes. Their revenue will decrease by 1.';
+    const EFFECT = 'Choose another industry to increase their taxes. Their income will decrease by 1.';
 }

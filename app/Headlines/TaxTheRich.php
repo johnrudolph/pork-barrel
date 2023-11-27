@@ -16,16 +16,17 @@ class TaxTheRich extends Headline
 
     public static function applyToRoundStateAtEndOfRound(RoundState $round_state)
     {
-        $player_ids = $round_state->gameState()->players;
+        $player_states = collect($round_state->gameState()->players)
+            ->map(fn ($player_id) => PlayerState::load($player_id));
 
-        $most_cash_held = $player_ids->max(fn ($player_id) => PlayerState::load($player_id)->money
+        $most_cash_held = $player_states->max(fn ($state) => $state->money
         );
 
-        $richest_players = $player_ids->filter(fn ($player_id) => PlayerState::load($player_id)->money === $most_cash_held
+        $richest_players = $player_states->filter(fn ($state) => $state->money === $most_cash_held
         );
 
-        $richest_players->each(fn ($player_id) => PlayerSpentMoney::fire(
-            player_id: $player_id,
+        $richest_players->each(fn ($state) => PlayerSpentMoney::fire(
+            player_id: $state->id,
             round_id: $round_state->id,
             activity_feed_description: 'Taxed the rich',
             amount: 5,

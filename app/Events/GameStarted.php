@@ -25,7 +25,7 @@ class GameStarted extends Event
     {
         SeededRounds::fire(
             game_id: $this->game_id,
-            round_ids: collect(range(1, 8))->map(fn () => Snowflake::make()->id())
+            round_ids: collect(range(1, 8))->map(fn () => Snowflake::make()->id())->toArray(),
         );
     }
 }

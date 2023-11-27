@@ -26,6 +26,6 @@ class GameCreated extends Event
     {
         $state->status = 'awaiting-players';
 
-        $state->players = collect();
+        // $state->players = collect();
     }
 }

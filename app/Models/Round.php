@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Bureaucrats\Bureaucrat;
 use App\Events\EndedAuctionPhase;
 use App\Events\RoundEnded;
+use App\Events\RoundStarted;
+use App\Headlines\Headline;
 use App\States\RoundState;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,6 +40,17 @@ class Round extends Model
         return $this->game->rounds()
             ->where('round_number', $this->round_number - 1)
             ->first();
+    }
+
+    public function start()
+    {
+        RoundStarted::fire(
+            round_id: $this->id,
+            game_id: $this->game->id,
+            round_number: $this->round_number,
+            bureaucrats: Bureaucrat::all()->random(5)->toArray(),
+            headline: Headline::all()->random(),
+        );
     }
 
     public function endAuctionPhase()
