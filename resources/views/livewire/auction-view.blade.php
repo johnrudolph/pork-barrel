@@ -51,17 +51,17 @@
                     </div>
                     <div class="w-full mt-2 text-sm">
                         <p>{{ $b['class']::EFFECT }}</p>
-                        @if($b['class']::EFFECT_REQUIRES_DECISION)
+                        <p class="mt-2 italic text-gray-400 text-xs">{{ $b['class']::DIALOG }}</p>
+                        @foreach(collect($b['class']::options($game->currentRound(), $this->player())) as $key => $value)
                             <select
-                                wire:model="bureaucrats.{{ $b['class']::SLUG }}.data"
+                                wire:model="bureaucrats.{{ $b['class']::SLUG }}.data.{{ $key }}"
                                 class="mt-2 w-full text-sm"
                             >
-                                @foreach($b['class']::options($game->currentRound(), $this->player()) as $key => $option)
+                                @foreach($value as $key => $option)
                                     <option value="{{ $key }}">{{ $option }}</option>
                                 @endforeach
                             </select>
-                        @endif
-                        <p class="mt-2 italic text-gray-400 text-xs">{{ $b['class']::DIALOG }}</p>
+                        @endforeach
                     </div>
                 </li>
             @endforeach

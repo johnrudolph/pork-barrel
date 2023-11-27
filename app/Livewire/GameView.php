@@ -22,8 +22,6 @@ class GameView extends Component
     public function mount($game)
     {
         $this->game = Game::find($game);
-        // dd($this->game->state());
-        // dd($this->game->currentRound());
     }
 
     public function render()

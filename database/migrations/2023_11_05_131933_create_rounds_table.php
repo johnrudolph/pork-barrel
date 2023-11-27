@@ -13,6 +13,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Game::class);
             $table->integer('round_number');
+            $table->string('status')->default('upcoming');
             $table->timestamps();
         });
     }

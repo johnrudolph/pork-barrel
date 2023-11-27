@@ -25,10 +25,11 @@ class DisruptiveDonkey extends Bureaucrat
 
     public static function options(Round $round, Player $player)
     {
-        return collect($round->state()->bureaucrats)
-            ->reject(fn ($b) => $b === static::class)
-            ->mapWithKeys(fn ($b) => [$b => $b::NAME]
-            );
+        return [
+            'bureaucrat' => collect($round->state()->bureaucrats)
+                ->reject(fn ($b) => $b === static::class)
+                ->mapWithKeys(fn ($b) => [$b => $b::NAME]),
+        ];
     }
 
     public static function applyToRoundStateOnPurchase(RoundState $state, PlayerState $player_state, array $data = null)

@@ -19,10 +19,6 @@ class Bureaucrat
 
     const EFFECT = '';
 
-    const EFFECT_REQUIRES_DECISION = false;
-
-    const SELECT_PROMPT = 'Select Prompt (replace me)';
-
     public static function all()
     {
         return collect([
@@ -61,8 +57,13 @@ class Bureaucrat
 
     public static function options(Round $round, Player $player)
     {
-        return collect(range(1, 10))->mapWithKeys(function ($i) {
-            return [$i => 'Placeholder option '.$i];
-        });
+        //
+    }
+
+    public static function expectedData(Round $round, Player $player)
+    {
+        return collect(static::options($round, $player))->mapWithKeys(function ($v, $k) {
+            return [$k => null];
+        })->toArray();
     }
 }

@@ -8,9 +8,9 @@ class GameState extends State
 {
     public string $status = '';
 
-    public $players;
+    public array $players = [];
 
-    public $rounds;
+    public array $rounds = [];
 
     public int $current_round_number = 0;
 
