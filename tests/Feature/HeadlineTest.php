@@ -57,10 +57,7 @@ it('takes 5 money from the richeset player at the end of the round', function ()
         headline: TaxTheRich::class,
     );
 
-    $this->game->players
-        ->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
-
-    $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
+    $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 10);
 
     $this->game->currentRound()->endAuctionPhase();
     Verbs::commit();

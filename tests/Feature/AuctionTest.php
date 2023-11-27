@@ -131,8 +131,8 @@ it('spends the money offerred by winners', function () {
     $round->endAuctionPhase();
 
     // John spends 3, because he didn't win the second bureaucrat
-    $this->assertEquals(7, $this->john->state()->money);
+    $this->assertEquals(17, $this->john->state()->money);
 
     // Daniel spends 3, because he didn't win the first bureaucrat
-    $this->assertEquals(7, $this->daniel->state()->money);
+    $this->assertEquals(17, $this->daniel->state()->money);
 });

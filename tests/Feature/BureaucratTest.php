@@ -60,12 +60,9 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
         headline: Headline::class,
     );
 
-    $this->game->players
-        ->each(fn ($p) => $p->receiveMoney(1, 'Received starting money.'));
+    $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 10);
 
-    $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
-
-    $this->assertEquals(1, $this->john->state()->money);
+    $this->assertEquals(10, $this->john->state()->money);
 
     $this->game->currentRound()->endAuctionPhase();
     Verbs::commit();
@@ -96,11 +93,8 @@ it('blocks an action from resolving if was blocked by the Donkey', function () {
         headline: TaxTheRich::class,
     );
 
-    $this->game->players
-        ->each(fn ($p) => $p->receiveMoney(1, 'Received starting money.'));
-
-    $this->john->submitOffer($this->game->currentRound(), DisruptiveDonkey::class, 1, ['bureaucrat' => GamblinGoat::class]);
-    $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
+    $this->john->submitOffer($this->game->currentRound(), DisruptiveDonkey::class, 10, ['bureaucrat' => GamblinGoat::class]);
+    $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 10);
 
     Verbs::commit();
 
