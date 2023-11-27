@@ -48,10 +48,6 @@ class Game extends Model
         );
 
         Verbs::commit();
-
-        $this->players->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
-
-        Verbs::commit();
     }
 
     public function currentRound()

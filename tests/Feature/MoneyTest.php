@@ -1,7 +1,11 @@
 <?php
 
+use App\Bureaucrats\BailoutBunny;
 use App\Events\GameCreated;
+use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
+use App\Events\RoundStarted;
+use App\Headlines\Headline;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
@@ -37,7 +41,17 @@ beforeEach(function () {
 
     $this->game = Game::find($event->game_id);
 
-    $this->game->start();
+    GameStarted::fire(game_id: $this->game->id);
+
+    Verbs::commit();
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->rounds->first()->id,
+        bureaucrats: [BailoutBunny::class],
+        headline: Headline::class,
+    );
 
     Verbs::commit();
 
@@ -45,8 +59,17 @@ beforeEach(function () {
     $this->daniel = Player::get()->last();
 });
 
-it('gives players 10 money to start the game', function () {
+it('gives players 10 money to start each round', function () {
     $this->assertEquals(10, $this->john->state()->money);
     app(StateManager::class)->reset();
     $this->assertEquals(10, $this->john->state()->money);
+
+    $this->game->currentRound()->endAuctionPhase();
+    Verbs::commit();
+    $this->game->currentRound()->endRound();
+    Verbs::commit();
+    $this->game->currentRound()->next()->start();
+    Verbs::commit();
+
+    $this->assertEquals(20, $this->john->state()->money);
 });
