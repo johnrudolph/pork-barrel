@@ -11,5 +11,6 @@
         @if($game->currentRound()->state()->phase === 'auction')
             <livewire:auction-view :game="$game" />
         @endif
+        <livewire:money-log :game="$game" />
     @endif
 </div>

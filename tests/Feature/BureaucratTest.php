@@ -3,6 +3,7 @@
 use App\Bureaucrats\BailoutBunny;
 use App\Bureaucrats\DisruptiveDonkey;
 use App\Bureaucrats\GamblinGoat;
+use App\Bureaucrats\Watchdog;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
@@ -42,16 +43,17 @@ beforeEach(function () {
     Verbs::commit();
 
     $this->game = Game::find($event->game_id);
+    GameStarted::fire(game_id: $this->game->id);
+
+    Verbs::commit();
+
+    $this->game = Game::find($event->game_id);
 
     $this->john = Player::first();
     $this->daniel = Player::get()->last();
 });
 
 it('gives player random amount of money for winning Gamblin Goat', function () {
-    GameStarted::fire(game_id: $this->game->id);
-
-    Verbs::commit();
-
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -81,10 +83,6 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
 });
 
 it('blocks an action from resolving if was blocked by the Donkey', function () {
-    GameStarted::fire(game_id: $this->game->id);
-
-    Verbs::commit();
-
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -111,10 +109,6 @@ it('blocks an action from resolving if was blocked by the Donkey', function () {
 });
 
 it('gives you a bailout if you ever reach 0 money after an auction', function () {
-    GameStarted::fire(game_id: $this->game->id);
-
-    Verbs::commit();
-
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -123,10 +117,7 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
         headline: Headline::class,
     );
 
-    $this->game->players
-        ->each(fn ($p) => $p->receiveMoney(1, 'Received starting money.'));
-
-    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 10);
     Verbs::commit();
 
     $this->game->currentRound()->endAuctionPhase();
@@ -136,4 +127,30 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
     Verbs::commit();
 
     $this->assertEquals(10, $this->john->state()->money);
+});
+
+it('fines a player if they were caught by the watchdog', function() {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->rounds->first()->id,
+        bureaucrats: [BailoutBunny::class, Watchdog::class],
+        headline: Headline::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
+    $this->daniel->submitOffer(
+        $this->game->currentRound(), 
+        Watchdog::class, 
+        1,
+        ['bureaucrat' => BailoutBunny::class, 'player' => $this->john->id]
+    );
+
+    Verbs::commit();
+    $this->game->currentRound()->endAuctionPhase();
+    Verbs::commit();
+    $this->game->currentRound()->endRound();
+    Verbs::commit();
+
+    $this->assertEquals(4, $this->john->state()->money);
 });

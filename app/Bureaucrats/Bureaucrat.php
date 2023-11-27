@@ -45,12 +45,12 @@ class Bureaucrat
         //
     }
 
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state)
+    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state, array $data = null)
     {
         //
     }
 
-    public static function applyToPlayerStateAtEndOfRound(PlayerState $player_state, RoundState $round_state)
+    public static function applyToPlayerStateAtEndOfRound(PlayerState $player_state, RoundState $round_state, array $data = null)
     {
         //
     }
