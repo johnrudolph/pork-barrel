@@ -24,9 +24,15 @@ class Watchdog extends Bureaucrat
     public static function options(Round $round, Player $player)
     {
         return [
-            'bureaucrat' => collect($round->state()->bureaucrats)
-                ->reject(fn ($b) => $b === static::class)
-                ->mapWithKeys(fn ($b) => [$b => $b::NAME]),
+            'bureaucrat' => [
+                'title' => 'Bureaucrat',
+                'description' => 'Select a bureaucrat',
+                'type' => 'dropdown',
+                'rules' => ['required', 'string'],
+                'values' => collect($round->state()->bureaucrats)
+                    ->reject(fn ($b) => $b === static::class)
+                    ->mapWithKeys(fn ($b) => [$b => $b::NAME])
+            ],
             'player' => $round->game->players
                 ->mapWithKeys(fn ($p) => [$p->id => $p->user->name])
                 ->toArray(),
