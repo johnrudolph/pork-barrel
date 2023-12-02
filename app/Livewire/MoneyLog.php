@@ -43,7 +43,6 @@ class MoneyLog extends Component
         $this->money = $this->player()->state()->money;
 
         $this->entries = MoneyLogEntry::where('player_id', $this->player()->id)
-            ->where('round_id', $this->game->currentRound()->id)
             ->get()
             ->sortByDesc('created_at');
     }

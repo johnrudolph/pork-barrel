@@ -25,12 +25,12 @@ class Bureaucrat
             BailoutBunny::class,
             DisruptiveDonkey::class,
             GamblinGoat::class,
-            MajorityLeaderMare::class,
-            MinorityLeaderMink::class,
-            OffshoreOx::class,
+            // MajorityLeaderMare::class,
+            // MinorityLeaderMink::class,
+            // OffshoreOx::class,
             PolicePiggy::class,
-            TaxTurkey::class,
-            TreasuryChicken::class,
+            // TaxTurkey::class,
+            // TreasuryChicken::class,
             Watchdog::class,
         ]);
     }
@@ -58,6 +58,11 @@ class Bureaucrat
     public static function options(Round $round, Player $player)
     {
         //
+    }
+
+    public static function activityFeedDescription(array $data = null)
+    {
+        return "You had the highest bid for ".static::NAME;
     }
 
     public static function expectedData(Round $round, Player $player)

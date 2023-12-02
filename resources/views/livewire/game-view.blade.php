@@ -9,8 +9,8 @@
     @elseif($game->state()->status === 'in-progress')
         <livewire:headlines :game="$game" />
         @if($game->currentRound()->state()->phase === 'auction')
-            <livewire:auction-view :game="$game" />
+        <livewire:auction-view :game="$game" />
+        {{-- <livewire:money-log :game="$game" /> --}}
         @endif
-        <livewire:money-log :game="$game" />
     @endif
 </div>

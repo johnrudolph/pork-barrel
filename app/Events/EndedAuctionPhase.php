@@ -32,7 +32,7 @@ class EndedAuctionPhase extends Event
                         PlayerSpentMoney::fire(
                             player_id: $player_id,
                             round_id: $this->round_id,
-                            activity_feed_description: 'You had the highest bid for '.$action['bureaucrat']::NAME,
+                            activity_feed_description: $action['bureaucrat']::activityFeedDescription($action['data'] ?? null),
                             amount: collect($state->offers)
                                 ->filter(fn ($o) => $o['player_id'] === $player_id && $o['bureaucrat'] === $action['bureaucrat'])
                                 ->first()['amount']

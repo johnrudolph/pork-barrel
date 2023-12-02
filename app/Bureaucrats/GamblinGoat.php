@@ -27,4 +27,9 @@ class GamblinGoat extends Bureaucrat
             activity_feed_description: "The Gamlin' Goat's scheme paid off!"
         );
     }
+
+    public static function activityFeedDescription(array $data = null)
+    {
+        return "You had the highest bid for the Gamblin' Goat. Let's see how it pays off...";
+    }
 }

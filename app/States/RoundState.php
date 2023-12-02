@@ -36,7 +36,8 @@ class RoundState extends State
                     ->max(fn ($o) => $o['amount']);
 
                 return $offer['player_id'] === $player_id
-                    && $offer['amount'] === $top_offer;
+                    && $offer['amount'] === $top_offer
+                    && $offer['amount'] > 0;
             });
     }
 }

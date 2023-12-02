@@ -21,4 +21,9 @@ class BailoutBunny extends Bureaucrat
     {
         $state->has_bailout = true;
     }
+
+    public static function activityFeedDescription(array $data = null)
+    {
+        return "You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.";
+    }
 }
