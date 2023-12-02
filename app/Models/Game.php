@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use App\Bureaucrats\Bureaucrat;
-use App\Events\GameStarted;
-use App\Events\RoundStarted;
-use App\Headlines\Headline;
+use App\Events\GameEnded;
 use App\States\GameState;
-use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Events\GameStarted;
+use App\Headlines\Headline;
+use App\Events\RoundStarted;
 use Thunk\Verbs\Facades\Verbs;
+use App\Bureaucrats\Bureaucrat;
+use Glhd\Bits\Database\HasSnowflakes;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Game extends Model
 {
@@ -53,5 +54,10 @@ class Game extends Model
     public function currentRound()
     {
         return Round::find($this->state()->current_round_id);
+    }
+
+    public function end()
+    {
+        GameEnded::fire(game_id: $this->id);
     }
 }

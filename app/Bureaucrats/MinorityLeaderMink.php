@@ -2,6 +2,11 @@
 
 namespace App\Bureaucrats;
 
+use App\States\RoundState;
+use App\States\PlayerState;
+use App\Bureaucrats\Bureaucrat;
+use App\Events\MinorityLeaderMinkAppliedToNextRound;
+
 class MinorityLeaderMink extends Bureaucrat
 {
     const NAME = 'Minority Leader Mink';
@@ -15,4 +20,17 @@ class MinorityLeaderMink extends Bureaucrat
     const EFFECT = 'If you make no offers next round, you will earn 10 money.';
 
     const EFFECT_REQUIRES_DECISION = true;
+
+    public static function applyToRoundStateOnPurchase(RoundState $round_state, PlayerState $player_state, $amount, ?array $data = null)
+    {
+        MinorityLeaderMinkAppliedToNextRound::fire(
+            round_id: $round_state->gameState()->nextRoundId(),
+            player_id: $player_state->id
+        );
+    }
+
+    public static function activityFeedDescription(array $data = null)
+    {
+        return "You had the highest bid for the Minority Leader Mink. Next round, you will receive 10 money if you make no offers.";
+    }
 }

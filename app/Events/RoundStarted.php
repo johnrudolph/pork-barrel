@@ -21,6 +21,7 @@ class RoundStarted extends Event
 
     public function applyToRoundState(RoundState $state)
     {
+        $state->round_number = $this->round_number;
         $state->status = 'in-progress';
         $state->phase = 'auction';
         $state->bureaucrats = $this->bureaucrats;

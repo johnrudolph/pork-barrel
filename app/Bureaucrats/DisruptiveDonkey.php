@@ -32,7 +32,7 @@ class DisruptiveDonkey extends Bureaucrat
         ];
     }
 
-    public static function applyToRoundStateOnPurchase(RoundState $state, PlayerState $player_state, array $data = null)
+    public static function applyToRoundStateOnPurchase(RoundState $state, PlayerState $player_state, $amount, array $data = null)
     {
         $state->blocked_actions[] = $data['bureaucrat'];
     }
