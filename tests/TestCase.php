@@ -2,11 +2,11 @@
 
 namespace Tests;
 
-use App\Headlines\Headline;
-use App\Events\RoundStarted;
-use Thunk\Verbs\Facades\Verbs;
 use App\Bureaucrats\Bureaucrat;
+use App\Events\RoundStarted;
+use App\RoundModifiers\RoundModifier;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Thunk\Verbs\Facades\Verbs;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -26,7 +26,7 @@ abstract class TestCase extends BaseTestCase
                     round_number: $round_number + 1,
                     round_id: $game->state()->rounds[$round_number],
                     bureaucrats: [Bureaucrat::class],
-                    headline: Headline::class,
+                    round_modifier: RoundModifier::class,
                 );
 
                 Verbs::commit();

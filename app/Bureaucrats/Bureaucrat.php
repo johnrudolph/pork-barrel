@@ -23,11 +23,11 @@ class Bureaucrat
     {
         return collect([
             BailoutBunny::class,
-            DisruptiveDonkey::class,
+            ObstructionOx::class,
             GamblinGoat::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
-            // OffshoreOx::class,
+            // OffshoreOtter::class,
             PolicePiggy::class,
             // TaxTurkey::class,
             TreasuryChicken::class,
@@ -62,7 +62,7 @@ class Bureaucrat
 
     public static function activityFeedDescription(array $data = null)
     {
-        return "You had the highest bid for ".static::NAME;
+        return 'You had the highest bid for '.static::NAME;
     }
 
     public static function expectedData(Round $round, Player $player)

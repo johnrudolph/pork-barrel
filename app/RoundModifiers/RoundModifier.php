@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Headlines;
+namespace App\RoundModifiers;
 
 use App\Models\Player;
 use App\Models\Round;
 use App\States\RoundState;
 
-class Headline
+class RoundModifier
 {
     const HEADLINE = '';
 

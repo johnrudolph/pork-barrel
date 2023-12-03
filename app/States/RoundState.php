@@ -24,7 +24,7 @@ class RoundState extends State
 
     public $players_with_minority_leader_mink = [];
 
-    public $headline;
+    public $round_modifier;
 
     public function gameState(): GameState
     {
@@ -35,7 +35,8 @@ class RoundState extends State
     {
         return collect($this->offers)
             ->filter(fn ($o) => $o['player_id'] === $player_id)
-            ->filter(function ($offer) use ($player_id) {
+            ->reject(fn ($o) => collect($this->blocked_actions)->contains($o['bureaucrat']))
+            ->filter(function ($offer) {
                 $top_offer = collect($this->offers)
                     ->filter(fn ($o) => $o['bureaucrat'] === $offer['bureaucrat'])
                     ->max(fn ($o) => $o['amount']);

@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use App\Events\GameEnded;
-use App\States\GameState;
-use App\Events\GameStarted;
-use App\Headlines\Headline;
-use App\Events\RoundStarted;
-use Thunk\Verbs\Facades\Verbs;
 use App\Bureaucrats\Bureaucrat;
+use App\Events\GameEnded;
+use App\Events\GameStarted;
+use App\Events\RoundStarted;
+use App\RoundModifiers\RoundModifier;
+use App\States\GameState;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Thunk\Verbs\Facades\Verbs;
 
 class Game extends Model
 {
@@ -45,7 +45,7 @@ class Game extends Model
             round_number: 1,
             round_id: $this->rounds->first()->id,
             bureaucrats: Bureaucrat::all()->random(5)->toArray(),
-            headline: Headline::all()->random(),
+            round_modifier: RoundModifier::all()->random(),
         );
 
         Verbs::commit();

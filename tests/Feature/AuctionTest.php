@@ -8,10 +8,10 @@ use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
 use App\Events\RoundStarted;
-use App\Headlines\TaxTheRich;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
+use App\RoundModifiers\RoundModifier;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -52,7 +52,7 @@ beforeEach(function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [GamblinGoat::class, BailoutBunny::class, MinorityLeaderMink::class, MajorityLeaderMare::class, TaxTurkey::class],
-        headline: TaxTheRich::class,
+        round_modifier: RoundModifier::class,
     );
 
     $this->game->players

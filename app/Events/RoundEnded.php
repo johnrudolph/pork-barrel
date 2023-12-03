@@ -41,6 +41,6 @@ class RoundEnded extends Event
 
         $players->each(fn ($player_id) => PlayerState::load($player_id)->endRound($this->round_id));
 
-        $state->headline::applyToRoundStateAtEndOfRound($state);
+        $state->round_modifier::applyToRoundStateAtEndOfRound($state);
     }
 }

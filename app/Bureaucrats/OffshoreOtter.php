@@ -2,11 +2,11 @@
 
 namespace App\Bureaucrats;
 
-class OffshoreOx extends Bureaucrat
+class OffshoreOtter extends Bureaucrat
 {
-    const NAME = 'Offshore Ox';
+    const NAME = 'Offshore Otter';
 
-    const SLUG = 'offshore-ox';
+    const SLUG = 'offshore-otter';
 
     const SHORT_DESCRIPTION = 'Hide some of your money.';
 

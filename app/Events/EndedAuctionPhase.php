@@ -2,11 +2,10 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
-use App\States\RoundState;
 use App\States\PlayerState;
-use App\Events\PlayerReceivedMoney;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class EndedAuctionPhase extends Event
 {
@@ -36,9 +35,9 @@ class EndedAuctionPhase extends Event
                     ->each(function ($action) use ($player_id, $state) {
                         $player_state = PlayerState::load($player_id);
 
-                        $action['bureaucrat']::applyToRoundStateOnPurchase($state, $player_state, $action['data'] ?? null);
+                        $action['bureaucrat']::applyToRoundStateOnPurchase($state, $player_state, $action['amount'], $action['data'] ?? null);
 
-                        $action['bureaucrat']::applyToPlayerStateOnPurchase($player_state, $state, $action['data'] ?? null);
+                        $action['bureaucrat']::applyToPlayerStateOnPurchase($player_state, $state, $action['amount'], $action['data'] ?? null);
 
                         PlayerSpentMoney::fire(
                             player_id: $player_id,

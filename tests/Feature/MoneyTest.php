@@ -1,20 +1,20 @@
 <?php
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
-use Glhd\Bits\Snowflake;
+use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\GamblinGoat;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
-use App\Headlines\Headline;
-use App\Events\RoundStarted;
-use Thunk\Verbs\Facades\Verbs;
-use App\Bureaucrats\GamblinGoat;
 use App\Events\PlayerJoinedGame;
-use App\Bureaucrats\BailoutBunny;
+use App\Events\RoundStarted;
+use App\Models\Game;
 use App\Models\MoneyLogEntry;
-use Thunk\Verbs\Lifecycle\StateManager;
+use App\Models\Player;
+use App\Models\User;
+use App\RoundModifiers\RoundModifier;
+use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
+use Thunk\Verbs\Lifecycle\StateManager;
 
 uses(DatabaseMigrations::class);
 
@@ -52,7 +52,7 @@ beforeEach(function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [BailoutBunny::class, GamblinGoat::class],
-        headline: Headline::class,
+        round_modifier: RoundModifier::class,
     );
 
     Verbs::commit();
@@ -76,7 +76,7 @@ it('gives players 10 money to start each round', function () {
     $this->assertEquals(20, $this->john->state()->money);
 });
 
-it('creates money log entries when players win auctions', function() {
+it('creates money log entries when players win auctions', function () {
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
     $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
     Verbs::commit();
@@ -94,7 +94,7 @@ it('creates money log entries when players win auctions', function() {
     $this->assertCount(1, $johns_spending);
 
     $this->assertEquals(
-        "You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.",
+        'You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.',
         $johns_spending->first()->description,
     );
 

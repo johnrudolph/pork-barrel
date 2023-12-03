@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('headlines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('round_id')->constrained();
+            $table->foreignId('round_id');
             $table->string('headline');
+            $table->boolean('is_round_modifier')->default(false);
             $table->timestamps();
         });
     }

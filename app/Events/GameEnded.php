@@ -2,12 +2,11 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
-use Glhd\Bits\Snowflake;
 use App\States\GameState;
 use App\States\PlayerState;
-use App\Events\PlayerReceivedMoney;
+use Glhd\Bits\Snowflake;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class GameEnded extends Event
 {
