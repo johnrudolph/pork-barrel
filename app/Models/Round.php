@@ -6,7 +6,7 @@ use App\Bureaucrats\Bureaucrat;
 use App\Events\EndedAuctionPhase;
 use App\Events\RoundEnded;
 use App\Events\RoundStarted;
-use App\Headlines\Headline;
+use App\RoundModifiers\RoundModifier;
 use App\States\RoundState;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,7 +49,7 @@ class Round extends Model
             game_id: $this->game->id,
             round_number: $this->round_number,
             bureaucrats: Bureaucrat::all()->random(5)->toArray(),
-            headline: Headline::all()->random(),
+            round_modifier: RoundModifier::all()->random(),
         );
     }
 

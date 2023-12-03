@@ -15,17 +15,18 @@ class RoundStarted extends Event
         #[StateId(RoundState::class)] public int $round_id,
         public int $round_number,
         public $bureaucrats,
-        public $headline,
+        public $round_modifier,
     ) {
     }
 
     public function applyToRoundState(RoundState $state)
     {
+        $state->round_number = $this->round_number;
         $state->status = 'in-progress';
         $state->phase = 'auction';
         $state->bureaucrats = $this->bureaucrats;
         $state->game_id = $this->game_id;
-        $state->headline = $this->headline;
+        $state->round_modifier = $this->round_modifier;
     }
 
     public function applyToGameState(GameState $state)
@@ -36,9 +37,9 @@ class RoundStarted extends Event
 
     public function fired(RoundState $state)
     {
-        HeadlineAppliedAtBeginningOfRound::fire(
+        RoundModifierAppliedAtBeginningOfRound::fire(
             round_id: $this->round_id,
-            headline: $this->headline,
+            round_modifier: $this->round_modifier,
         );
 
         collect($state->gameState()->players)->each(fn ($player_id) => PlayerReceivedMoney::fire(

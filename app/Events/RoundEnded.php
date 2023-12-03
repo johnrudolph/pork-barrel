@@ -34,12 +34,13 @@ class RoundEnded extends Event
             ->each(fn ($action) => ActionAppliedAtEndOfRound::fire(
                 round_id: $state->id,
                 player_id: $player_id,
+                amount: $action['amount'],
                 bureaucrat: $action['bureaucrat'],
                 data: $action['data'],
             )));
 
-        $players->each(fn ($player_id) => PlayerState::load($player_id)->endRound());
+        $players->each(fn ($player_id) => PlayerState::load($player_id)->endRound($this->round_id));
 
-        $state->headline::applyToRoundStateAtEndOfRound($state);
+        $state->round_modifier::applyToRoundStateAtEndOfRound($state);
     }
 }
