@@ -18,9 +18,17 @@ class AuctionView extends Component
 
     public array $bureaucrats;
 
-    public int $money;
+    public int $initial_money;
 
     public array $offers;
+
+    public $foo = 7;
+
+    #[Computed]
+    public function money()
+    {
+        return $this->initial_money - collect($this->bureaucrats)->sum('offer');
+    }
 
     #[Computed]
     public function player()
@@ -37,12 +45,12 @@ class AuctionView extends Component
     {
         $this->player_id = $player->id;
 
-        $this->money = $this->player()->state()->money;
+        $this->initial_money = $this->player()->state()->money;
 
         $this->bureaucrats = collect($round->state()->bureaucrats)->mapWithKeys(function ($b) {
             $data_array = $b::expectedData($this->game->currentRound(), $this->player());
 
-            return [$b::SLUG => ['class' => $b, 'offer' => 0, 'data' => $data_array ?? null]];
+            return [$b => ['class' => $b, 'offer' => 0, 'data' => $data_array ?? null]];
         })->toArray();
 
         $this->offers = collect($round->state()->offers)
@@ -51,25 +59,11 @@ class AuctionView extends Component
             ->toArray();
     }
 
-    public function increment($bureacrat_slug)
-    {
-        if (collect($this->bureaucrats)->sum('offer') < $this->money) {
-            $this->bureaucrats[$bureacrat_slug]['offer']++;
-        } else {
-            // @todo: tell the user they don't have enough money
-        }
-    }
-
-    public function decrement($bureacrat_slug)
-    {
-        if ($this->bureaucrats[$bureacrat_slug]['offer'] > 0) {
-            $this->bureaucrats[$bureacrat_slug]['offer']--;
-        }
-    }
-
     public function submit()
     {
+        dd($this->bureaucrats);
         collect($this->bureaucrats)
+            ->filter(fn ($b) => $b['offer'] > 0)
             ->each(fn ($b) => $this->player
                 ->submitOffer($this->game->currentRound(), $b['class'], $b['offer'], $b['data'] ?? null)
             );
