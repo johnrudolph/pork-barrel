@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Headlines;
+namespace App\RoundModifiers;
 
 use App\Events\PlayerSpentMoney;
 use App\States\PlayerState;
 use App\States\RoundState;
 
-class TaxTheRich extends Headline
+class TaxTheRich extends RoundModifier
 {
     const HEADLINE = 'Crackdown on the rich';
 

@@ -17,15 +17,17 @@ class ActionAppliedAtEndOfRound extends Event
 
     public $bureaucrat;
 
+    public $amount;
+
     public $data;
 
     public function applyToRoundState(RoundState $state)
     {
-        $this->bureaucrat::applyToRoundStateAtEndOfRound($state, PlayerState::load($this->player_id), $this->data);
+        $this->bureaucrat::applyToRoundStateAtEndOfRound($state, PlayerState::load($this->player_id), $this->amount, $this->data);
     }
 
     public function applyToPlayerState(PlayerState $state)
     {
-        $this->bureaucrat::applyToPlayerStateAtEndOfRound($state, RoundState::load($this->round_id), $this->data);
+        $this->bureaucrat::applyToPlayerStateAtEndOfRound($state, RoundState::load($this->round_id), $this->amount, $this->data);
     }
 }

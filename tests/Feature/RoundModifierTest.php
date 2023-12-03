@@ -5,10 +5,10 @@ use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
 use App\Events\RoundStarted;
-use App\Headlines\TaxTheRich;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
+use App\RoundModifiers\TaxTheRich;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -54,7 +54,7 @@ it('takes 5 money from the richeset player at the end of the round', function ()
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [GamblinGoat::class],
-        headline: TaxTheRich::class,
+        round_modifier: TaxTheRich::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 10);

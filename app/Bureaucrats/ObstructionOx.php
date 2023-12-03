@@ -2,16 +2,17 @@
 
 namespace App\Bureaucrats;
 
+use App\Events\ActionWasBlocked;
 use App\Models\Player;
 use App\Models\Round;
 use App\States\PlayerState;
 use App\States\RoundState;
 
-class DisruptiveDonkey extends Bureaucrat
+class ObstructionOx extends Bureaucrat
 {
-    const NAME = 'Disruptive Donkey';
+    const NAME = 'Obstruction Ox';
 
-    const SLUG = 'disruptive-donkey';
+    const SLUG = 'obstruction-ox';
 
     const SHORT_DESCRIPTION = "Cancel a bureaucrat's action.";
 
@@ -32,8 +33,12 @@ class DisruptiveDonkey extends Bureaucrat
         ];
     }
 
-    public static function applyToRoundStateOnPurchase(RoundState $state, PlayerState $player_state, array $data = null)
+    public static function applyToRoundStateOnPurchase(RoundState $state, PlayerState $player_state, $amount, array $data = null)
     {
-        $state->blocked_actions[] = $data['bureaucrat'];
+        ActionWasBlocked::fire(
+            round_id: $state->id,
+            bureaucrat: $data['bureaucrat'],
+            headline: 'The Obstruction Ox blocked '.$data['bureaucrat']::NAME.' from taking an action.'
+        );
     }
 }

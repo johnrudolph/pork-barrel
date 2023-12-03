@@ -17,13 +17,13 @@ class BailoutBunny extends Bureaucrat
 
     const EFFECT = 'If you ever have 0 money after an auction, you will receive $10.';
 
-    public static function applyToPlayerStateOnPurchase(PlayerState $state, RoundState $round_state, array $data = null)
+    public static function applyToPlayerStateAtEndOfRound(PlayerState $state, RoundState $round_state, $amount, array $data = null)
     {
         $state->has_bailout = true;
     }
 
     public static function activityFeedDescription(array $data = null)
     {
-        return "You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.";
+        return 'You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.';
     }
 }

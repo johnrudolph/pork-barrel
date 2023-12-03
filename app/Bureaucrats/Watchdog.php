@@ -2,12 +2,11 @@
 
 namespace App\Bureaucrats;
 
-use App\Models\Round;
-use App\Models\Player;
-use App\States\RoundState;
-use App\States\PlayerState;
-use App\Bureaucrats\Bureaucrat;
 use App\Events\PlayerSpentMoney;
+use App\Models\Player;
+use App\Models\Round;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class Watchdog extends Bureaucrat
 {
@@ -40,14 +39,14 @@ class Watchdog extends Bureaucrat
     }
 
     // @todo: is it ok to fire an event for another player here??
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state, array $data = null)
+    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state, $amount, array $data = null)
     {
-        if($round_state->actionsWonBy($data['player'])->contains('bureaucrat', $data['bureaucrat'])) {
+        if ($round_state->actionsWonBy($data['player'])->contains('bureaucrat', $data['bureaucrat'])) {
             PlayerSpentMoney::fire(
                 player_id: $data['player'],
                 round_id: $round_state->id,
                 amount: 5,
-                activity_feed_description: 'Fined by the Watchdog',
+                activity_feed_description: 'Fined by the Watchdog. Bribery is not tolarated around these parts.',
             );
         }
     }

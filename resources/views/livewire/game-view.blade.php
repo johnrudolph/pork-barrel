@@ -5,12 +5,12 @@
         </h2>
     </x-slot>
     @if($game->state()->status === 'awaiting-players')
-        <livewire:pre-game-lobby :game="$game" />
+        <livewire:pre-game-lobby :game="$game" :key="'pre-game'"/>
     @elseif($game->state()->status === 'in-progress')
-        <livewire:headlines :game="$game" />
+        <livewire:headlines :game="$game" :key="'headline'"/>
         @if($game->currentRound()->state()->phase === 'auction')
-        <livewire:auction-view :game="$game" />
-        {{-- <livewire:money-log :game="$game" /> --}}
+        <livewire:auction-view :game="$game" :key="'auction'"/>
+        {{--<livewire:money-log :game="$game" :key="'log'"/>--}}
         @endif
     @endif
 </div>
