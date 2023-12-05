@@ -10,6 +10,8 @@ class GameState extends State
 
     public array $players = [];
 
+    public array $industries = [];
+
     public array $rounds = [];
 
     public int $current_round_number = 0;

@@ -7,6 +7,8 @@ use Thunk\Verbs\State;
 
 class PlayerState extends State
 {
+    public $industry = null;
+    
     public $money = 0;
 
     public $income = 10;

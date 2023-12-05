@@ -23,12 +23,12 @@ class Bureaucrat
     {
         return collect([
             BailoutBunny::class,
-            ObstructionOx::class,
             GamblinGoat::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
+            ObstructionOx::class,
             // OffshoreOtter::class,
-            PolicePiggy::class,
+            // PolicePiggy::class,
             // TaxTurkey::class,
             TreasuryChicken::class,
             Watchdog::class,

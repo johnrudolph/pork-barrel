@@ -5,6 +5,7 @@ use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
 use App\Bureaucrats\ObstructionOx;
+use App\Bureaucrats\TaxTurkey;
 use App\Bureaucrats\TreasuryChicken;
 use App\Bureaucrats\Watchdog;
 use App\Events\GameCreated;
@@ -308,5 +309,43 @@ it('gives you a 50% return on your savings if you win the Treasury Chicken', fun
         'player_id' => $this->john->id,
         'amount' => 12,
         'description' => 'Received 25% return on money saved in treasury',
+    ]);
+});
+
+it('permanently decreases income by 1 if you are hit by the Tax Turkey', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->rounds[0],
+        bureaucrats: [TaxTurkey::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    $this->daniel->submitOffer(
+        $this->game->currentRound(), 
+        TaxTurkey::class, 
+        1, 
+        ['player' => $this->john]
+    );
+
+    Verbs::commit();
+    $this->game->currentRound()->endAuctionPhase();
+    Verbs::commit();
+    $this->game->currentRound()->endRound();
+    Verbs::commit();
+
+    $this->assertEquals(9, $this->john->state()->income);
+    $this->assertEquals(19, $this->john->state()->money);
+
+    $this->assertDatabaseHas('money_log_entries', [
+        'player_id' => $this->john->id,
+        'amount' => null,
+        'description' => "You've been taxed by the Tax Turkey. Your income has descreased by 1.",
+    ]);
+
+    $this->assertDatabaseHas('money_log_entries', [
+        'player_id' => $this->john->id,
+        'amount' => 9,
+        'description' => "Received income",
     ]);
 });

@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Events;
+
+use App\Models\MoneyLogEntry;
+use App\States\PlayerState;
+use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
+
+class PlayerIncomeChanged extends Event
+{
+    #[StateId(PlayerState::class)]
+    public int $player_id;
+
+    public int $round_id;
+
+    public string $activity_feed_description;
+
+    public int $amount;
+
+    public function handle()
+    {
+        MoneyLogEntry::create([
+            'player_id' => $this->player_id,
+            'round_id' => $this->round_id,
+            'amount' => null,
+            'description' => $this->activity_feed_description,
+        ]);
+    }
+
+    public function apply(PlayerState $state)
+    {
+        $state->income += $this->amount;
+    }
+}
