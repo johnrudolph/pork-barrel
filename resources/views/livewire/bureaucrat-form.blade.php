@@ -12,10 +12,10 @@
                     -
                 </button>
                 <span 
-                    wire:model="offer.amount"
+                    wire:model="offer"
                     class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20"
                 >
-                    {{ $offer['amount'] }}
+                    {{ $offer }}
                 </span>
                 <button 
                     class="text-slate-600 font-extrabold text-m w-8 h-6"

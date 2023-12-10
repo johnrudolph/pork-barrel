@@ -17,6 +17,7 @@ class EndedAuctionPhase extends Event
 
     }
 
+    // @todo try doing these arrays as collections again. If it fails, make a discussion
     public function fired(RoundState $state)
     {
         collect($state->players_with_minority_leader_mink)
@@ -33,8 +34,11 @@ class EndedAuctionPhase extends Event
             ->each(function ($player_id) use ($state) {
                 collect($state->actionsWonBy($player_id))
                     ->each(function ($action) use ($player_id, $state) {
+                        // @todo: it might feel better to have a PlayerWonAction event that fires here
+
                         $player_state = PlayerState::load($player_id);
 
+                        // @todo: fire off new unique events from each bureaucrat
                         $action['bureaucrat']::applyToRoundStateOnPurchase($state, $player_state, $action['amount'], $action['data'] ?? null);
 
                         $action['bureaucrat']::applyToPlayerStateOnPurchase($player_state, $state, $action['amount'], $action['data'] ?? null);

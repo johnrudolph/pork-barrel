@@ -26,6 +26,7 @@ class RoundState extends State
 
     public $round_modifier;
 
+    // @todo: call this game()
     public function gameState(): GameState
     {
         return GameState::load($this->game_id);
@@ -41,6 +42,11 @@ class RoundState extends State
                     ->filter(fn ($o) => $o['bureaucrat'] === $offer['bureaucrat'])
                     ->max(fn ($o) => $o['amount']);
 
+                // it feels very bad to have this logic here
+                // daniel: it would be nicer to at least move this logic to the bureaucrat
+                // have a hook for "mutatesOffers()" or something
+                // then we could even have another "offer_adjustments" array
+                // there could also be a hook for blocked_actions, or bureaucrats
                 $player_with_mare_has_top_offer = collect($this->players_with_majority_leader_mare)
                     ->intersect(collect($this->offers)
                         ->filter(fn ($o) => $o['bureaucrat'] === $offer['bureaucrat'])

@@ -33,4 +33,9 @@ class TaxTheRich extends RoundModifier
         )
         );
     }
+
+    public function handleAtBeginningOfRound($event)
+    {
+        //
+    }
 }

@@ -4,10 +4,10 @@ namespace App\Events;
 
 use App\Models\Round;
 use App\States\GameState;
-use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\AppliesToState;
 use Thunk\Verbs\Event;
 
+// @todo: maybe have RoundSeeded and fire it 8 times?
 #[AppliesToState(GameState::class)]
 class SeededRounds extends Event
 {
@@ -17,10 +17,7 @@ class SeededRounds extends Event
     ) {
     }
 
-    public function applyToRound(RoundState $state)
-    {
-        $state->bureaucrats = collect();
-    }
+    // @todo: write up a discussion in github to explain case for #AppliesToStateCollection
 
     public function applyToGame(GameState $state)
     {

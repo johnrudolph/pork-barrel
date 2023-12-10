@@ -29,6 +29,8 @@ class RoundEnded extends Event
     {
         $players = collect($state->gameState()->players);
 
+        // @todo: slightly confusing with "won" and "purchased". Maybe "awarded" is a better term?
+        // Then at the end of the round, the actions are "applied"
         $players->each(fn ($player_id) => $state->actionsWonBy($player_id)
             ->reject(fn ($a) => collect($state->blocked_actions)->contains($a))
             ->each(fn ($action) => ActionAppliedAtEndOfRound::fire(

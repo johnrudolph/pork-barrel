@@ -19,6 +19,8 @@ class RoundStarted extends Event
     ) {
     }
 
+    // @todo: validate that this is possible and good
+
     public function applyToRoundState(RoundState $state)
     {
         $state->round_number = $this->round_number;
@@ -35,13 +37,18 @@ class RoundStarted extends Event
         $state->current_round_number = $this->round_number;
     }
 
-    public function fired(RoundState $state)
+    public function handle(RoundState $state)
     {
+        // @todo
+        // RoundModifier::find($this->round_modifier)->fireBeginningOfRoundEvents(
+        //     $this->round_id
+        // )
         RoundModifierAppliedAtBeginningOfRound::fire(
             round_id: $this->round_id,
             round_modifier: $this->round_modifier,
         );
 
+        // @todo we should just have a function players() that returns a collection of playerStates
         collect($state->gameState()->players)->each(fn ($player_id) => PlayerReceivedMoney::fire(
             player_id: $player_id,
             round_id: $this->round_id,

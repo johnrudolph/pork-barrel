@@ -84,7 +84,7 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
     ]);
 });
 
-it('blocks an action from resolving if was blocked by the Donkey', function () {
+it('blocks an action from resolving if was blocked by the Ox', function () {
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -254,6 +254,10 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
 });
 
 it('gives you 10 money if you make no offers after getting the minority leader mink', function () {
+    // @todo write up a discussion for a convenient way to not constantly call commit()
+
+    // @todo discussion for "the big bang event" to initialize states
+
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,

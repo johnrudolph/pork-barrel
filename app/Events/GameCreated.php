@@ -14,18 +14,16 @@ class GameCreated extends Event
 
     public $user_id;
 
+    public function apply(GameState $state)
+    {
+        $state->status = 'awaiting-players';
+    }
+
     public function handle()
     {
         Game::create([
             'id' => $this->game_id,
             'code' => rand(10000, 99999),
         ]);
-    }
-
-    public function apply(GameState $state)
-    {
-        $state->status = 'awaiting-players';
-
-        // $state->players = collect();
     }
 }

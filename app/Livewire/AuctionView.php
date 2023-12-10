@@ -36,6 +36,24 @@ class AuctionView extends Component
         return Auth::user()->currentPlayer();
     }
 
+    public function rules()
+    {
+        return collect($this->bureaucrats)->map(
+            fn ($b) => $b['class']::rules()->mapWithKeys(
+                fn ($v, $k) => ["bureaucrats.{$b['slug']}.$k" => $v]
+            )
+        )->flatten()->toArray();
+
+        [
+            'something' => 'string|required',
+            'something' => 'string|required',
+        ]
+
+        [
+            'bureaucrats.tax-turkey.something' => 'string|required',
+        ]
+    }
+
     public function mount(Player $player)
     {
         $this->initializeProperties($player, $this->game->currentRound());
