@@ -2,8 +2,11 @@
 
 namespace App\Bureaucrats;
 
-use App\States\PlayerState;
 use App\States\RoundState;
+use App\States\PlayerState;
+use App\Events\PlayerPutMoneyInTreasury;
+use App\Events\ActionEffectAppliedToFutureRound;
+use App\Events\PlayerReceivedMoney;
 
 class TreasuryChicken extends Bureaucrat
 {
@@ -17,9 +20,32 @@ class TreasuryChicken extends Bureaucrat
 
     const EFFECT = 'The winning bidder will spend the money now, and at the end of the game will receive their money back with 25% interest (rounded down).';
 
-    public static function applyToPlayerStateAtEndOfRound(PlayerState $player_state, RoundState $round_state, $amount, array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
-        $player_state->money_in_treasury += $amount;
+        PlayerPutMoneyInTreasury::fire(
+            player_id: $player->id,
+            round_id: $round->id,
+            amount: $amount,
+        );
+
+        ActionEffectAppliedToFutureRound::fire(
+            player_id: $player->id,
+            round_id: $round->game()->rounds->last(),
+            bureaucrat: static::class,
+            amount: $amount,
+            data: $data,
+            hook: $round::HOOKS['on_round_ended']
+        );
+    }
+
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    {
+        PlayerReceivedMoney::fire(
+            player_id: $player->id,
+            round_id: $round->id,
+            amount: intval($player->money_in_treasury * 1.25),
+            activity_feed_description: 'Received 25% return on money saved in treasury',
+        );
     }
 
     public static function activityFeedDescription(array $data = null)

@@ -2,9 +2,11 @@
 
 namespace App\Bureaucrats;
 
-use App\Events\MinorityLeaderMinkAppliedToNextRound;
-use App\States\PlayerState;
 use App\States\RoundState;
+use App\States\PlayerState;
+use App\Events\PlayerReceivedMoney;
+use App\Events\ActionEffectAppliedToFutureRound;
+use App\Events\MinorityLeaderMinkAppliedToNextRound;
 
 class MinorityLeaderMink extends Bureaucrat
 {
@@ -20,12 +22,28 @@ class MinorityLeaderMink extends Bureaucrat
 
     const EFFECT_REQUIRES_DECISION = true;
 
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state, $amount, array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
-        MinorityLeaderMinkAppliedToNextRound::fire(
-            round_id: $round_state->gameState()->nextRoundId(),
-            player_id: $player_state->id
+        ActionEffectAppliedToFutureRound::fire(
+            player_id: $player->id,
+            round_id: $round->game()->nextRound()->id,
+            bureaucrat: static::class,
+            amount: $amount,
+            data: $data,
+            hook: $round::HOOKS['on_auction_ended']
         );
+    }
+
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    {
+        if ($round->offers->filter(fn ($o) => $o['player_id'])->count() === 0) {
+            PlayerReceivedMoney::fire(
+                player_id: $player->id,
+                round_id: $round->id,
+                amount: 10,
+                activity_feed_description: "You made no offers. That'll show 'em",
+            );
+        }
     }
 
     public static function activityFeedDescription(array $data = null)

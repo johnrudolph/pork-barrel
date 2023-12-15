@@ -14,9 +14,9 @@ class TaxTheRich extends RoundModifier
 
     const FLAVOR_TEXT = "It's time for the 1% of the 1% of the 1% to pay their fair share!";
 
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state)
+    public static function handleOnRoundEnd(RoundState $round_state)
     {
-        $player_states = collect($round_state->gameState()->players)
+        $player_states = collect($round_state->game()->players)
             ->map(fn ($player_id) => PlayerState::load($player_id));
 
         $most_cash_held = $player_states->max(fn ($state) => $state->money
@@ -32,10 +32,5 @@ class TaxTheRich extends RoundModifier
             amount: 5,
         )
         );
-    }
-
-    public function handleAtBeginningOfRound($event)
-    {
-        //
     }
 }

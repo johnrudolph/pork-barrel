@@ -14,8 +14,8 @@ class RoundModifierAppliedAtBeginningOfRound extends Event
     ) {
     }
 
-    public function applyToRoundState(RoundState $state)
+    public function handle()
     {
-        $this->round_modifier::applyToRoundStateAtBeginningOfRound($state);
+        $this->round_modifier::handleOnRoundStart(RoundState::load($this->round_id));
     }
 }

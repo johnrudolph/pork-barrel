@@ -1,20 +1,22 @@
 <?php
 
-use App\Bureaucrats\BailoutBunny;
-use App\Bureaucrats\GamblinGoat;
-use App\Bureaucrats\MajorityLeaderMare;
-use App\Bureaucrats\MinorityLeaderMink;
+use App\Models\Game;
+use App\Models\User;
+use App\Models\Player;
+use Glhd\Bits\Snowflake;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
-use App\Events\PlayerJoinedGame;
 use App\Events\RoundStarted;
-use App\Models\Game;
-use App\Models\Player;
-use App\Models\User;
-use App\RoundModifiers\RoundModifier;
-use Glhd\Bits\Snowflake;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use App\Bureaucrats\TaxTurkey;
 use Thunk\Verbs\Facades\Verbs;
+use App\Bureaucrats\GamblinGoat;
+use App\Events\PlayerJoinedGame;
+use App\Bureaucrats\BailoutBunny;
+use App\RoundModifiers\RoundModifier;
+use App\Bureaucrats\MajorityLeaderMare;
+use App\Bureaucrats\MinorityLeaderMink;
+use App\Events\AuctionEnded;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 uses(DatabaseMigrations::class);
 
@@ -51,7 +53,12 @@ beforeEach(function () {
         game_id: $this->game->id,
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
-        bureaucrats: [GamblinGoat::class, BailoutBunny::class, MinorityLeaderMink::class, MajorityLeaderMare::class, TaxTurkey::class],
+        bureaucrats: [
+            GamblinGoat::class, 
+            BailoutBunny::class, 
+            MinorityLeaderMink::class, 
+            MajorityLeaderMare::class,
+            TaxTurkey::class],
         round_modifier: RoundModifier::class,
     );
 
@@ -83,15 +90,14 @@ it('records offers made to the state', function () {
         collect($round->state()->offers)
             ->filter(fn ($o) => $o['player_id'] === $this->john->id
                 && $o['bureaucrat'] === $round->state()->bureaucrats[0]
-                && $o['amount'] === 1
+                && $o['original_amount'] === 1
             )
             ->count()
     );
 });
 
-it('allows you to easily access which actions are available for each player', function () {
+it('records which player won each action', function () {
     $round = $this->game->currentRound();
-    $bureaucrats = $round->state()->bureaucrats;
 
     $this->john->submitOffer($round, GamblinGoat::class, 1);
     $this->john->submitOffer($round, MinorityLeaderMink::class, 2);
@@ -99,10 +105,16 @@ it('allows you to easily access which actions are available for each player', fu
     $this->daniel->submitOffer($round, BailoutBunny::class, 1);
     $this->daniel->submitOffer($round, MinorityLeaderMink::class, 2);
 
-    $round->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+    Verbs::commit();
 
-    $johns_actions = $round->state()->actionsWonBy($this->john->id)->pluck('bureaucrat');
-    $daniels_actions = $round->state()->actionsWonBy($this->daniel->id)->pluck('bureaucrat');
+    $johns_actions = $round->state()->actions_awarded
+        ->filter(fn ($a) => $a['player_id'] === $this->john->id)
+        ->pluck('bureaucrat');
+
+    $daniels_actions = $round->state()->actions_awarded
+        ->filter(fn ($a) => $a['player_id'] === $this->daniel->id)
+        ->pluck('bureaucrat');
 
     $this->assertEquals(true, $johns_actions->contains(GamblinGoat::class));
     $this->assertEquals(false, $daniels_actions->contains(GamblinGoat::class));
@@ -128,7 +140,8 @@ it('spends the money offerred by winners', function () {
     $this->daniel->submitOffer($round, $bureaucrats[2], 2);
     $this->daniel->submitOffer($round, $bureaucrats[3], 0);
 
-    $round->endAuctionPhase();
+    AuctionEnded::fire(round_id: $round->id);
+    Verbs::commit();
 
     // John spends 3, because he didn't win the second bureaucrat
     $this->assertEquals(17, $this->john->state()->money);

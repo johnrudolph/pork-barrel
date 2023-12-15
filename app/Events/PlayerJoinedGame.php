@@ -19,6 +19,11 @@ class PlayerJoinedGame extends Event
     #[StateId(PlayerState::class)]
     public int $player_id;
 
+    public function applyToGameState(GameState $state)
+    {
+        $state->players->push($this->player_id);
+    }
+
     public function handle()
     {
         Player::create([
@@ -30,10 +35,5 @@ class PlayerJoinedGame extends Event
         $user = User::find($this->user_id);
         $user->current_game_id = $this->game_id;
         $user->save();
-    }
-
-    public function applyToGameState(GameState $state)
-    {
-        $state->players[] = $this->player_id;
     }
 }

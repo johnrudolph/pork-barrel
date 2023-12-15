@@ -1,26 +1,28 @@
 <?php
 
-use App\Bureaucrats\BailoutBunny;
-use App\Bureaucrats\GamblinGoat;
-use App\Bureaucrats\MajorityLeaderMare;
-use App\Bureaucrats\MinorityLeaderMink;
-use App\Bureaucrats\ObstructionOx;
-use App\Bureaucrats\TreasuryChicken;
-use App\Bureaucrats\Watchdog;
+use App\Models\Game;
+use App\Models\User;
+use App\Models\Player;
+use Glhd\Bits\Snowflake;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
-use App\Events\PlayerJoinedGame;
+use App\Events\AuctionEnded;
 use App\Events\RoundStarted;
-use App\Models\Game;
-use App\Models\Player;
-use App\Models\User;
-use App\RoundModifiers\RoundModifier;
-use Glhd\Bits\Snowflake;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use App\Bureaucrats\Watchdog;
 use Thunk\Verbs\Facades\Verbs;
+use App\Bureaucrats\GamblinGoat;
+use App\Events\PlayerJoinedGame;
+use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\ObstructionOx;
+use App\Bureaucrats\TreasuryChicken;
+use App\RoundModifiers\RoundModifier;
+use App\Bureaucrats\MajorityLeaderMare;
+use App\Bureaucrats\MinorityLeaderMink;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 uses(DatabaseMigrations::class);
 
+// @todo: in general, could we test this code without creating a whole game? 
 beforeEach(function () {
     $this->user_1 = User::factory()->create();
     $this->user_2 = User::factory()->create();
@@ -68,7 +70,7 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
 
     $this->assertEquals(10, $this->john->state()->money);
 
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -98,7 +100,7 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
 
     Verbs::commit();
 
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
 
     $this->assertTrue(collect($this->game->currentRound()->state()->blocked_actions)
@@ -128,7 +130,7 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 10);
     Verbs::commit();
 
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
 
     $this->game->currentRound()->endRound();
@@ -161,7 +163,7 @@ it('fines a player if they were caught by the watchdog', function () {
     );
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -187,7 +189,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     $this->john->submitOffer($this->game->currentRound(), MajorityLeaderMare::class, 1);
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -209,7 +211,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 2);
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -254,10 +256,6 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
 });
 
 it('gives you 10 money if you make no offers after getting the minority leader mink', function () {
-    // @todo write up a discussion for a convenient way to not constantly call commit()
-
-    // @todo discussion for "the big bang event" to initialize states
-
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -269,7 +267,7 @@ it('gives you 10 money if you make no offers after getting the minority leader m
     $this->john->submitOffer($this->game->currentRound(), MinorityLeaderMink::class, 1);
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -283,7 +281,7 @@ it('gives you 10 money if you make no offers after getting the minority leader m
     );
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();

@@ -2,9 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\Events\MajorityLeaderMareAppliedToNextRound;
-use App\States\PlayerState;
 use App\States\RoundState;
+use App\States\PlayerState;
+use App\Events\ActionEffectAppliedToFutureRound;
+use App\Events\MajorityLeaderMareAppliedToNextRound;
 
 class MajorityLeaderMare extends Bureaucrat
 {
@@ -18,12 +19,22 @@ class MajorityLeaderMare extends Bureaucrat
 
     const EFFECT = 'After you submit your offers next round, 1 money will be added to each.';
 
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state, $amount, array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
-        MajorityLeaderMareAppliedToNextRound::fire(
-            round_id: $round_state->gameState()->nextRoundId(),
-            player_id: $player_state->id
+        ActionEffectAppliedToFutureRound::fire(
+            player_id: $player->id,
+            round_id: $round->game()->nextRound()->id,
+            bureaucrat: static::class,
+            amount: $amount,
+            data: $data,
+            hook: $round::HOOKS['on_auction_ended']
         );
+    }
+
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    {
+        $round->offers->filter(fn ($o) => $o['player_id'] === $player->id)
+            ->transform(fn ($o) => $o['modified_offer'] += 1);
     }
 
     public static function activityFeedDescription(array $data = null)

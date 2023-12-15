@@ -23,28 +23,26 @@ class Watchdog extends Bureaucrat
     public static function options(Round $round, Player $player)
     {
         return [
-            'bureaucrat' => [
-                'title' => 'Bureaucrat',
-                'description' => 'Select a bureaucrat',
-                'type' => 'dropdown',
-                'rules' => ['required', 'string'],
-                'values' => collect($round->state()->bureaucrats)
-                    ->reject(fn ($b) => $b === static::class)
-                    ->mapWithKeys(fn ($b) => [$b => $b::NAME])
-            ],
+            'bureaucrat' => collect($round->state()->bureaucrats)
+                ->reject(fn ($b) => $b === static::class)
+                ->mapWithKeys(fn ($b) => [$b => $b::NAME]),
             'player' => $round->game->players
                 ->mapWithKeys(fn ($p) => [$p->id => $p->user->name])
                 ->toArray(),
         ];
     }
 
-    // @todo: is it ok to fire an event for another player here??
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state, $amount, array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
-        if ($round_state->actionsWonBy($data['player'])->contains('bureaucrat', $data['bureaucrat'])) {
+        if (
+            $round->actions_awarded->filter(fn ($a) => 
+                $a['bureaucrat'] === $data['bureaucrat']
+                && $a['player'] === $data['player']
+            )
+        ) {
             PlayerSpentMoney::fire(
                 player_id: $data['player'],
-                round_id: $round_state->id,
+                round_id: $round->id,
                 amount: 5,
                 activity_feed_description: 'Fined by the Watchdog. Bribery is not tolarated around these parts.',
             );
