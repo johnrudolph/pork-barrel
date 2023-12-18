@@ -2,10 +2,10 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
-use App\States\RoundState;
 use App\States\PlayerState;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class ActionEffectAppliedToFutureRound extends Event
 {
@@ -31,7 +31,7 @@ class ActionEffectAppliedToFutureRound extends Event
                 'bureaucrat' => $this->bureaucrat,
                 'amount' => $this->amount,
                 'data' => $this->data,
-                'hook' => $this->hook
+                'hook' => $this->hook,
             ]);
     }
 }

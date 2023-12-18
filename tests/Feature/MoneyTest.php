@@ -16,7 +16,6 @@ use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
 use Thunk\Verbs\Lifecycle\StateManager;
-use Thunk\Verbs\Models\VerbEvent;
 
 uses(DatabaseMigrations::class);
 

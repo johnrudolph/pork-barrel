@@ -23,7 +23,7 @@ class ActionAppliedAtEndOfRound extends Event
         $this->bureaucrat::handleOnRoundEnd(
             PlayerState::load($this->player_id),
             RoundState::load($this->round_id),
-            $this->amount, 
+            $this->amount,
             $this->data
         );
     }

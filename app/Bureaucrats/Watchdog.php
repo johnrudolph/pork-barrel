@@ -35,8 +35,7 @@ class Watchdog extends Bureaucrat
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         if (
-            $round->actions_awarded->filter(fn ($a) => 
-                $a['bureaucrat'] === $data['bureaucrat']
+            $round->actions_awarded->filter(fn ($a) => $a['bureaucrat'] === $data['bureaucrat']
                 && $a['player_id'] === $data['player']
             )
         ) {

@@ -1,33 +1,29 @@
 <?php
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
-use Glhd\Bits\Snowflake;
-use App\Events\RoundEnded;
-use App\States\RoundState;
-use App\Events\GameCreated;
-use App\Events\GameStarted;
-use App\Events\AuctionEnded;
-use App\Events\RoundStarted;
-use App\Bureaucrats\Watchdog;
-use App\Models\MoneyLogEntry;
-use Thunk\Verbs\Facades\Verbs;
-use App\Bureaucrats\Bureaucrat;
-use App\Bureaucrats\GamblinGoat;
-use App\Events\PlayerJoinedGame;
 use App\Bureaucrats\BailoutBunny;
-use Thunk\Verbs\Models\VerbEvent;
-use App\Bureaucrats\ObstructionOx;
-use App\Bureaucrats\TreasuryChicken;
-use App\RoundModifiers\RoundModifier;
+use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
+use App\Bureaucrats\ObstructionOx;
+use App\Bureaucrats\TreasuryChicken;
+use App\Bureaucrats\Watchdog;
+use App\Events\AuctionEnded;
+use App\Events\GameCreated;
+use App\Events\GameStarted;
+use App\Events\PlayerJoinedGame;
+use App\Events\RoundEnded;
+use App\Events\RoundStarted;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\User;
+use App\RoundModifiers\RoundModifier;
+use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
-// @todo: in general, could we test this code without creating a whole game? 
+// @todo: in general, could we test this code without creating a whole game?
 beforeEach(function () {
     $this->user_1 = User::factory()->create();
     $this->user_2 = User::factory()->create();
@@ -262,11 +258,11 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     ]);
 
     $this->assertTrue($this->game->currentRound()->state()->
-        actions_from_previous_rounds_that_resolve_this_round->first()['bureaucrat'] === MajorityLeaderMare::class      
+        actions_from_previous_rounds_that_resolve_this_round->first()['bureaucrat'] === MajorityLeaderMare::class
     );
 
     $this->assertTrue($this->game->currentRound()->next()->state()->
-        actions_from_previous_rounds_that_resolve_this_round->count() === 0      
+        actions_from_previous_rounds_that_resolve_this_round->count() === 0
     );
 
     $this->assertFalse($this->daniel->state()->has_bailout);
@@ -304,11 +300,11 @@ it('gives you 10 money if you make no offers after getting the minority leader m
     Verbs::commit();
 
     $this->assertTrue($this->game->currentRound()->state()->
-        actions_from_previous_rounds_that_resolve_this_round->first()['bureaucrat'] === MinorityLeaderMink::class      
+        actions_from_previous_rounds_that_resolve_this_round->first()['bureaucrat'] === MinorityLeaderMink::class
     );
 
     $this->assertTrue($this->game->currentRound()->next()->state()->
-        actions_from_previous_rounds_that_resolve_this_round->count() === 0      
+        actions_from_previous_rounds_that_resolve_this_round->count() === 0
     );
 
     $this->assertEquals(29, $this->john->state()->money);

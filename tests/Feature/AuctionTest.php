@@ -1,22 +1,22 @@
 <?php
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
-use Glhd\Bits\Snowflake;
-use App\Events\GameCreated;
-use App\Events\GameStarted;
-use App\Events\RoundStarted;
-use App\Bureaucrats\TaxTurkey;
-use Thunk\Verbs\Facades\Verbs;
-use App\Bureaucrats\GamblinGoat;
-use App\Events\PlayerJoinedGame;
 use App\Bureaucrats\BailoutBunny;
-use App\RoundModifiers\RoundModifier;
+use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
+use App\Bureaucrats\TaxTurkey;
 use App\Events\AuctionEnded;
+use App\Events\GameCreated;
+use App\Events\GameStarted;
+use App\Events\PlayerJoinedGame;
+use App\Events\RoundStarted;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\User;
+use App\RoundModifiers\RoundModifier;
+use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
@@ -54,9 +54,9 @@ beforeEach(function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [
-            GamblinGoat::class, 
-            BailoutBunny::class, 
-            MinorityLeaderMink::class, 
+            GamblinGoat::class,
+            BailoutBunny::class,
+            MinorityLeaderMink::class,
             MajorityLeaderMare::class,
             TaxTurkey::class],
         round_modifier: RoundModifier::class,

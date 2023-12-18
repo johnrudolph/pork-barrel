@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
+use App\Bureaucrats\Bureaucrat;
 use App\Events\GameEnded;
-use App\States\GameState;
-use App\States\RoundState;
 use App\Events\GameStarted;
 use App\Events\RoundStarted;
-use Thunk\Verbs\Facades\Verbs;
-use App\Bureaucrats\Bureaucrat;
 use App\RoundModifiers\RoundModifier;
+use App\States\GameState;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Game extends Model
 {

@@ -3,10 +3,10 @@
 namespace App\Events;
 
 use App\Models\Round;
-use Thunk\Verbs\Event;
 use App\States\GameState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class RoundSeeded extends Event
 {

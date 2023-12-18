@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\MoneyLogEntry;
 use App\States\PlayerState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;

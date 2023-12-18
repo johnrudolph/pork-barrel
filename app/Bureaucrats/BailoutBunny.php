@@ -2,9 +2,9 @@
 
 namespace App\Bureaucrats;
 
-use App\States\RoundState;
-use App\States\PlayerState;
 use App\Events\PlayerAwardedBailout;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class BailoutBunny extends Bureaucrat
 {
@@ -34,7 +34,7 @@ class BailoutBunny extends Bureaucrat
         );
     }
 
-    public static function activityFeedDescription(array $data = null)
+    public static function activityFeedDescription(?array $data = null)
     {
         return 'You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.';
     }

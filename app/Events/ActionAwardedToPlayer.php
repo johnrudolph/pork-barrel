@@ -2,10 +2,10 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
-use App\States\RoundState;
 use App\States\PlayerState;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class ActionAwardedToPlayer extends Event
 {
@@ -38,7 +38,7 @@ class ActionAwardedToPlayer extends Event
         $this->bureaucrat::handleOnAwarded(
             $this->state(PlayerState::class),
             $this->state(RoundState::class),
-            $this->amount, 
+            $this->amount,
             $this->data
         );
 

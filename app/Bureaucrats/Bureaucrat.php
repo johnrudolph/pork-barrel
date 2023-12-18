@@ -35,22 +35,22 @@ class Bureaucrat
         ]);
     }
 
-    public static function handleOnAwarded(PlayerState $player, RoundState $round, $amount, array $data = null)
+    public static function handleOnAwarded(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         //
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         //
     }
 
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, array $data = null)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         //
     }
 
-    public static function handleOnGameEnd(PlayerState $player, RoundState $round, $amount, array $data = null)
+    public static function handleOnGameEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         //
     }
@@ -60,7 +60,7 @@ class Bureaucrat
         //
     }
 
-    public static function activityFeedDescription(array $data = null)
+    public static function activityFeedDescription(?array $data = null)
     {
         return 'You had the highest bid for '.static::NAME;
     }

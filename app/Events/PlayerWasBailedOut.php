@@ -25,7 +25,7 @@ class PlayerWasBailedOut extends Event
         $state->has_bailout = false;
     }
 
-    public function handle() 
+    public function handle()
     {
         dump('player was bailed out');
     }

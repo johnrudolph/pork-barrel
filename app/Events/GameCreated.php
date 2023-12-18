@@ -3,10 +3,10 @@
 namespace App\Events;
 
 use App\Models\Game;
-use Thunk\Verbs\Event;
-use Glhd\Bits\Snowflake;
 use App\States\GameState;
+use Glhd\Bits\Snowflake;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class GameCreated extends Event
 {
@@ -29,12 +29,11 @@ class GameCreated extends Event
             'code' => rand(10000, 99999),
         ]);
 
-        collect(range(1, 8))->each(fn ($i) => 
-            RoundSeeded::fire(
-                game_id: $this->game_id,
-                round_number: $i,
-                round_id: Snowflake::make()->id()
-            )
+        collect(range(1, 8))->each(fn ($i) => RoundSeeded::fire(
+            game_id: $this->game_id,
+            round_number: $i,
+            round_id: Snowflake::make()->id()
+        )
         );
     }
 }

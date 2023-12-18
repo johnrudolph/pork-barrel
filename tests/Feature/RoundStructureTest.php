@@ -1,13 +1,13 @@
 <?php
 
+use App\Events\AuctionEnded;
+use App\Events\GameCreated;
+use App\Events\PlayerJoinedGame;
 use App\Models\Game;
 use App\Models\User;
 use Glhd\Bits\Snowflake;
-use App\Events\GameCreated;
-use App\Events\AuctionEnded;
-use Thunk\Verbs\Facades\Verbs;
-use App\Events\PlayerJoinedGame;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 

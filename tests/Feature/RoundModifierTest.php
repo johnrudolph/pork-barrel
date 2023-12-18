@@ -64,6 +64,6 @@ it('takes 5 money from the richeset player at the end of the round', function ()
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
-    
+
     $this->assertEquals(5, $this->daniel->state()->money);
 });

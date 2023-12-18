@@ -2,10 +2,9 @@
 
 namespace App\Bureaucrats;
 
-use App\States\RoundState;
-use App\States\PlayerState;
 use App\Events\ActionEffectAppliedToFutureRound;
-use App\Events\MajorityLeaderMareAppliedToNextRound;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class MajorityLeaderMare extends Bureaucrat
 {
@@ -37,12 +36,12 @@ class MajorityLeaderMare extends Bureaucrat
             if ($o['player_id'] === $player->id) {
                 $o['modified_amount'] += 1;
             }
-            
+
             return $o;
         });
     }
 
-    public static function activityFeedDescription(array $data = null)
+    public static function activityFeedDescription(?array $data = null)
     {
         return 'You had the highest bid for the Majority Leader Mare. Next round, 1 money will be added to each of your offers.';
     }

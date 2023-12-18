@@ -2,11 +2,10 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
-use App\States\RoundState;
 use App\States\PlayerState;
-use App\Events\ActionAwardedToPlayer;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class AuctionEnded extends Event
 {
@@ -22,23 +21,21 @@ class AuctionEnded extends Event
             ->each(fn ($a) => $a['bureaucrat']::handleInFutureRound(
                 PlayerState::load($a['player_id']),
                 RoundState::load($this->round_id),
-                $a['amount'], 
+                $a['amount'],
                 $a['data'],
             ));
-        
+
         collect($round->game()->players)
-            ->each(fn ($player_id) =>
-                $this->actionsWonBy($player_id, $round)
-                    ->each(fn ($action) =>
-                        ActionAwardedToPlayer::fire(
-                            player_id: $player_id,
-                            round_id: $this->round_id,
-                            activity_feed_description: $action['bureaucrat']::activityFeedDescription($action['data'] ?? null),
-                            bureaucrat: $action['bureaucrat'],
-                            data: $action['data'] ?? null,
-                            amount: $action['original_amount'],
-                        )
-                    )
+            ->each(fn ($player_id) => $this->actionsWonBy($player_id, $round)
+                ->each(fn ($action) => ActionAwardedToPlayer::fire(
+                    player_id: $player_id,
+                    round_id: $this->round_id,
+                    activity_feed_description: $action['bureaucrat']::activityFeedDescription($action['data'] ?? null),
+                    bureaucrat: $action['bureaucrat'],
+                    data: $action['data'] ?? null,
+                    amount: $action['original_amount'],
+                )
+                )
             );
     }
 

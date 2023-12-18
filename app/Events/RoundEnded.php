@@ -3,11 +3,10 @@
 namespace App\Events;
 
 use App\Models\Round;
-use Thunk\Verbs\Event;
-use App\States\RoundState;
 use App\States\PlayerState;
-use App\Events\PlayerRoundEnded;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class RoundEnded extends Event
 {
@@ -33,7 +32,7 @@ class RoundEnded extends Event
             ->each(fn ($a) => $a['bureaucrat']::handleInFutureRound(
                 PlayerState::load($a['player_id']),
                 RoundState::load($this->round_id),
-                $a['amount'], 
+                $a['amount'],
                 $a['data'],
             ));
 
@@ -49,11 +48,10 @@ class RoundEnded extends Event
 
         $state->round_modifier::handleOnRoundEnd($state);
 
-        $state->game()->players->each(fn ($p) => 
-            PlayerRoundEnded::fire(
-                player_id: $p,
-                round_id: $this->round_id,
-            )
+        $state->game()->players->each(fn ($p) => PlayerRoundEnded::fire(
+            player_id: $p,
+            round_id: $this->round_id,
+        )
         );
     }
 }

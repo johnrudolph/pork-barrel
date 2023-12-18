@@ -2,19 +2,18 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
 use App\States\GameState;
-use App\States\RoundState;
 use App\States\PlayerState;
-use Illuminate\Support\Collection;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class RoundStarted extends Event
 {
-    #[StateId(GameState::class)] 
+    #[StateId(GameState::class)]
     public int $game_id;
 
-    #[StateId(RoundState::class)] 
+    #[StateId(RoundState::class)]
     public int $round_id;
 
     public array $bureaucrats;
@@ -27,7 +26,7 @@ class RoundStarted extends Event
     {
         $state->status = 'in-progress';
         $state->phase = 'auction';
-        collect($this->bureaucrats)->each(fn($b) => $state->bureaucrats->push($b));
+        collect($this->bureaucrats)->each(fn ($b) => $state->bureaucrats->push($b));
         $state->round_modifier = $this->round_modifier;
     }
 

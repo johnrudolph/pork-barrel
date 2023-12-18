@@ -18,40 +18,14 @@ class AuctionView extends Component
 
     public array $bureaucrats;
 
-    public int $initial_money;
+    public int $money;
 
     public array $offers;
-
-    public $foo = 7;
-
-    #[Computed]
-    public function money()
-    {
-        return $this->initial_money - collect($this->bureaucrats)->sum('offer');
-    }
 
     #[Computed]
     public function player()
     {
         return Auth::user()->currentPlayer();
-    }
-
-    public function rules()
-    {
-        return collect($this->bureaucrats)->map(
-            fn ($b) => $b['class']::rules()->mapWithKeys(
-                fn ($v, $k) => ["bureaucrats.{$b['slug']}.$k" => $v]
-            )
-        )->flatten()->toArray();
-
-        [
-            'something' => 'string|required',
-            'something' => 'string|required',
-        ]
-
-        [
-            'bureaucrats.tax-turkey.something' => 'string|required',
-        ]
     }
 
     public function mount(Player $player)
@@ -63,12 +37,12 @@ class AuctionView extends Component
     {
         $this->player_id = $player->id;
 
-        $this->initial_money = $this->player()->state()->money;
+        $this->money = $this->player()->state()->money;
 
         $this->bureaucrats = collect($round->state()->bureaucrats)->mapWithKeys(function ($b) {
             $data_array = $b::expectedData($this->game->currentRound(), $this->player());
 
-            return [$b => ['class' => $b, 'offer' => 0, 'data' => $data_array ?? null]];
+            return [$b::SLUG => ['class' => $b, 'offer' => 0, 'data' => $data_array ?? null]];
         })->toArray();
 
         $this->offers = collect($round->state()->offers)
@@ -77,11 +51,25 @@ class AuctionView extends Component
             ->toArray();
     }
 
+    public function increment($bureacrat_slug)
+    {
+        if (collect($this->bureaucrats)->sum('offer') < $this->money) {
+            $this->bureaucrats[$bureacrat_slug]['offer']++;
+        } else {
+            // @todo: tell the user they don't have enough money
+        }
+    }
+
+    public function decrement($bureacrat_slug)
+    {
+        if ($this->bureaucrats[$bureacrat_slug]['offer'] > 0) {
+            $this->bureaucrats[$bureacrat_slug]['offer']--;
+        }
+    }
+
     public function submit()
     {
-        dd($this->bureaucrats);
         collect($this->bureaucrats)
-            ->filter(fn ($b) => $b['offer'] > 0)
             ->each(fn ($b) => $this->player
                 ->submitOffer($this->game->currentRound(), $b['class'], $b['offer'], $b['data'] ?? null)
             );

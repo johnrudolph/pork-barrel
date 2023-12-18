@@ -2,11 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\States\RoundState;
-use App\States\PlayerState;
-use App\Events\PlayerReceivedMoney;
 use App\Events\ActionEffectAppliedToFutureRound;
-use App\Events\MinorityLeaderMinkAppliedToNextRound;
+use App\Events\PlayerReceivedMoney;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class MinorityLeaderMink extends Bureaucrat
 {
@@ -46,7 +45,7 @@ class MinorityLeaderMink extends Bureaucrat
         }
     }
 
-    public static function activityFeedDescription(array $data = null)
+    public static function activityFeedDescription(?array $data = null)
     {
         return 'You had the highest bid for the Minority Leader Mink. Next round, you will receive 10 money if you make no offers.';
     }

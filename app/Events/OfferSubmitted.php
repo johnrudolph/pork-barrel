@@ -34,13 +34,13 @@ class OfferSubmitted extends Event
     public function handle()
     {
         $round = $this->state(RoundState::class);
-        
+
         $round->actions_from_previous_rounds_that_resolve_this_round
             ->filter(fn ($a) => $a['hook'] === $round::HOOKS['on_offer_submitted'])
             ->each(fn ($a) => $a['bureaucrat']::handleInFutureRound(
                 PlayerState::load($a['player_id']),
                 RoundState::load($this->round_id),
-                $a['amount'], 
+                $a['amount'],
                 $a['data'],
             ));
     }
