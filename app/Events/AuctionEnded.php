@@ -36,7 +36,7 @@ class AuctionEnded extends Event
                             activity_feed_description: $action['bureaucrat']::activityFeedDescription($action['data'] ?? null),
                             bureaucrat: $action['bureaucrat'],
                             data: $action['data'] ?? null,
-                            amount: $action['modified_amount'],
+                            amount: $action['original_amount'],
                         )
                     )
             );

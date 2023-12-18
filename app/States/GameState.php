@@ -13,7 +13,7 @@ class GameState extends State
 
     public Collection $players;
 
-    public Collection $rounds;
+    public Collection $round_ids;
 
     public int $current_round_number = 0;
 
@@ -22,16 +22,15 @@ class GameState extends State
     // @todo: these two functions are getting wacky. They get called at unexpected times
     // and then suddenly return states instead of ints. No clue why
 
-    // public function players()
-    // {
-    //     dump($this);
-    //     return $this->players->map(fn ($id) => PlayerState::load($id));
-    // }
+    public function playerStates()
+    {
+        return $this->players->map(fn ($id) => PlayerState::load($id));
+    }
 
-    // public function rounds()
-    // {
-    //     return $this->rounds->map(fn ($id) => RoundState::load($id));
-    // }
+    public function rounds()
+    {
+        return $this->round_ids->map(fn ($id) => RoundState::load($id));
+    }
 
     public function currentRound(): RoundState
     {
@@ -40,6 +39,6 @@ class GameState extends State
 
     public function nextRound(): RoundState
     {
-        return RoundState::load($this->rounds[$this->current_round_number]) ?? null;
+        return RoundState::load($this->round_ids[$this->current_round_number]) ?? null;
     }
 }

@@ -30,7 +30,7 @@ class RoundState extends State
     const HOOKS = [
         'on_round_started' => 'on_round_started',
         'on_offer_submitted' => 'on_offer_submitted',
-        'on_awarded' => 'on_awarded',
+        'on_auction_ended' => 'on_auction_ended',
         'on_round_ended' => 'on_round_ended',
     ];
 

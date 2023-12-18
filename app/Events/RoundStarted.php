@@ -39,13 +39,6 @@ class RoundStarted extends Event
 
     public function handle()
     {
-        // $delete_this = RoundModifierAppliedAtBeginningOfRound::fire(
-        //     round_id: $this->round_id,
-        //     round_modifier: $this->round_modifier,
-        // );
-
-        // dump('round_modifier_applied', $delete_this->id);
-
         collect($this->state(RoundState::class)->game()->players)->each(fn ($player_id) => PlayerReceivedMoney::fire(
             player_id: $player_id,
             round_id: $this->round_id,

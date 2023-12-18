@@ -30,7 +30,7 @@ class TreasuryChicken extends Bureaucrat
 
         ActionEffectAppliedToFutureRound::fire(
             player_id: $player->id,
-            round_id: $round->game()->rounds->last(),
+            round_id: $round->game()->round_ids->last(),
             bureaucrat: static::class,
             amount: $amount,
             data: $data,

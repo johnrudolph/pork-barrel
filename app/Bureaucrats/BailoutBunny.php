@@ -2,8 +2,9 @@
 
 namespace App\Bureaucrats;
 
-use App\States\PlayerState;
 use App\States\RoundState;
+use App\States\PlayerState;
+use App\Events\PlayerAwardedBailout;
 
 class BailoutBunny extends Bureaucrat
 {
@@ -25,9 +26,12 @@ class BailoutBunny extends Bureaucrat
         ];
     }
 
-    public static function applyToPlayerStateAtEndOfRound(PlayerState $state, RoundState $round_state, $amount, array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
-        $state->has_bailout = true;
+        PlayerAwardedBailout::fire(
+            player_id: $player->id,
+            round_id: $round->id,
+        );
     }
 
     public static function activityFeedDescription(array $data = null)

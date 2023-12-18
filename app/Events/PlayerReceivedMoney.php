@@ -18,6 +18,11 @@ class PlayerReceivedMoney extends Event
 
     public int $amount;
 
+    public function apply(PlayerState $state)
+    {
+        $state->money += $this->amount;
+    }
+
     public function handle()
     {
         MoneyLogEntry::create([
@@ -26,10 +31,5 @@ class PlayerReceivedMoney extends Event
             'amount' => $this->amount,
             'description' => $this->activity_feed_description,
         ]);
-    }
-
-    public function apply(PlayerState $state)
-    {
-        $state->money += $this->amount;
     }
 }

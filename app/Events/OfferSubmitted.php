@@ -9,8 +9,6 @@ use Thunk\Verbs\Event;
 
 class OfferSubmitted extends Event
 {
-    // @todo: this doesn't need to be here. but when it was here, it broke things. Why?
-    // #[StateId(PlayerState::class)]
     public int $player_id;
 
     #[StateId(RoundState::class)]

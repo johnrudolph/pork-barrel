@@ -36,11 +36,10 @@ it('creates a game and player when a game is created', function () {
         Player::first()->id,
     );
 
-    // this code is commented out for now
-    // $this->assertEquals(
-    //     $game->state()->players()->first()->id,
-    //     Player::first()->id,
-    // );
+    $this->assertEquals(
+        $game->state()->players()->first()->id,
+        Player::first()->id,
+    );
 });
 
 it('changes a players currentGame when they join a new game', function () {

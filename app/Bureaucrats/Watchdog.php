@@ -37,7 +37,7 @@ class Watchdog extends Bureaucrat
         if (
             $round->actions_awarded->filter(fn ($a) => 
                 $a['bureaucrat'] === $data['bureaucrat']
-                && $a['player'] === $data['player']
+                && $a['player_id'] === $data['player']
             )
         ) {
             PlayerSpentMoney::fire(

@@ -19,7 +19,7 @@ class GameCreated extends Event
     {
         $state->status = 'awaiting-players';
         $state->players = collect();
-        $state->rounds = collect();
+        $state->round_ids = collect();
     }
 
     public function handle()
