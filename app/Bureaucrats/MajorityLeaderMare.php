@@ -2,7 +2,7 @@
 
 namespace App\Bureaucrats;
 
-use App\Events\MajorityLeaderMareAppliedToNextRound;
+use App\Events\ActionEffectAppliedToFutureRound;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -18,15 +18,30 @@ class MajorityLeaderMare extends Bureaucrat
 
     const EFFECT = 'After you submit your offers next round, 1 money will be added to each.';
 
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state, $amount, array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
-        MajorityLeaderMareAppliedToNextRound::fire(
-            round_id: $round_state->gameState()->nextRoundId(),
-            player_id: $player_state->id
+        ActionEffectAppliedToFutureRound::fire(
+            player_id: $player->id,
+            round_id: $round->game()->nextRound()->id,
+            bureaucrat: static::class,
+            amount: $amount,
+            data: $data,
+            hook: $round::HOOKS['on_auction_ended']
         );
     }
 
-    public static function activityFeedDescription(array $data = null)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    {
+        $round->offers = $round->offers->transform(function ($o) use ($player) {
+            if ($o['player_id'] === $player->id) {
+                $o['modified_amount'] += 1;
+            }
+
+            return $o;
+        });
+    }
+
+    public static function activityFeedDescription(?array $data = null)
     {
         return 'You had the highest bid for the Majority Leader Mare. Next round, 1 money will be added to each of your offers.';
     }

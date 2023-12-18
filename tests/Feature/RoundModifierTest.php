@@ -1,6 +1,7 @@
 <?php
 
 use App\Bureaucrats\GamblinGoat;
+use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
@@ -59,9 +60,10 @@ it('takes 5 money from the richeset player at the end of the round', function ()
 
     $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 10);
 
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
+    Verbs::commit();
 
     $this->assertEquals(5, $this->daniel->state()->money);
 });

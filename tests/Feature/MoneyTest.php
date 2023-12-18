@@ -2,6 +2,7 @@
 
 use App\Bureaucrats\BailoutBunny;
 use App\Bureaucrats\GamblinGoat;
+use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
@@ -47,7 +48,7 @@ beforeEach(function () {
 
     Verbs::commit();
 
-    RoundStarted::fire(
+    $this->round_started = RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
@@ -66,7 +67,8 @@ it('gives players 10 money to start each round', function () {
     app(StateManager::class)->reset();
     $this->assertEquals(10, $this->john->state()->money);
 
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -81,7 +83,7 @@ it('creates money log entries when players win auctions', function () {
     $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
     Verbs::commit();
 
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
 
     $this->game->currentRound()->endRound();

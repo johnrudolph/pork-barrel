@@ -7,9 +7,11 @@ use App\Bureaucrats\MinorityLeaderMink;
 use App\Bureaucrats\ObstructionOx;
 use App\Bureaucrats\TreasuryChicken;
 use App\Bureaucrats\Watchdog;
+use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
+use App\Events\RoundEnded;
 use App\Events\RoundStarted;
 use App\Models\Game;
 use App\Models\Player;
@@ -21,6 +23,7 @@ use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
+// @todo: in general, could we test this code without creating a whole game?
 beforeEach(function () {
     $this->user_1 = User::factory()->create();
     $this->user_2 = User::factory()->create();
@@ -65,12 +68,13 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
     );
 
     $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 10);
+    Verbs::commit();
 
     $this->assertEquals(10, $this->john->state()->money);
 
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
-    $this->game->currentRound()->endRound();
+    RoundEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
 
     $amount_earned = $this->john->state()->money;
@@ -84,7 +88,7 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
     ]);
 });
 
-it('blocks an action from resolving if was blocked by the Donkey', function () {
+it('blocks an action from resolving if was blocked by the Ox', function () {
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -97,8 +101,7 @@ it('blocks an action from resolving if was blocked by the Donkey', function () {
     $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 10);
 
     Verbs::commit();
-
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
 
     $this->assertTrue(collect($this->game->currentRound()->state()->blocked_actions)
@@ -107,7 +110,7 @@ it('blocks an action from resolving if was blocked by the Donkey', function () {
     $this->game->currentRound()->endRound();
     Verbs::commit();
 
-    $this->assertEquals(10, $this->daniel->state()->money);
+    $this->assertEquals(0, $this->daniel->state()->money);
 
     $this->assertDatabaseHas('headlines', [
         'round_id' => $this->game->rounds->first()->id,
@@ -128,8 +131,10 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 10);
     Verbs::commit();
 
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
+
+    $this->assertEquals(0, $this->john->state()->money);
 
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -152,6 +157,8 @@ it('fines a player if they were caught by the watchdog', function () {
         round_modifier: RoundModifier::class,
     );
 
+    Verbs::commit();
+
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
     $this->daniel->submitOffer(
         $this->game->currentRound(),
@@ -161,9 +168,9 @@ it('fines a player if they were caught by the watchdog', function () {
     );
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
-    $this->game->currentRound()->endRound();
+    RoundEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
 
     $this->assertEquals(4, $this->john->state()->money);
@@ -179,7 +186,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
-        round_id: $this->game->state()->rounds[0],
+        round_id: $this->game->state()->round_ids[0],
         bureaucrats: [MajorityLeaderMare::class],
         round_modifier: RoundModifier::class,
     );
@@ -187,7 +194,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     $this->john->submitOffer($this->game->currentRound(), MajorityLeaderMare::class, 1);
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -195,7 +202,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 2,
-        round_id: $this->game->state()->rounds[1],
+        round_id: $this->game->state()->round_ids[1],
         bureaucrats: [GamblinGoat::class, BailoutBunny::class],
         round_modifier: RoundModifier::class,
     );
@@ -209,7 +216,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 2);
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -250,6 +257,14 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
         'description' => "The Gamlin' Goat's scheme paid off!",
     ]);
 
+    $this->assertTrue($this->game->currentRound()->state()->
+        actions_from_previous_rounds_that_resolve_this_round->first()['bureaucrat'] === MajorityLeaderMare::class
+    );
+
+    $this->assertTrue($this->game->currentRound()->next()->state()->
+        actions_from_previous_rounds_that_resolve_this_round->count() === 0
+    );
+
     $this->assertFalse($this->daniel->state()->has_bailout);
 });
 
@@ -257,7 +272,7 @@ it('gives you 10 money if you make no offers after getting the minority leader m
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
-        round_id: $this->game->state()->rounds[0],
+        round_id: $this->game->state()->round_ids[0],
         bureaucrats: [MinorityLeaderMink::class],
         round_modifier: RoundModifier::class,
     );
@@ -265,7 +280,7 @@ it('gives you 10 money if you make no offers after getting the minority leader m
     $this->john->submitOffer($this->game->currentRound(), MinorityLeaderMink::class, 1);
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
@@ -273,21 +288,31 @@ it('gives you 10 money if you make no offers after getting the minority leader m
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 2,
-        round_id: $this->game->state()->rounds[1],
+        round_id: $this->game->state()->round_ids[1],
         bureaucrats: [GamblinGoat::class],
         round_modifier: RoundModifier::class,
     );
 
     Verbs::commit();
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();
 
+    $this->assertTrue($this->game->currentRound()->state()->
+        actions_from_previous_rounds_that_resolve_this_round->first()['bureaucrat'] === MinorityLeaderMink::class
+    );
+
+    $this->assertTrue($this->game->currentRound()->next()->state()->
+        actions_from_previous_rounds_that_resolve_this_round->count() === 0
+    );
+
+    $this->assertEquals(29, $this->john->state()->money);
+
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->john->id,
         'amount' => 10,
-        'description' => 'You received money for making no offers this round. Way to stick it to them!',
+        'description' => "You made no offers. That'll show 'em",
     ]);
 });
 
@@ -295,7 +320,7 @@ it('gives you a 50% return on your savings if you win the Treasury Chicken', fun
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
-        round_id: $this->game->state()->rounds[0],
+        round_id: $this->game->state()->round_ids[0],
         bureaucrats: [TreasuryChicken::class],
         round_modifier: RoundModifier::class,
     );

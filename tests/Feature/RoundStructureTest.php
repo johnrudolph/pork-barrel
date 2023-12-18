@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\PlayerJoinedGame;
 use App\Models\Game;
@@ -15,6 +16,7 @@ beforeEach(function () {
 
     $event = GameCreated::fire(
         user_id: $user->id,
+        game_id: Snowflake::make()->id(),
     );
 
     PlayerJoinedGame::fire(
@@ -41,7 +43,7 @@ it('seeds rounds for new games', function () {
 });
 
 it('progresses to the next round after rounds end', function () {
-    $this->game->currentRound()->endAuctionPhase();
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
     $this->game->currentRound()->endRound();
     Verbs::commit();

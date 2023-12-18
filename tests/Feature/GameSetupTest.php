@@ -32,7 +32,12 @@ it('creates a game and player when a game is created', function () {
     $this->assertCount(1, $game->players);
 
     $this->assertEquals(
-        $event->state()->players[0],
+        $game->state()->players[0],
+        Player::first()->id,
+    );
+
+    $this->assertEquals(
+        $game->state()->players()->first()->id,
         Player::first()->id,
     );
 });

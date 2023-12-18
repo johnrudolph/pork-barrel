@@ -11,7 +11,6 @@ use App\States\GameState;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Thunk\Verbs\Facades\Verbs;
 
 class Game extends Model
 {
@@ -38,17 +37,12 @@ class Game extends Model
     {
         GameStarted::fire(game_id: $this->id);
 
-        Verbs::commit();
-
         RoundStarted::fire(
             game_id: $this->id,
-            round_number: 1,
-            round_id: $this->rounds->first()->id,
+            round_id: $this->state()->rounds[0],
             bureaucrats: Bureaucrat::all()->random(5)->toArray(),
             round_modifier: RoundModifier::all()->random(),
         );
-
-        Verbs::commit();
     }
 
     public function currentRound()

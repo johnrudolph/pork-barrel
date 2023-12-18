@@ -32,13 +32,16 @@ class Watchdog extends Bureaucrat
         ];
     }
 
-    // @todo: is it ok to fire an event for another player here??
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state, $amount, array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
-        if ($round_state->actionsWonBy($data['player'])->contains('bureaucrat', $data['bureaucrat'])) {
+        if (
+            $round->actions_awarded->filter(fn ($a) => $a['bureaucrat'] === $data['bureaucrat']
+                && $a['player_id'] === $data['player']
+            )
+        ) {
             PlayerSpentMoney::fire(
                 player_id: $data['player'],
-                round_id: $round_state->id,
+                round_id: $round->id,
                 amount: 5,
                 activity_feed_description: 'Fined by the Watchdog. Bribery is not tolarated around these parts.',
             );

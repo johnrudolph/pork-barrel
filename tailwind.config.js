@@ -15,6 +15,14 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
         },
+        colors: {
+            'white': '#ffffff',
+            'teal': '#007393',
+            'red': '#B30000',
+            'purple': '#323067',
+            'pale': '#E3D4B6',
+            'salmon': '#FF5541',
+        },
     },
 
     plugins: [forms],

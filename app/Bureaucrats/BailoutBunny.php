@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\Events\PlayerAwardedBailout;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -17,12 +18,23 @@ class BailoutBunny extends Bureaucrat
 
     const EFFECT = 'If you ever have 0 money after an auction, you will receive $10.';
 
-    public static function applyToPlayerStateAtEndOfRound(PlayerState $state, RoundState $round_state, $amount, array $data = null)
+    // @todo this is the concept for how we implement rules on the form
+    public static function rules(): array
     {
-        $state->has_bailout = true;
+        return [
+            'something' => 'string|required',
+        ];
     }
 
-    public static function activityFeedDescription(array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    {
+        PlayerAwardedBailout::fire(
+            player_id: $player->id,
+            round_id: $round->id,
+        );
+    }
+
+    public static function activityFeedDescription(?array $data = null)
     {
         return 'You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.';
     }

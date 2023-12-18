@@ -3,6 +3,8 @@
 namespace Tests;
 
 use App\Bureaucrats\Bureaucrat;
+use App\Events\AuctionEnded;
+use App\Events\RoundEnded;
 use App\Events\RoundStarted;
 use App\RoundModifiers\RoundModifier;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -16,15 +18,15 @@ abstract class TestCase extends BaseTestCase
     {
         collect(range($game->currentRound()->round_number, $game->rounds->count() - 1))
             ->each(function ($round_number) use ($game) {
-                $game->currentRound()->endAuctionPhase();
+                AuctionEnded::fire(round_id: $game->state()->round_ids[$round_number - 1]);
                 Verbs::commit();
-                $game->currentRound()->endRound();
+                RoundEnded::fire(round_id: $game->state()->round_ids[$round_number - 1]);
                 Verbs::commit();
 
                 RoundStarted::fire(
                     game_id: $game->id,
                     round_number: $round_number + 1,
-                    round_id: $game->state()->rounds[$round_number],
+                    round_id: $game->state()->round_ids[$round_number],
                     bureaucrats: [Bureaucrat::class],
                     round_modifier: RoundModifier::class,
                 );
@@ -32,9 +34,9 @@ abstract class TestCase extends BaseTestCase
                 Verbs::commit();
             });
 
-        $game->currentRound()->endAuctionPhase();
+        AuctionEnded::fire(round_id: $game->state()->round_ids[7]);
         Verbs::commit();
-        $game->currentRound()->endRound();
+        RoundEnded::fire(round_id: $game->state()->round_ids[7]);
         Verbs::commit();
 
         $game->end();

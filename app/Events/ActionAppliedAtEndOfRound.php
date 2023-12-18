@@ -4,15 +4,12 @@ namespace App\Events;
 
 use App\States\PlayerState;
 use App\States\RoundState;
-use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
 class ActionAppliedAtEndOfRound extends Event
 {
-    #[StateId(RoundState::class)]
     public int $round_id;
 
-    #[StateId(PlayerState::class)]
     public int $player_id;
 
     public $bureaucrat;
@@ -21,13 +18,13 @@ class ActionAppliedAtEndOfRound extends Event
 
     public $data;
 
-    public function applyToRoundState(RoundState $state)
+    public function handle()
     {
-        $this->bureaucrat::applyToRoundStateAtEndOfRound($state, PlayerState::load($this->player_id), $this->amount, $this->data);
-    }
-
-    public function applyToPlayerState(PlayerState $state)
-    {
-        $this->bureaucrat::applyToPlayerStateAtEndOfRound($state, RoundState::load($this->round_id), $this->amount, $this->data);
+        $this->bureaucrat::handleOnRoundEnd(
+            PlayerState::load($this->player_id),
+            RoundState::load($this->round_id),
+            $this->amount,
+            $this->data
+        );
     }
 }

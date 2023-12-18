@@ -22,35 +22,35 @@ class Bureaucrat
     public static function all()
     {
         return collect([
-            BailoutBunny::class,
+            // BailoutBunny::class,
             ObstructionOx::class,
             GamblinGoat::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
             // OffshoreOtter::class,
-            PolicePiggy::class,
+            // PolicePiggy::class,
             // TaxTurkey::class,
             TreasuryChicken::class,
             Watchdog::class,
         ]);
     }
 
-    public static function applyToPlayerStateOnPurchase(PlayerState $player_state, RoundState $round_state, $amount, array $data = null)
+    public static function handleOnAwarded(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         //
     }
 
-    public static function applyToRoundStateOnPurchase(RoundState $round_state, PlayerState $player_state, $amount, array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         //
     }
 
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state, PlayerState $player_state, $amount, array $data = null)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         //
     }
 
-    public static function applyToPlayerStateAtEndOfRound(PlayerState $player_state, RoundState $round_state, $amount, array $data = null)
+    public static function handleOnGameEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         //
     }
@@ -60,7 +60,7 @@ class Bureaucrat
         //
     }
 
-    public static function activityFeedDescription(array $data = null)
+    public static function activityFeedDescription(?array $data = null)
     {
         return 'You had the highest bid for '.static::NAME;
     }

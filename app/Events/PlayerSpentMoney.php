@@ -18,6 +18,7 @@ class PlayerSpentMoney extends Event
 
     public int $amount;
 
+    // @todo: doesn't really matter but this could be an array on the state
     public function handle()
     {
         MoneyLogEntry::create([

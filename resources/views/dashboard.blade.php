@@ -4,8 +4,5 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-
-
-        <livewire:initialize-game/>
-
+    <livewire:initialize-game/>
 </x-app-layout>

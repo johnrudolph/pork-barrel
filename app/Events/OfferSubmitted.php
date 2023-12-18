@@ -9,7 +9,6 @@ use Thunk\Verbs\Event;
 
 class OfferSubmitted extends Event
 {
-    #[StateId(PlayerState::class)]
     public int $player_id;
 
     #[StateId(RoundState::class)]
@@ -23,11 +22,26 @@ class OfferSubmitted extends Event
 
     public function applyToRoundState(RoundState $state)
     {
-        $state->offers[] = [
+        $state->offers->push([
             'player_id' => $this->player_id,
             'bureaucrat' => $this->bureaucrat,
-            'amount' => $this->amount,
+            'original_amount' => $this->amount,
+            'modified_amount' => $this->amount,
             'data' => $this->data,
-        ];
+        ]);
+    }
+
+    public function handle()
+    {
+        $round = $this->state(RoundState::class);
+
+        $round->actions_from_previous_rounds_that_resolve_this_round
+            ->filter(fn ($a) => $a['hook'] === $round::HOOKS['on_offer_submitted'])
+            ->each(fn ($a) => $a['bureaucrat']::handleInFutureRound(
+                PlayerState::load($a['player_id']),
+                RoundState::load($this->round_id),
+                $a['amount'],
+                $a['data'],
+            ));
     }
 }

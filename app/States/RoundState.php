@@ -2,6 +2,7 @@
 
 namespace App\States;
 
+use Illuminate\Support\Collection;
 use Thunk\Verbs\State;
 
 class RoundState extends State
@@ -14,50 +15,27 @@ class RoundState extends State
 
     public int $round_number;
 
-    public $bureaucrats;
+    public Collection $bureaucrats;
 
-    public $offers;
+    public Collection $offers;
 
-    public $blocked_actions;
+    public Collection $actions_awarded;
 
-    public $players_with_majority_leader_mare = [];
+    public Collection $blocked_actions;
 
-    public $players_with_minority_leader_mink = [];
+    public Collection $actions_from_previous_rounds_that_resolve_this_round;
 
-    public $round_modifier;
+    public string $round_modifier;
 
-    public function gameState(): GameState
+    const HOOKS = [
+        'on_round_started' => 'on_round_started',
+        'on_offer_submitted' => 'on_offer_submitted',
+        'on_auction_ended' => 'on_auction_ended',
+        'on_round_ended' => 'on_round_ended',
+    ];
+
+    public function game(): GameState
     {
         return GameState::load($this->game_id);
-    }
-
-    public function actionsWonBy(int $player_id)
-    {
-        return collect($this->offers)
-            ->filter(fn ($o) => $o['player_id'] === $player_id)
-            ->reject(fn ($o) => collect($this->blocked_actions)->contains($o['bureaucrat']))
-            ->filter(function ($offer) {
-                $top_offer = collect($this->offers)
-                    ->filter(fn ($o) => $o['bureaucrat'] === $offer['bureaucrat'])
-                    ->max(fn ($o) => $o['amount']);
-
-                $player_with_mare_has_top_offer = collect($this->players_with_majority_leader_mare)
-                    ->intersect(collect($this->offers)
-                        ->filter(fn ($o) => $o['bureaucrat'] === $offer['bureaucrat'])
-                        ->filter(fn ($o) => $o['amount'] === $top_offer)
-                        ->pluck('player_id')
-                    )->isNotEmpty();
-
-                $top_offer = $player_with_mare_has_top_offer
-                    ? $top_offer + 1
-                    : $top_offer;
-
-                $player_offer = collect($this->players_with_majority_leader_mare)->contains($offer['player_id'])
-                    ? $offer['amount'] + 1
-                    : $offer['amount'];
-
-                return $player_offer >= $top_offer
-                    && $player_offer > 0;
-            });
     }
 }

@@ -27,12 +27,17 @@ class RoundModifier
         ]);
     }
 
-    public static function applyToRoundStateAtBeginningOfRound(RoundState $round_state)
+    public static function handleOnRoundStart(RoundState $round_state)
     {
         //
     }
 
-    public static function applyToRoundStateAtEndOfRound(RoundState $round_state)
+    public static function handleOnAuctionEnd(RoundState $round_state)
+    {
+        //
+    }
+
+    public static function handleOnRoundEnd(RoundState $round_state)
     {
         //
     }

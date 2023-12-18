@@ -33,10 +33,10 @@ class ObstructionOx extends Bureaucrat
         ];
     }
 
-    public static function applyToRoundStateOnPurchase(RoundState $state, PlayerState $player_state, $amount, array $data = null)
+    public static function handleOnAwarded(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         ActionWasBlocked::fire(
-            round_id: $state->id,
+            round_id: $round->id,
             bureaucrat: $data['bureaucrat'],
             headline: 'The Obstruction Ox blocked '.$data['bureaucrat']::NAME.' from taking an action.'
         );

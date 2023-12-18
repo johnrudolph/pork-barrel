@@ -23,24 +23,35 @@ class RoundEnded extends Event
         $round = Round::find($this->round_id);
         $round->status = 'complete';
         $round->save();
-    }
 
-    public function fired(RoundState $state)
-    {
-        $players = collect($state->gameState()->players);
+        $state = $this->state(RoundState::class);
+        $players = collect($state->game()->players);
 
-        $players->each(fn ($player_id) => $state->actionsWonBy($player_id)
+        $state->actions_from_previous_rounds_that_resolve_this_round
+            ->filter(fn ($a) => $a['hook'] === $state::HOOKS['on_round_ended'])
+            ->each(fn ($a) => $a['bureaucrat']::handleInFutureRound(
+                PlayerState::load($a['player_id']),
+                RoundState::load($this->round_id),
+                $a['amount'],
+                $a['data'],
+            ));
+
+        $state->actions_awarded
             ->reject(fn ($a) => collect($state->blocked_actions)->contains($a))
             ->each(fn ($action) => ActionAppliedAtEndOfRound::fire(
                 round_id: $state->id,
-                player_id: $player_id,
+                player_id: $action['player_id'],
                 amount: $action['amount'],
                 bureaucrat: $action['bureaucrat'],
                 data: $action['data'],
-            )));
+            ));
 
-        $players->each(fn ($player_id) => PlayerState::load($player_id)->endRound($this->round_id));
+        $state->round_modifier::handleOnRoundEnd($state);
 
-        $state->round_modifier::applyToRoundStateAtEndOfRound($state);
+        $state->game()->players->each(fn ($p) => PlayerRoundEnded::fire(
+            player_id: $p,
+            round_id: $this->round_id,
+        )
+        );
     }
 }
