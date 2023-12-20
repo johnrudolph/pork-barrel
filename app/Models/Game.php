@@ -28,6 +28,11 @@ class Game extends Model
         return $this->hasMany(Round::class);
     }
 
+    public function headlines()
+    {
+        return $this->hasMany(Headline::class);
+    }
+
     public function state()
     {
         return GameState::load($this->id);
@@ -39,8 +44,8 @@ class Game extends Model
 
         RoundStarted::fire(
             game_id: $this->id,
-            round_id: $this->state()->rounds[0],
-            bureaucrats: Bureaucrat::all()->random(5)->toArray(),
+            round_id: $this->state()->round_ids[0],
+            bureaucrats: Bureaucrat::all()->random(4)->toArray(),
             round_modifier: RoundModifier::all()->random(),
         );
     }

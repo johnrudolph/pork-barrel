@@ -107,6 +107,8 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
     $this->assertTrue(collect($this->game->currentRound()->state()->blocked_actions)
         ->contains(BailoutBunny::class));
 
+    $this->assertFalse($this->daniel->state()->has_bailout);
+
     $this->game->currentRound()->endRound();
     Verbs::commit();
 
@@ -115,7 +117,8 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
     $this->assertDatabaseHas('headlines', [
         'round_id' => $this->game->rounds->first()->id,
         'is_round_modifier' => false,
-        'headline' => 'The Obstruction Ox blocked Bailout Bunny from taking an action.',
+        'headline' => 'Bailout Bunny Ousted',
+        'description' => 'The Obstructionist Ox blocked Bailout Bunny from taking action this round.',
     ]);
 });
 

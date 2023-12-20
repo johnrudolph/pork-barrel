@@ -3,6 +3,7 @@
 namespace App\Bureaucrats;
 
 use App\Events\PlayerSpentMoney;
+use App\Models\Headline;
 use App\Models\Player;
 use App\Models\Round;
 use App\States\PlayerState;
@@ -45,6 +46,14 @@ class Watchdog extends Bureaucrat
                 amount: 5,
                 activity_feed_description: 'Fined by the Watchdog. Bribery is not tolarated around these parts.',
             );
+
+            // @todo maybe this belongs in a specific event
+            Headline::create([
+                'round_id' => $round->id,
+                'game_id' => $round->game()->id,
+                'headline' => 'So and so industry caught bribing officials!',
+                'description' => 'In a shocking discovery, the Watchdog has exposed so and so for bribing bureaucrat. They have been fined.',
+            ]);
         }
     }
 }

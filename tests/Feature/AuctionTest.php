@@ -88,13 +88,29 @@ it('records offers made to the state', function () {
     $this->assertEquals(
         1,
         collect($round->state()->offers)
-            ->filter(fn ($o) => $o['player_id'] === $this->john->id
-                && $o['bureaucrat'] === $round->state()->bureaucrats[0]
-                && $o['original_amount'] === 1
+            ->filter(fn ($o) => $o->player_id === $this->john->id
+                && $o->bureaucrat === $round->state()->bureaucrats[0]
+                && $o->amount_offered === 1
             )
             ->count()
     );
 });
+
+// it('records offers made to the state', function () {
+//     $round = $this->game->currentRound();
+
+//     $this->john->submitOffer($round, $round->state()->bureaucrats[0], 1);
+
+//     $this->assertEquals(
+//         1,
+//         collect($round->state()->offers)
+//             ->filter(fn ($o) => $o['player_id'] === $this->john->id
+//                 && $o['bureaucrat'] === $round->state()->bureaucrats[0]
+//                 && $o['original_amount'] === 1
+//             )
+//             ->count()
+//     );
+// });
 
 it('records which player won each action', function () {
     $round = $this->game->currentRound();

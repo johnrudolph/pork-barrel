@@ -16,7 +16,6 @@ class Headlines extends Component
     public function mount()
     {
         $this->headline = $this->game->currentRound()->state()->round_modifier;
-
         $this->other_headlines = $this->game->headlines;
     }
 

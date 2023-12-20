@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\DTOs\OfferDTO;
 use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -22,13 +23,14 @@ class OfferSubmitted extends Event
 
     public function applyToRoundState(RoundState $state)
     {
-        $state->offers->push([
-            'player_id' => $this->player_id,
-            'bureaucrat' => $this->bureaucrat,
-            'original_amount' => $this->amount,
-            'modified_amount' => $this->amount,
-            'data' => $this->data,
-        ]);
+        $state->offers->push(new OfferDTO(
+            player_id: $this->player_id,
+            round_id: $this->round_id,
+            bureaucrat: $this->bureaucrat,
+            amount_offered: $this->amount,
+            modified_amount: $this->amount,
+            data: $this->data,
+        ));
     }
 
     public function handle()

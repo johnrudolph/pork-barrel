@@ -16,6 +16,8 @@ class ActionWasBlocked extends Event
 
     public $headline;
 
+    public $description;
+
     public function applyToRoundState(RoundState $state)
     {
         $state->blocked_actions[] = $this->bureaucrat;
@@ -25,7 +27,9 @@ class ActionWasBlocked extends Event
     {
         Headline::create([
             'round_id' => $this->round_id,
+            'game_id' => $this->state(RoundState::class)->game()->id,
             'headline' => $this->headline,
+            'description' => $this->description,
         ]);
     }
 }

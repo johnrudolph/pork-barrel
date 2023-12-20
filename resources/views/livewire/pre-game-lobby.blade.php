@@ -9,6 +9,9 @@
                         Waiting for players to join
                     </h2>
                     <p class="mx-auto mt-6 max-w-xl text-lg leading-8">
+                        Game code: {{ $this->game->code }}
+                    </p>
+                    <p class="mx-auto mt-6 max-w-xl text-lg leading-8">
                         Who's in: {{ $this->game->players->map(fn($p) => $p->user->name)->join(', ') }}
                     </p>
                     <div class="mt-10 flex items-center justify-center gap-x-6">
@@ -16,7 +19,7 @@
                         <button 
                             type="button" 
                             wire:click="startGame" 
-                            class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            class="rounded-md bg-teal text-white px-3.5 py-2.5 text-sm font-semibold shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                             Everyone's here, let's start
                         </button>

@@ -10,7 +10,11 @@ class PreGameLobby extends Component
 
     public function startGame()
     {
-        $this->game->start();
+        try {
+            $this->game->start();
+        } catch (\Throwable $th) {
+            //
+        }
     }
 
     public function render()

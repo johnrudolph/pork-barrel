@@ -3,12 +3,13 @@
 namespace App\Livewire;
 
 use App\Models\Game;
-use App\Models\Player;
 use App\Models\Round;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
+use App\Models\Player;
 use Livewire\Component;
+use App\Events\RoundEnded;
 use Thunk\Verbs\Facades\Verbs;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Auth;
 
 class AuctionView extends Component
 {
@@ -46,8 +47,8 @@ class AuctionView extends Component
         })->toArray();
 
         $this->offers = collect($round->state()->offers)
-            ->filter(fn ($o) => $o['player_id'] === $this->player()->id)
-            ->mapWithKeys(fn ($o) => [$o['bureaucrat'] => $o['amount']])
+            ->filter(fn ($o) => $o->player_id === $this->player()->id)
+            ->mapWithKeys(fn ($o) => [$o->bureaucrat => $o->modified_amount])
             ->toArray();
     }
 
@@ -82,7 +83,7 @@ class AuctionView extends Component
         ) {
             $this->game->currentRound()->endAuctionPhase();
             Verbs::commit();
-            $this->game->currentRound()->endRound();
+            RoundEnded::fire(round_id: $this->game->currentRound()->id);
             Verbs::commit();
             $this->game->currentRound()->next()->start();
         }

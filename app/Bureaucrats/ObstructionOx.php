@@ -38,7 +38,8 @@ class ObstructionOx extends Bureaucrat
         ActionWasBlocked::fire(
             round_id: $round->id,
             bureaucrat: $data['bureaucrat'],
-            headline: 'The Obstruction Ox blocked '.$data['bureaucrat']::NAME.' from taking an action.'
+            headline: $data['bureaucrat']::NAME.' Ousted',
+            description: 'The Obstructionist Ox blocked '.$data['bureaucrat']::NAME.' from taking action this round.'
         );
     }
 }

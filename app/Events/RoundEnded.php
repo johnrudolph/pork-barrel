@@ -37,7 +37,7 @@ class RoundEnded extends Event
             ));
 
         $state->actions_awarded
-            ->reject(fn ($a) => collect($state->blocked_actions)->contains($a))
+            ->reject(fn ($a) => collect($state->blocked_actions)->contains($a['bureaucrat']))
             ->each(fn ($action) => ActionAppliedAtEndOfRound::fire(
                 round_id: $state->id,
                 player_id: $action['player_id'],

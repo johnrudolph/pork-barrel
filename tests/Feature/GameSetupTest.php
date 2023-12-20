@@ -37,7 +37,7 @@ it('creates a game and player when a game is created', function () {
     );
 
     $this->assertEquals(
-        $game->state()->players()->first()->id,
+        $game->state()->playerStates()->first()->id,
         Player::first()->id,
     );
 });

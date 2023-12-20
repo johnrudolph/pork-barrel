@@ -30,10 +30,10 @@ class AuctionEnded extends Event
                 ->each(fn ($action) => ActionAwardedToPlayer::fire(
                     player_id: $player_id,
                     round_id: $this->round_id,
-                    activity_feed_description: $action['bureaucrat']::activityFeedDescription($action['data'] ?? null),
-                    bureaucrat: $action['bureaucrat'],
-                    data: $action['data'] ?? null,
-                    amount: $action['original_amount'],
+                    activity_feed_description: $action->bureaucrat::activityFeedDescription($action->data ?? null),
+                    bureaucrat: $action->bureaucrat,
+                    data: $action->data ?? null,
+                    amount: $action->amount_offered,
                 )
                 )
             );
@@ -42,14 +42,14 @@ class AuctionEnded extends Event
     public function actionsWonBy($player_id, $round)
     {
         return collect($round->offers)
-            ->filter(fn ($o) => $o['player_id'] === $player_id)
+            ->filter(fn ($o) => $o->player_id === $player_id)
             ->filter(function ($offer) use ($round) {
                 $top_offer = collect($round->offers)
-                    ->filter(fn ($o) => $o['bureaucrat'] === $offer['bureaucrat'])
-                    ->max(fn ($o) => $o['modified_amount']);
+                    ->filter(fn ($o) => $o->bureaucrat === $offer->bureaucrat)
+                    ->max(fn ($o) => $o->modified_amount);
 
-                return $offer['modified_amount'] >= $top_offer
-                    && $offer['modified_amount'] > 0;
+                return $offer->modified_amount >= $top_offer
+                    && $offer->modified_amount > 0;
             });
     }
 }

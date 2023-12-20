@@ -18,7 +18,6 @@ class BailoutBunny extends Bureaucrat
 
     const EFFECT = 'If you ever have 0 money after an auction, you will receive $10.';
 
-    // @todo this is the concept for how we implement rules on the form
     public static function rules(): array
     {
         return [

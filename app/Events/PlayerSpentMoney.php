@@ -18,7 +18,11 @@ class PlayerSpentMoney extends Event
 
     public int $amount;
 
-    // @todo: doesn't really matter but this could be an array on the state
+    public function apply(PlayerState $state)
+    {
+        $state->money -= min($this->amount, $state->money);
+    }
+
     public function handle()
     {
         MoneyLogEntry::create([
@@ -27,10 +31,5 @@ class PlayerSpentMoney extends Event
             'amount' => -$this->amount,
             'description' => $this->activity_feed_description,
         ]);
-    }
-
-    public function apply(PlayerState $state)
-    {
-        $state->money -= min($this->amount, $state->money);
     }
 }

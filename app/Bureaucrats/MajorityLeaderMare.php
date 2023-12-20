@@ -33,8 +33,8 @@ class MajorityLeaderMare extends Bureaucrat
     public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         $round->offers = $round->offers->transform(function ($o) use ($player) {
-            if ($o['player_id'] === $player->id) {
-                $o['modified_amount'] += 1;
+            if ($o->player_id === $player->id) {
+                $o->modified_amount += 1;
             }
 
             return $o;

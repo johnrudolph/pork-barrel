@@ -9,6 +9,7 @@ use Glhd\Bits\Snowflake;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Thunk\Verbs\Facades\Verbs;
 
 class InitializeGame extends Component
 {
@@ -32,6 +33,8 @@ class InitializeGame extends Component
             player_id: Snowflake::make()->id(),
             user_id: $this->user()->id,
         );
+
+        Verbs::commit();
 
         return redirect()->route('games.show', ['game' => $event->game_id]);
     }

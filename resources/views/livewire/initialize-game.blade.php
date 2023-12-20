@@ -21,7 +21,7 @@
                         <div x-data="{ open: false }">
                             <button 
                                 x-on:click="open = ! open"
-                                class="text-sm font-semibold leading-6 text-salmon"
+                                class="text-sm font-semibold leading-6 text-teal"
                             >
                                 Join Game
                                 <span aria-hidden="true">→</span>
@@ -32,7 +32,7 @@
                                 class="absolute z-10 w-screen max-w-md px-4 mt-3 transform -translate-x-1/2 left-1/2 sm:px-0"
                             >
                                 <form>
-                                    <div class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+                                    <div class="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-teal">
                                         <div class="relative grid gap-8 bg-white p-7 lg:grid-cols-2">
                                             <div class="space-y-4">
                                                 <div>
