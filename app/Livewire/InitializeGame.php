@@ -9,7 +9,6 @@ use Glhd\Bits\Snowflake;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Thunk\Verbs\Facades\Verbs;
 
 class InitializeGame extends Component
 {

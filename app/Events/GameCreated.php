@@ -3,11 +3,10 @@
 namespace App\Events;
 
 use App\Models\Game;
-use Thunk\Verbs\Event;
-use Glhd\Bits\Snowflake;
 use App\States\GameState;
-use App\Events\PlayerJoinedGame;
+use Glhd\Bits\Snowflake;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class GameCreated extends Event
 {

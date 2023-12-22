@@ -3,7 +3,6 @@
 namespace App\States;
 
 use Thunk\Verbs\State;
-use App\States\GameState;
 
 class PlayerState extends State
 {
@@ -20,7 +19,7 @@ class PlayerState extends State
     public $status = 'auction';
 
     public $current_round_id;
-    
+
     public $current_round_number;
 
     public function game(): GameState

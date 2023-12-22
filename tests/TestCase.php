@@ -4,7 +4,6 @@ namespace Tests;
 
 use App\Bureaucrats\Bureaucrat;
 use App\Events\AuctionEnded;
-use App\Events\RoundEnded;
 use App\Events\RoundStarted;
 use App\RoundModifiers\RoundModifier;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;

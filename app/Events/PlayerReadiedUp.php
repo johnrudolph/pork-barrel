@@ -2,12 +2,12 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
-use App\States\GameState;
-use App\States\PlayerState;
 use App\Bureaucrats\Bureaucrat;
 use App\RoundModifiers\RoundModifier;
+use App\States\GameState;
+use App\States\PlayerState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class PlayerReadiedUp extends Event
 {

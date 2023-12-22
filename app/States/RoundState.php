@@ -35,8 +35,7 @@ class RoundState extends State
 
     public function actionsWonBy(int $player_id)
     {
-        return $this->offers->filter(fn ($o) => 
-            $o->awarded && $o->player_id === $player_id
+        return $this->offers->filter(fn ($o) => $o->awarded && $o->player_id === $player_id
         );
     }
 }

@@ -4,15 +4,12 @@ namespace App\Livewire;
 
 use App\Events\AuctionEnded;
 use App\Events\PlayerAwaitingResults;
-use App\Events\PlayerReadiedUp;
 use App\Models\Game;
-use App\Models\Round;
 use App\Models\Player;
-use Livewire\Component;
-use App\Events\RoundEnded;
-use Thunk\Verbs\Facades\Verbs;
-use Livewire\Attributes\Computed;
+use App\Models\Round;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class AuctionView extends Component
 {

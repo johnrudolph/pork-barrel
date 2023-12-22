@@ -5,10 +5,10 @@ namespace App\Livewire;
 use App\Events\PlayerReadiedUp;
 use App\Models\Game;
 use App\Models\Player;
-use Livewire\Component;
 use App\States\RoundState;
-use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class AwaitingNextRoundView extends Component
 {
@@ -51,7 +51,7 @@ class AwaitingNextRoundView extends Component
     {
         PlayerReadiedUp::fire(player_id: $this->player()->id, game_id: $this->game->id);
     }
-    
+
     public function render()
     {
         return view('livewire.awaiting-next-round-view');

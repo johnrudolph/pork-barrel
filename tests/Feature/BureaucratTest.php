@@ -11,7 +11,6 @@ use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
-use App\Events\RoundEnded;
 use App\Events\RoundStarted;
 use App\Models\Game;
 use App\Models\Player;

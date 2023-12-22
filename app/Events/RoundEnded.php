@@ -37,8 +37,7 @@ class RoundEnded extends Event
             ));
 
         $state->offers
-            ->filter(fn ($o) => 
-                $o->awarded === true 
+            ->filter(fn ($o) => $o->awarded === true
                 && ! $o->is_blocked
             )
             ->each(fn ($action) => ActionAppliedAtEndOfRound::fire(

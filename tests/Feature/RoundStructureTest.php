@@ -1,17 +1,17 @@
 <?php
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
-use Glhd\Bits\Snowflake;
-use App\Events\RoundEnded;
-use App\Events\GameCreated;
-use App\Events\AuctionEnded;
-use Thunk\Verbs\Facades\Verbs;
 use App\Bureaucrats\GamblinGoat;
+use App\Events\AuctionEnded;
+use App\Events\GameCreated;
+use App\Events\PlayerAwaitingResults;
 use App\Events\PlayerJoinedGame;
 use App\Events\PlayerReadiedUp;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\User;
+use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
@@ -80,6 +80,7 @@ it('sets the appropriate statuses and current_round_ids as rounds proceed', func
     $this->assertTrue($this->john->state()->status === 'auction');
 
     $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
+    PlayerAwaitingResults::fire(player_id: $this->john->id);
     Verbs::commit();
 
     $this->assertTrue($this->game->currentRound()->state()->status === 'auction');

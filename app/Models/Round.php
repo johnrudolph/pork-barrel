@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Bureaucrats\Bureaucrat;
-use App\Events\RoundEnded;
 use App\Events\RoundStarted;
 use App\RoundModifiers\RoundModifier;
 use App\States\RoundState;
