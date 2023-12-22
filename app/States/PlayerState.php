@@ -22,6 +22,8 @@ class PlayerState extends State
 
     public $current_round_number;
 
+    public $industry;
+
     public function game(): GameState
     {
         return GameState::load($this->game_id);

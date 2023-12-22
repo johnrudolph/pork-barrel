@@ -67,5 +67,6 @@
             </div>
         </div>
     </div>
+    <livewire:scoreboard :game="$game" :key="'scoreboard'"/>
     <livewire:money-log :game="$game" :key="'log'"/>
 </div>
