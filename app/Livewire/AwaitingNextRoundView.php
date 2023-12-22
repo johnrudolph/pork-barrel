@@ -2,13 +2,16 @@
 
 namespace App\Livewire;
 
-use App\Events\PlayerReadiedUp;
 use App\Models\Game;
+use App\Models\Round;
 use App\Models\Player;
-use App\States\RoundState;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
+use App\Events\MyEvent;
 use Livewire\Component;
+use App\States\RoundState;
+use Livewire\Attributes\On;
+use App\Events\PlayerReadiedUp;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Auth;
 
 class AwaitingNextRoundView extends Component
 {
@@ -16,7 +19,28 @@ class AwaitingNextRoundView extends Component
 
     public Game $game;
 
+    public Round $round;
+
     public $offers_made;
+
+
+
+
+    public $number_of_offers_submitted = 0;
+
+    #[On('echo:rounds.{round.id},MyEvent')]
+    public function showNumberOfOffers()
+    {
+        $this->number_of_offers_submitted += 1;
+    }
+
+    public function example()
+    {
+        MyEvent::dispatch($this->game->currentRound());
+    }
+
+
+
 
     #[Computed]
     public function player()
@@ -37,6 +61,8 @@ class AwaitingNextRoundView extends Component
 
     public function initializeProperties()
     {
+        $this->round = $this->game->currentRound();
+    
         $this->offers_made = $this->round()->offers
             ->filter(fn ($o) => $o->player_id === $this->player()->id)
             ->map(fn ($o) => [

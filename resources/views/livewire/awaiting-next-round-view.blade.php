@@ -1,6 +1,13 @@
 <div wire:poll>
     <div class="my-4 max-w-7xl mx-auto sm:px-6 lg:px-8 overflow-hidden flex flex-row justify-between">
         <p class="pl-8">Round {{ $this->round()->round_number }} of 8</p>
+        <p> {{ $this->number_of_offers_submitted }} </p>
+        <button 
+            wire:click="example"
+            class="rounded-md bg-teal mr-4 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+            example
+        </button>
         @if($this->round()->status === 'complete')
             <button 
                 wire:click="readyUp"
