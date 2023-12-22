@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Industries\Industry;
 use App\Models\Player;
 use App\Models\User;
 use App\States\GameState;
@@ -29,6 +30,7 @@ class PlayerJoinedGame extends Event
         $state->game_id = $this->game_id;
         $state->current_round_id = $this->state(GameState::class)->round_ids->first();
         $state->current_round_number = 1;
+        $state->industry = Industry::unusedRandomIndustry($this->state(GameState::class));
     }
 
     public function handle()
