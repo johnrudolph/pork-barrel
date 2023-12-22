@@ -2,13 +2,14 @@
 
 namespace App\Events;
 
-use App\Industries\Industry;
-use App\Models\Player;
 use App\Models\User;
-use App\States\GameState;
-use App\States\PlayerState;
-use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use App\Models\Player;
 use Thunk\Verbs\Event;
+use App\States\GameState;
+use App\Events\GameUpdated;
+use App\States\PlayerState;
+use App\Industries\Industry;
+use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class PlayerJoinedGame extends Event
 {
@@ -44,5 +45,7 @@ class PlayerJoinedGame extends Event
         $user = User::find($this->user_id);
         $user->current_game_id = $this->game_id;
         $user->save();
+
+        GameUpdated::dispatch($this->game_id);
     }
 }

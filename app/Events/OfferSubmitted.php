@@ -6,7 +6,6 @@ use App\DTOs\OfferDTO;
 use Thunk\Verbs\Event;
 use App\States\RoundState;
 use App\States\PlayerState;
-use App\Events\ExampleEvent;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class OfferSubmitted extends Event
@@ -52,7 +51,5 @@ class OfferSubmitted extends Event
                 $a['amount'],
                 $a['data'],
             ));
-
-        ExampleEvent::dispatch();
     }
 }

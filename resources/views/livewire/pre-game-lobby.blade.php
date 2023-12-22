@@ -1,4 +1,4 @@
-<div wire:poll>
+<div>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg bg-salmon border border-color-purple text-purple">
@@ -12,10 +12,10 @@
                         Game code: {{ $this->game->code }}
                     </p>
                     <p class="mx-auto mt-6 max-w-xl text-lg leading-8">
-                        Who's in: {{ $this->game->players->map(fn($p) => $p->user->name)->join(', ') }}
+                        Who's in: {{ collect($this->players)->implode(', ') }}
                     </p>
                     <div class="mt-10 flex items-center justify-center gap-x-6">
-                        @if ($this->game->players->count() > 1)
+                        @if (collect($this->players)->count() > 1)
                         <button 
                             type="button" 
                             wire:click="startGame" 
