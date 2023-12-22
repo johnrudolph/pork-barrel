@@ -30,7 +30,6 @@ class RoundSeeded extends Event
         $state->bureaucrats = collect();
         $state->actions_from_previous_rounds_that_resolve_this_round = collect();
         $state->blocked_actions = collect();
-        $state->actions_awarded = collect();
     }
 
     public function handle()

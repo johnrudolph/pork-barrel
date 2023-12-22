@@ -19,12 +19,6 @@ it('creates a game and player when a game is created', function () {
         game_id: Snowflake::make()->id(),
     );
 
-    PlayerJoinedGame::fire(
-        game_id: $event->game_id,
-        player_id: Snowflake::make()->id(),
-        user_id: $user->id,
-    );
-
     Verbs::commit();
 
     $game = Game::find($event->game_id);

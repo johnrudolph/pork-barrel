@@ -35,5 +35,11 @@ class GameCreated extends Event
             round_id: Snowflake::make()->id()
         )
         );
+
+        PlayerJoinedGame::fire(
+            game_id: $this->game_id,
+            player_id: Snowflake::make()->id(),
+            user_id: $this->user_id,
+        );
     }
 }

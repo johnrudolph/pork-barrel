@@ -28,6 +28,7 @@ class Watchdog extends Bureaucrat
                 ->reject(fn ($b) => $b === static::class)
                 ->mapWithKeys(fn ($b) => [$b => $b::NAME]),
             'player' => $round->game->players
+                ->reject(fn ($p) => $p->id === $player->id)
                 ->mapWithKeys(fn ($p) => [$p->id => $p->user->name])
                 ->toArray(),
         ];
@@ -36,10 +37,12 @@ class Watchdog extends Bureaucrat
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
         if (
-            $round->actions_awarded->filter(fn ($a) => $a['bureaucrat'] === $data['bureaucrat']
-                && $a['player_id'] === $data['player']
+            $round->offers->filter(fn ($o) => $o->awarded === true
+                && $o->bureaucrat === $data['bureaucrat']
+                && $o->player_id === $data['player']
             )
         ) {
+            // @todo: something is wrong here. $data['player'] is null
             PlayerSpentMoney::fire(
                 player_id: $data['player'],
                 round_id: $round->id,
@@ -47,7 +50,6 @@ class Watchdog extends Bureaucrat
                 activity_feed_description: 'Fined by the Watchdog. Bribery is not tolarated around these parts.',
             );
 
-            // @todo maybe this belongs in a specific event
             Headline::create([
                 'round_id' => $round->id,
                 'game_id' => $round->game()->id,

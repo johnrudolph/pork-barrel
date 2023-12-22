@@ -1,5 +1,5 @@
 <div>
-    <div class="mt-8">
+    <div>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="px-6 py-8 sm:px-6 sm:py-8 lg:px-8 bg-teal text-white">

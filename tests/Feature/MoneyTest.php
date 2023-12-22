@@ -68,9 +68,6 @@ it('gives players 10 money to start each round', function () {
     $this->assertEquals(10, $this->john->state()->money);
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-
-    Verbs::commit();
-    $this->game->currentRound()->endRound();
     Verbs::commit();
     $this->game->currentRound()->next()->start();
     Verbs::commit();
@@ -84,9 +81,6 @@ it('creates money log entries when players win auctions', function () {
     Verbs::commit();
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
-
-    $this->game->currentRound()->endRound();
     Verbs::commit();
 
     $johns_spending = MoneyLogEntry::where('player_id', $this->john->id)

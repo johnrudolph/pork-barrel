@@ -11,17 +11,11 @@ class RoundState extends State
 
     public string $status = 'upcoming';
 
-    public string $phase = '';
-
     public int $round_number;
 
     public Collection $bureaucrats;
 
     public Collection $offers;
-
-    public Collection $actions_awarded;
-
-    public Collection $blocked_actions;
 
     public Collection $actions_from_previous_rounds_that_resolve_this_round;
 
@@ -37,5 +31,11 @@ class RoundState extends State
     public function game(): GameState
     {
         return GameState::load($this->game_id);
+    }
+
+    public function actionsWonBy(int $player_id)
+    {
+        return $this->offers->filter(fn ($o) => $o->awarded && $o->player_id === $player_id
+        );
     }
 }

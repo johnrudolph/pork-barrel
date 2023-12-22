@@ -24,6 +24,13 @@ class PlayerJoinedGame extends Event
         $state->players->push($this->player_id);
     }
 
+    public function applyToPlayerState(PlayerState $state)
+    {
+        $state->game_id = $this->game_id;
+        $state->current_round_id = $this->state(GameState::class)->round_ids->first();
+        $state->current_round_number = 1;
+    }
+
     public function handle()
     {
         Player::create([

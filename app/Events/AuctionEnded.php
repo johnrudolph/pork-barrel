@@ -37,6 +37,8 @@ class AuctionEnded extends Event
                 )
                 )
             );
+
+        RoundEnded::fire(round_id: $this->round_id);
     }
 
     public function actionsWonBy($player_id, $round)

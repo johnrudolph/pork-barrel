@@ -11,7 +11,6 @@ use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
-use App\Events\RoundEnded;
 use App\Events\RoundStarted;
 use App\Models\Game;
 use App\Models\Player;
@@ -74,8 +73,6 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
-    RoundEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     $amount_earned = $this->john->state()->money;
 
@@ -104,13 +101,14 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
 
-    $this->assertTrue(collect($this->game->currentRound()->state()->blocked_actions)
-        ->contains(BailoutBunny::class));
+    $this->assertTrue(
+        $this->game->currentRound()->state()->offers
+            ->filter(fn ($o) => $o->bureaucrat === BailoutBunny::class)
+            ->first()
+            ->is_blocked === true
+    );
 
     $this->assertFalse($this->daniel->state()->has_bailout);
-
-    $this->game->currentRound()->endRound();
-    Verbs::commit();
 
     $this->assertEquals(0, $this->daniel->state()->money);
 
@@ -135,11 +133,6 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
     Verbs::commit();
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
-
-    $this->assertEquals(0, $this->john->state()->money);
-
-    $this->game->currentRound()->endRound();
     Verbs::commit();
 
     $this->assertEquals(10, $this->john->state()->money);
@@ -173,8 +166,6 @@ it('fines a player if they were caught by the watchdog', function () {
     Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
-    RoundEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     $this->assertEquals(4, $this->john->state()->money);
 
@@ -199,8 +190,6 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
-    $this->game->currentRound()->endRound();
-    Verbs::commit();
 
     RoundStarted::fire(
         game_id: $this->game->id,
@@ -220,8 +209,6 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
 
     Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
-    $this->game->currentRound()->endRound();
     Verbs::commit();
 
     $this->assertDatabaseHas('money_log_entries', [
@@ -285,8 +272,6 @@ it('gives you 10 money if you make no offers after getting the minority leader m
     Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
-    $this->game->currentRound()->endRound();
-    Verbs::commit();
 
     RoundStarted::fire(
         game_id: $this->game->id,
@@ -298,8 +283,6 @@ it('gives you 10 money if you make no offers after getting the minority leader m
 
     Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
-    $this->game->currentRound()->endRound();
     Verbs::commit();
 
     $this->assertTrue($this->game->currentRound()->state()->

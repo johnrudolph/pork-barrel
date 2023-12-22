@@ -36,14 +36,16 @@ class RoundEnded extends Event
                 $a['data'],
             ));
 
-        $state->actions_awarded
-            ->reject(fn ($a) => collect($state->blocked_actions)->contains($a['bureaucrat']))
+        $state->offers
+            ->filter(fn ($o) => $o->awarded === true
+                && ! $o->is_blocked
+            )
             ->each(fn ($action) => ActionAppliedAtEndOfRound::fire(
                 round_id: $state->id,
-                player_id: $action['player_id'],
-                amount: $action['amount'],
-                bureaucrat: $action['bureaucrat'],
-                data: $action['data'],
+                player_id: $action->player_id,
+                amount: $action->modified_amount,
+                bureaucrat: $action->bureaucrat,
+                data: $action->data,
             ));
 
         $state->round_modifier::handleOnRoundEnd($state);

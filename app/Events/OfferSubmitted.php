@@ -10,6 +10,7 @@ use Thunk\Verbs\Event;
 
 class OfferSubmitted extends Event
 {
+    #[StateId(PlayerState::class)]
     public int $player_id;
 
     #[StateId(RoundState::class)]
@@ -31,6 +32,11 @@ class OfferSubmitted extends Event
             modified_amount: $this->amount,
             data: $this->data,
         ));
+    }
+
+    public function applyToPlayerState(PlayerState $state)
+    {
+        //
     }
 
     public function handle()

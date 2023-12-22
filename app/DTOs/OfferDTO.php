@@ -15,7 +15,9 @@ class OfferDTO implements SerializedByVerbs
         public string $bureaucrat,
         public int $amount_offered = 0,
         public int $modified_amount = 0,
-        public ?array $data = null
+        public ?array $data = null,
+        public bool $awarded = false,
+        public bool $is_blocked = false,
     ) {
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Bureaucrats\Bureaucrat;
-use App\Events\RoundEnded;
 use App\Events\RoundStarted;
 use App\RoundModifiers\RoundModifier;
 use App\States\RoundState;
@@ -50,10 +49,5 @@ class Round extends Model
             bureaucrats: Bureaucrat::all()->random(5)->toArray(),
             round_modifier: RoundModifier::all()->random(),
         );
-    }
-
-    public function endRound()
-    {
-        RoundEnded::fire(round_id: $this->id);
     }
 }

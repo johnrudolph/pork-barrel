@@ -19,6 +19,12 @@ class GameView extends Component
         return Auth::user();
     }
 
+    #[Computed]
+    public function player()
+    {
+        return $this->user()->currentPlayer();
+    }
+
     public function mount($game)
     {
         $this->game = Game::find($game);
