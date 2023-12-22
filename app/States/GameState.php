@@ -37,6 +37,6 @@ class GameState extends State
 
     public function nextRound(): RoundState
     {
-        return RoundState::load($this->round_ids[$this->current_round_number]) ?? null;
+        return RoundState::load($this->round_ids->toArray()[$this->current_round_number]) ?? null;
     }
 }

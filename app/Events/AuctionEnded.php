@@ -2,10 +2,11 @@
 
 namespace App\Events;
 
-use App\States\PlayerState;
-use App\States\RoundState;
-use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
+use App\Events\RoundEnded;
+use App\States\RoundState;
+use App\States\PlayerState;
+use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class AuctionEnded extends Event
 {
@@ -37,6 +38,8 @@ class AuctionEnded extends Event
                 )
                 )
             );
+        
+        RoundEnded::fire(round_id: $this->round_id);
     }
 
     public function actionsWonBy($player_id, $round)

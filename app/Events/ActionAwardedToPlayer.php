@@ -21,16 +21,18 @@ class ActionAwardedToPlayer extends Event
 
     public int $amount;
 
-    public ?array $data = null;
+    public ?array $data;
 
     public function applyToRound(RoundState $state)
     {
-        $state->actions_awarded->push([
-            'player_id' => $this->player_id,
-            'bureaucrat' => $this->bureaucrat,
-            'amount' => $this->amount,
-            'data' => $this->data,
-        ]);
+        $state->offers = $state->offers
+            ->transform(function ($o) {
+                if ($o->player_id === $this->player_id && $o->bureaucrat === $this->bureaucrat) {
+                    $o->awarded = true;
+                }
+
+                return $o;
+            });
     }
 
     public function handle()

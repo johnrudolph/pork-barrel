@@ -51,9 +51,4 @@ class Round extends Model
             round_modifier: RoundModifier::all()->random(),
         );
     }
-
-    public function endRound()
-    {
-        RoundEnded::fire(round_id: $this->id);
-    }
 }

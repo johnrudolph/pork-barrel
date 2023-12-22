@@ -2,6 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Events\AuctionEnded;
+use App\Events\PlayerAwaitingResults;
+use App\Events\PlayerReadiedUp;
 use App\Models\Game;
 use App\Models\Round;
 use App\Models\Player;
@@ -29,6 +32,12 @@ class AuctionView extends Component
         return Auth::user()->currentPlayer();
     }
 
+    #[Computed]
+    public function round()
+    {
+        return $this->game->currentRound();
+    }
+
     public function mount(Player $player)
     {
         $this->initializeProperties($player, $this->game->currentRound());
@@ -45,11 +54,6 @@ class AuctionView extends Component
 
             return [$b::SLUG => ['class' => $b, 'offer' => 0, 'data' => $data_array ?? null]];
         })->toArray();
-
-        $this->offers = collect($round->state()->offers)
-            ->filter(fn ($o) => $o->player_id === $this->player()->id)
-            ->mapWithKeys(fn ($o) => [$o->bureaucrat => $o->modified_amount])
-            ->toArray();
     }
 
     public function increment($bureacrat_slug)
@@ -71,21 +75,19 @@ class AuctionView extends Component
     public function submit()
     {
         collect($this->bureaucrats)
+            ->filter(fn ($b) => $b['offer'] > 0)
             ->each(fn ($b) => $this->player
                 ->submitOffer($this->game->currentRound(), $b['class'], $b['offer'], $b['data'] ?? null)
             );
 
+        PlayerAwaitingResults::fire(player_id: $this->player()->id);
+
         if (
-            collect($this->game->currentRound()->state()->offers)
-                ->pluck('player_id')
-                ->unique()
+            $this->game->state()->playerStates()
+                ->filter(fn ($p) => $p->status === 'waiting')
                 ->count() === $this->game->players->count()
         ) {
-            $this->game->currentRound()->endAuctionPhase();
-            Verbs::commit();
-            RoundEnded::fire(round_id: $this->game->currentRound()->id);
-            Verbs::commit();
-            $this->game->currentRound()->next()->start();
+            AuctionEnded::fire(round_id: $this->round()->id);
         }
 
         $this->initializeProperties($this->player(), $this->game->currentRound());

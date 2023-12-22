@@ -20,8 +20,6 @@ abstract class TestCase extends BaseTestCase
             ->each(function ($round_number) use ($game) {
                 AuctionEnded::fire(round_id: $game->state()->round_ids[$round_number - 1]);
                 Verbs::commit();
-                RoundEnded::fire(round_id: $game->state()->round_ids[$round_number - 1]);
-                Verbs::commit();
 
                 RoundStarted::fire(
                     game_id: $game->id,
@@ -35,8 +33,6 @@ abstract class TestCase extends BaseTestCase
             });
 
         AuctionEnded::fire(round_id: $game->state()->round_ids[7]);
-        Verbs::commit();
-        RoundEnded::fire(round_id: $game->state()->round_ids[7]);
         Verbs::commit();
 
         $game->end();

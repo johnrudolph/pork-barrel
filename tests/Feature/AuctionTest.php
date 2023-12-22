@@ -54,7 +54,6 @@ beforeEach(function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [
-            GamblinGoat::class,
             BailoutBunny::class,
             MinorityLeaderMink::class,
             MajorityLeaderMare::class,
@@ -71,9 +70,9 @@ beforeEach(function () {
     $this->daniel = Player::get()->last();
 });
 
-it('provides 5 options to bid on in a round', function () {
+it('provides 4 options to bid on in a round', function () {
     $this->assertEquals(
-        5,
+        4,
         collect($this->game->currentRound()->state()->bureaucrats)
             ->unique()
             ->count()
@@ -96,22 +95,6 @@ it('records offers made to the state', function () {
     );
 });
 
-// it('records offers made to the state', function () {
-//     $round = $this->game->currentRound();
-
-//     $this->john->submitOffer($round, $round->state()->bureaucrats[0], 1);
-
-//     $this->assertEquals(
-//         1,
-//         collect($round->state()->offers)
-//             ->filter(fn ($o) => $o['player_id'] === $this->john->id
-//                 && $o['bureaucrat'] === $round->state()->bureaucrats[0]
-//                 && $o['original_amount'] === 1
-//             )
-//             ->count()
-//     );
-// });
-
 it('records which player won each action', function () {
     $round = $this->game->currentRound();
 
@@ -124,12 +107,10 @@ it('records which player won each action', function () {
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     Verbs::commit();
 
-    $johns_actions = $round->state()->actions_awarded
-        ->filter(fn ($a) => $a['player_id'] === $this->john->id)
+    $johns_actions = $round->state()->actionsWonBy($this->john->id)
         ->pluck('bureaucrat');
 
-    $daniels_actions = $round->state()->actions_awarded
-        ->filter(fn ($a) => $a['player_id'] === $this->daniel->id)
+    $daniels_actions = $round->state()->actionsWonBy($this->daniel->id)
         ->pluck('bureaucrat');
 
     $this->assertEquals(true, $johns_actions->contains(GamblinGoat::class));

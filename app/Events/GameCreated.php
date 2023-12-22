@@ -3,10 +3,11 @@
 namespace App\Events;
 
 use App\Models\Game;
-use App\States\GameState;
-use Glhd\Bits\Snowflake;
-use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
+use Glhd\Bits\Snowflake;
+use App\States\GameState;
+use App\Events\PlayerJoinedGame;
+use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class GameCreated extends Event
 {
@@ -34,6 +35,12 @@ class GameCreated extends Event
             round_number: $i,
             round_id: Snowflake::make()->id()
         )
+        );
+
+        PlayerJoinedGame::fire(
+            game_id: $this->game_id,
+            player_id: Snowflake::make()->id(),
+            user_id: $this->user_id,
         );
     }
 }

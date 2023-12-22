@@ -21,11 +21,9 @@ class RoundStarted extends Event
     public string $round_modifier;
 
     // @todo: validate that this is possible and good
-
     public function applyToRoundState(RoundState $state)
     {
-        $state->status = 'in-progress';
-        $state->phase = 'auction';
+        $state->status = 'auction';
         collect($this->bureaucrats)->each(fn ($b) => $state->bureaucrats->push($b));
         $state->round_modifier = $this->round_modifier;
     }

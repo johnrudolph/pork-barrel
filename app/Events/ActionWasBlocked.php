@@ -20,7 +20,13 @@ class ActionWasBlocked extends Event
 
     public function applyToRoundState(RoundState $state)
     {
-        $state->blocked_actions[] = $this->bureaucrat;
+        $state->offers = $state->offers->transform(function ($o) {
+            if ($o->bureaucrat === $this->bureaucrat) {
+                $o->is_blocked = true;
+            }
+
+            return $o;
+        });
     }
 
     public function handle()

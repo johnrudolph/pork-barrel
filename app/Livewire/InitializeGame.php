@@ -28,14 +28,6 @@ class InitializeGame extends Component
             user_id: $this->user()->id
         );
 
-        PlayerJoinedGame::fire(
-            game_id: $event->game_id,
-            player_id: Snowflake::make()->id(),
-            user_id: $this->user()->id,
-        );
-
-        Verbs::commit();
-
         return redirect()->route('games.show', ['game' => $event->game_id]);
     }
 
