@@ -87,7 +87,7 @@ class AuctionView extends Component
             AuctionEnded::fire(round_id: $this->round()->id);
         }
 
-        $this->initializeProperties($this->player(), $this->game->currentRound());
+        $this->dispatch('submitted'); 
     }
 
     public function render()

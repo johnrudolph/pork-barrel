@@ -29,6 +29,12 @@ class PreGameLobby extends Component
             ->toArray();
     }
 
+    #[On('echo:games.{game.id},GameUpdated')]
+    public function gameStarted()
+    {
+        $this->dispatch('game-started');
+    }
+
     public function startGame()
     {
         try {

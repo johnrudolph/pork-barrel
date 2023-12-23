@@ -2,9 +2,10 @@
 
 namespace App\Events;
 
-use App\States\GameState;
-use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
+use App\States\GameState;
+use App\Events\GameUpdated;
+use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class GameStarted extends Event
 {
@@ -19,5 +20,10 @@ class GameStarted extends Event
     public function applyToGame(GameState $state)
     {
         $state->status = 'in-progress';
+    }
+
+    public function handle()
+    {
+        GameUpdated::dispatch($this->game_id);
     }
 }

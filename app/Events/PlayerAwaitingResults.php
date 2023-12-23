@@ -2,9 +2,9 @@
 
 namespace App\Events;
 
+use Thunk\Verbs\Event;
 use App\States\PlayerState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
-use Thunk\Verbs\Event;
 
 class PlayerAwaitingResults extends Event
 {
@@ -14,5 +14,10 @@ class PlayerAwaitingResults extends Event
     public function applyToPlayerState(PlayerState $state)
     {
         $state->status = 'waiting';
+    }
+
+    public function handle()
+    {
+        PlayerUpdated::dispatch($this->player_id);
     }
 }

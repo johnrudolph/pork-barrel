@@ -1,7 +1,6 @@
 <div>
 <div class="my-4 overflow-hidden">
     <p class="pl-8">Round {{ $this->round()->round_number }} of 8</p>
-    <p>{{ $this->number_of_offers_submitted }} offers submitted</p>
 </div>
 <livewire:headlines :game="$game" :key="'headline'"/>
 <div class="py-4 text-purple">

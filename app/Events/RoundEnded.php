@@ -3,10 +3,11 @@
 namespace App\Events;
 
 use App\Models\Round;
-use App\States\PlayerState;
-use App\States\RoundState;
-use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
+use App\States\RoundState;
+use App\Events\GameUpdated;
+use App\States\PlayerState;
+use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class RoundEnded extends Event
 {
@@ -55,5 +56,7 @@ class RoundEnded extends Event
             round_id: $this->round_id,
         )
         );
+
+        GameUpdated::dispatch($this->state(RoundState::class)->game_id);
     }
 }

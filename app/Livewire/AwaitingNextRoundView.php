@@ -23,25 +23,6 @@ class AwaitingNextRoundView extends Component
 
     public $offers_made;
 
-
-
-
-    public $number_of_offers_submitted = 0;
-
-    #[On('echo:rounds.{round.id},MyEvent')]
-    public function showNumberOfOffers()
-    {
-        $this->number_of_offers_submitted += 1;
-    }
-
-    public function example()
-    {
-        MyEvent::dispatch($this->game->currentRound());
-    }
-
-
-
-
     #[Computed]
     public function player()
     {
@@ -76,6 +57,14 @@ class AwaitingNextRoundView extends Component
     public function readyUp()
     {
         PlayerReadiedUp::fire(player_id: $this->player()->id, game_id: $this->game->id);
+
+        $this->dispatch('readied-up'); 
+    }
+
+    #[On('echo:games.{game.id},GameUpdated')]
+    public function roundEnded()
+    {
+        $this->dispatch('round-ended');
     }
 
     public function render()
