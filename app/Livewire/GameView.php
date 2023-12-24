@@ -28,12 +28,19 @@ class GameView extends Component
 
     public function mount($game)
     {
-        $this->initializeProperties($game);
+        $this->game = Game::find($game);
     }
 
-    public function initializeProperties($game)
+    #[On('echo:games.{game.id},GameUpdated')]
+    public function gameUpdated()
     {
-        $this->game = Game::find($game);
+        //
+    }
+
+    #[On('echo:players.{player.id},PlayerUpdated')]
+    public function playerUpdated()
+    {
+        //
     }
 
     public function render()

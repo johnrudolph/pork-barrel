@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\Game;
 use App\Models\Round;
 use App\Models\Player;
-use App\Events\MyEvent;
 use Livewire\Component;
 use App\States\RoundState;
 use Livewire\Attributes\On;
@@ -64,7 +63,13 @@ class AwaitingNextRoundView extends Component
     #[On('echo:games.{game.id},GameUpdated')]
     public function roundEnded()
     {
-        $this->dispatch('round-ended');
+        // $this->dispatch('round-ended');
+    }
+
+    #[On('echo:players.{player.id},PlayerUpdated')]
+    public function playerUpdated()
+    {
+        //
     }
 
     public function render()

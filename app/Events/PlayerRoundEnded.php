@@ -2,9 +2,10 @@
 
 namespace App\Events;
 
-use App\States\PlayerState;
-use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
+use App\States\PlayerState;
+use App\Events\PlayerUpdated;
+use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 
 class PlayerRoundEnded extends Event
 {
@@ -28,5 +29,7 @@ class PlayerRoundEnded extends Event
                 round_id: $this->round_id
             );
         }
+
+        PlayerUpdated::dispatch($this->player_id);
     }
 }

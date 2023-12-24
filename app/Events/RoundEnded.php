@@ -57,6 +57,6 @@ class RoundEnded extends Event
         )
         );
 
-        GameUpdated::dispatch($this->state(RoundState::class)->game_id);
+        // GameUpdated::dispatch($this->state(RoundState::class)->game_id);
     }
 }

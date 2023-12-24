@@ -30,9 +30,9 @@ class PreGameLobby extends Component
     }
 
     #[On('echo:games.{game.id},GameUpdated')]
-    public function gameStarted()
+    public function gameUpdated()
     {
-        $this->dispatch('game-started');
+        $this->initializeProperties();
     }
 
     public function startGame()

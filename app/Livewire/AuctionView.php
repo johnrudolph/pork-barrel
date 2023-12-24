@@ -2,14 +2,15 @@
 
 namespace App\Livewire;
 
-use App\Events\AuctionEnded;
-use App\Events\PlayerAwaitingResults;
 use App\Models\Game;
-use App\Models\Player;
 use App\Models\Round;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
+use App\Models\Player;
 use Livewire\Component;
+use Livewire\Attributes\On;
+use App\Events\AuctionEnded;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Auth;
+use App\Events\PlayerAwaitingResults;
 
 class AuctionView extends Component
 {
@@ -88,6 +89,18 @@ class AuctionView extends Component
         }
 
         $this->dispatch('submitted'); 
+    }
+
+    #[On('echo:games.{game.id},GameUpdated')]
+    public function gameUpdated()
+    {
+        //
+    }
+
+    #[On('echo:players.{player.id},PlayerUpdated')]
+    public function playerUpdated()
+    {
+        //
     }
 
     public function render()

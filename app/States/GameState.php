@@ -17,9 +17,6 @@ class GameState extends State
 
     public int $current_round_id = 0;
 
-    // @todo: these two functions are getting wacky. They get called at unexpected times
-    // and then suddenly return states instead of ints. No clue why
-
     public function playerStates()
     {
         return $this->players->map(fn ($id) => PlayerState::load($id));
