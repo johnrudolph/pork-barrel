@@ -18,33 +18,30 @@ class AwaitingNextRoundView extends Component
 
     public Game $game;
 
-    public Round $round;
+    public Player $player;
 
-    public $offers_made;
+    protected $listeners = [
+        'echo:games.{game.id},GameUpdated' => '$refresh',
+        'echo:players.{player.id},PlayerUpdated' => '$refresh',
+    ];
 
-    #[Computed]
-    public function player()
-    {
-        return Auth::user()->currentPlayer();
-    }
+    // #[Computed]
+    // public function player()
+    // {
+    //     return Auth::user()->currentPlayer();
+    // }
 
     #[Computed]
     public function round()
     {
-        return RoundState::load($this->player()->state()->current_round_id);
+        return RoundState::load($this->player->state()->current_round_id);
     }
 
-    public function mount(Player $player)
+    #[Computed]
+    public function offersMade()
     {
-        $this->initializeProperties();
-    }
-
-    public function initializeProperties()
-    {
-        $this->round = $this->game->currentRound();
-    
-        $this->offers_made = $this->round()->offers
-            ->filter(fn ($o) => $o->player_id === $this->player()->id)
+        return $this->round->offers
+            ->filter(fn ($o) => $o->player_id === $this->player->id)
             ->map(fn ($o) => [
                 'bureaucrat' => $o->bureaucrat,
                 'offer' => $o->modified_amount,
@@ -53,23 +50,14 @@ class AwaitingNextRoundView extends Component
             ]);
     }
 
+    public function mount() 
+    {
+        $this->player = Auth::user()->currentPlayer();
+    }
+
     public function readyUp()
     {
-        PlayerReadiedUp::fire(player_id: $this->player()->id, game_id: $this->game->id);
-
-        $this->dispatch('readied-up'); 
-    }
-
-    #[On('echo:games.{game.id},GameUpdated')]
-    public function roundEnded()
-    {
-        // $this->dispatch('round-ended');
-    }
-
-    #[On('echo:players.{player.id},PlayerUpdated')]
-    public function playerUpdated()
-    {
-        //
+        PlayerReadiedUp::fire(player_id: $this->player->id, game_id: $this->game->id);
     }
 
     public function render()

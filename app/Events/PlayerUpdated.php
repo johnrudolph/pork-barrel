@@ -21,6 +21,6 @@ class PlayerUpdated implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('player.'.$this->player_id);
+        return new Channel('players.'.$this->player_id);
     }
 }

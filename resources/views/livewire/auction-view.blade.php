@@ -1,8 +1,4 @@
 <div>
-<div class="my-4 overflow-hidden">
-    <p class="pl-8">Round {{ $this->round()->round_number }} of 8</p>
-</div>
-<livewire:headlines :game="$game" :key="'headline'"/>
 <div class="py-4 text-purple">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border">
@@ -51,7 +47,7 @@
                             <div class="w-full mt-2 text-sm">
                                 <p>{{ $b['class']::EFFECT }}</p>
                                 <p class="mt-2 italic text-gray-400 text-xs">{{ $b['class']::DIALOG }}</p>
-                                @foreach(collect($b['class']::options($game->currentRound(), $this->player())) as $key => $value)
+                                @foreach(collect($b['class']::options($game->currentRound(), $this->player)) as $key => $value)
                                     <select
                                         wire:model="bureaucrats.{{ $b['class']::SLUG }}.data.{{ $key }}"
                                         class="mt-2 w-full text-sm"
