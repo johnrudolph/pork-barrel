@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Game;
 use App\Models\Round;
+use App\DTOs\OfferDTO;
 use App\Models\Player;
 use Livewire\Component;
 use App\Events\AuctionEnded;
@@ -15,7 +16,7 @@ class AuctionView extends Component
 {
     public Game $game;
 
-    public array $bureaucrats;
+    public $offers;
 
     public int $money;
 
@@ -43,17 +44,20 @@ class AuctionView extends Component
 
         $this->money = $this->player->state()->money;
 
-        $this->bureaucrats = collect($round->state()->bureaucrats)->mapWithKeys(function ($b) {
-            $data_array = $b::expectedData($this->game->currentRound(), $this->player);
-
-            return [$b::SLUG => ['class' => $b, 'offer' => 0, 'data' => $data_array ?? null]];
-        })->toArray();
+        foreach ($this->round->state()->bureaucrats as $b) {
+            $this->offers [$b::SLUG] = new OfferDTO(
+                player_id: $this->player->id,
+                round_id: $this->round->id,
+                bureaucrat: $b,
+            );
+        }
     }
 
     public function increment($bureacrat_slug)
     {
-        if (collect($this->bureaucrats)->sum('offer') < $this->money) {
-            $this->bureaucrats[$bureacrat_slug]['offer']++;
+        if (collect($this->offers)->sum('offer') < $this->money) {
+            $this->offers[$bureacrat_slug]->amount_offered++;
+            $this->money--;
         } else {
             // @todo: tell the user they don't have enough money
         }
@@ -61,18 +65,29 @@ class AuctionView extends Component
 
     public function decrement($bureacrat_slug)
     {
-        if ($this->bureaucrats[$bureacrat_slug]['offer'] > 0) {
-            $this->bureaucrats[$bureacrat_slug]['offer']--;
+        if ($this->offers[$bureacrat_slug]->amount_offered > 0) {
+            $this->offers[$bureacrat_slug]->amount_offered--;
+            $this->money++;
         }
     }
 
     public function submit()
     {
-        collect($this->bureaucrats)
-            ->filter(fn ($b) => $b['offer'] > 0)
-            ->each(fn ($b) => $this->player
-                ->submitOffer($this->round, $b['class'], $b['offer'], $b['data'] ?? null)
-            );
+        collect($this->offers)
+            ->filter(fn ($o) => $o->amount_offered > 0)
+            ->each(function ($o) {
+                if (collect($o->data)->contains(null)) {
+                    dd('Please fill out options for '.$o->bureaucrat::NAME.'.');
+                }
+            })
+            ->each(fn ($o) => $o->submit());
+
+        // @todo this doesn't work. 
+        // collect($this->offers)->each(function ($o) {
+        //     if ($o->amount_offered > 0) {
+        //         $this->validate($o->rules);
+        //     }
+        // })->each(fn ($o) => $o->submit());
 
         PlayerAwaitingResults::fire(player_id: $this->player->id);
 

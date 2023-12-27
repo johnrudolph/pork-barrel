@@ -27,9 +27,15 @@ class ObstructionOx extends Bureaucrat
     public static function options(Round $round, Player $player)
     {
         return [
-            'bureaucrat' => collect($round->state()->bureaucrats)
-                ->reject(fn ($b) => $b === static::class)
-                ->mapWithKeys(fn ($b) => [$b => $b::NAME]),
+            'bureaucrat' => [
+                'type' => 'select',
+                'options' => collect($round->state()->bureaucrats)
+                    ->reject(fn ($b) => $b === static::class)
+                    ->mapWithKeys(fn ($b) => [$b => $b::NAME]),
+                'label' => 'Bureaucrat',
+                'placeholder' => 'Select a bureaucrat',
+                'rules' => 'required',
+            ],
         ];
     }
 

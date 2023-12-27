@@ -16,22 +16,11 @@ class OfferSubmitted extends Event
     #[StateId(RoundState::class)]
     public int $round_id;
 
-    public $bureaucrat;
-
-    public $amount;
-
-    public ?array $data = null;
+    public OfferDTO $offer;
 
     public function applyToRoundState(RoundState $state)
     {
-        $state->offers->push(new OfferDTO(
-            player_id: $this->player_id,
-            round_id: $this->round_id,
-            bureaucrat: $this->bureaucrat,
-            amount_offered: $this->amount,
-            modified_amount: $this->amount,
-            data: $this->data,
-        ));
+        $state->offers->push($this->offer);
     }
 
     public function applyToPlayerState(PlayerState $state)
