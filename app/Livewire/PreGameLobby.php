@@ -3,9 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Game;
-use Livewire\Component;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class PreGameLobby extends Component
 {

@@ -2,9 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Headline;
 use App\States\PlayerState;
-use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 

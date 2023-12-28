@@ -2,13 +2,13 @@
 
 namespace App\Livewire;
 
-use App\Models\Game;
-use Livewire\Component;
-use Glhd\Bits\Snowflake;
 use App\Events\GameCreated;
 use App\Events\PlayerJoinedGame;
-use Livewire\Attributes\Computed;
+use App\Models\Game;
+use Glhd\Bits\Snowflake;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class InitializeGame extends Component
 {

@@ -2,16 +2,16 @@
 
 namespace App\Livewire;
 
-use App\Models\Game;
-use App\Models\Round;
 use App\DTOs\OfferDTO;
-use App\Models\Player;
-use Livewire\Component;
 use App\Events\AuctionEnded;
-use Livewire\Attributes\Computed;
-use Illuminate\Support\Facades\Auth;
 use App\Events\PlayerAwaitingResults;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\Round;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class AuctionView extends Component
 {
@@ -46,7 +46,7 @@ class AuctionView extends Component
         $this->money = $this->player->state()->money;
 
         foreach ($this->round->state()->bureaucrats as $b) {
-            $this->offers [$b::SLUG] = new OfferDTO(
+            $this->offers[$b::SLUG] = new OfferDTO(
                 player_id: $this->player->id,
                 round_id: $this->round->id,
                 bureaucrat: $b,
@@ -84,6 +84,7 @@ class AuctionView extends Component
 
         if ($errors->count() === 0) {
             session()->forget('error');
+
             return true;
         }
 

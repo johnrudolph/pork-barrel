@@ -2,10 +2,9 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
 use App\States\PlayerState;
-use App\Events\PlayerUpdated;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class PlayerRoundEnded extends Event
 {

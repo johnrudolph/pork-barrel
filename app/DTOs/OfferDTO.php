@@ -2,10 +2,9 @@
 
 namespace App\DTOs;
 
-use App\DTOs\LivewireDTO;
-use App\Models\Round;
-use App\Models\Player;
 use App\Events\OfferSubmitted;
+use App\Models\Player;
+use App\Models\Round;
 use Thunk\Verbs\SerializedByVerbs;
 use Thunk\Verbs\Support\Normalization\NormalizeToPropertiesAndClassName;
 
@@ -27,20 +26,18 @@ class OfferDTO extends LivewireDTO implements SerializedByVerbs
     ) {
         $this->options = $this->bureaucrat::options(Round::find($round_id), Player::find($player_id));
 
-        $this->data = collect($this->options)->mapWithKeys(fn ($v, $k) =>
-            [$k => null]
+        $this->data = collect($this->options)->mapWithKeys(fn ($v, $k) => [$k => null]
         )->toArray();
 
-        $this->rules = collect($this->options)->mapWithKeys(fn ($option, $option_name) => 
-            [$option_name => $option['rules']]
+        $this->rules = collect($this->options)->mapWithKeys(fn ($option, $option_name) => [$option_name => $option['rules']]
         )->toArray();
     }
 
     public function submit()
     {
         OfferSubmitted::fire(
-            player_id: $this->player_id, 
-            round_id: $this->round_id, 
+            player_id: $this->player_id,
+            round_id: $this->round_id,
             offer: $this
         );
     }

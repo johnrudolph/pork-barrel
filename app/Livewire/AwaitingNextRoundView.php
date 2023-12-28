@@ -2,15 +2,13 @@
 
 namespace App\Livewire;
 
-use App\Models\Game;
-use App\Models\Round;
-use App\Models\Player;
-use Livewire\Component;
-use App\States\RoundState;
-use Livewire\Attributes\On;
 use App\Events\PlayerReadiedUp;
-use Livewire\Attributes\Computed;
+use App\Models\Game;
+use App\Models\Player;
+use App\States\RoundState;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class AwaitingNextRoundView extends Component
 {
@@ -50,7 +48,7 @@ class AwaitingNextRoundView extends Component
             ]);
     }
 
-    public function mount() 
+    public function mount()
     {
         $this->player = Auth::user()->currentPlayer();
     }

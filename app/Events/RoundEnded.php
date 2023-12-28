@@ -3,11 +3,10 @@
 namespace App\Events;
 
 use App\Models\Round;
-use Thunk\Verbs\Event;
-use App\States\RoundState;
-use App\Events\GameUpdated;
 use App\States\PlayerState;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class RoundEnded extends Event
 {

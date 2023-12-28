@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use App\Models\Round;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -18,9 +17,3 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
-
-// Broadcast::channel('rounds', function (User $user, int $round_id) {
-//     // return (int) $user->current_game_id === (int) Round::find($round_id)->game->id;
-//     dd('channel route');
-//     return true;
-// });

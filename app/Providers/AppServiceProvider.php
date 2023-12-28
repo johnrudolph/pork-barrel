@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use Livewire\Livewire;
 use App\Livewire\Synths\DTOSynth;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {

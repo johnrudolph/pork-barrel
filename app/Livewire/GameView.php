@@ -3,11 +3,11 @@
 namespace App\Livewire;
 
 use App\Models\Game;
-use Livewire\Component;
-use Livewire\Attributes\On;
 use App\Models\MoneyLogEntry;
-use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class GameView extends Component
 {
