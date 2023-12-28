@@ -11,6 +11,7 @@ use App\Events\AuctionEnded;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
 use App\Events\PlayerAwaitingResults;
+use Illuminate\Support\Facades\Validator;
 
 class AuctionView extends Component
 {
@@ -71,23 +72,35 @@ class AuctionView extends Component
         }
     }
 
+    public function offerDataIsValid()
+    {
+        $errors = collect($this->offers)
+            ->filter(fn ($o) => $o->amount_offered > 0)
+            ->map(function ($o) {
+                return Validator::make($o->data, $o->rules)->fails()
+                    ? 'Please fill out options for '.$o->bureaucrat::NAME.'.'
+                    : null;
+            });
+
+        if ($errors->count() === 0) {
+            session()->forget('error');
+            return true;
+        }
+
+        session()->flash('error', $errors->implode(' '));
+
+        return false;
+    }
+
     public function submit()
     {
+        if (! $this->offerDataIsValid()) {
+            return;
+        }
+
         collect($this->offers)
             ->filter(fn ($o) => $o->amount_offered > 0)
-            ->each(function ($o) {
-                if (collect($o->data)->contains(null)) {
-                    dd('Please fill out options for '.$o->bureaucrat::NAME.'.');
-                }
-            })
             ->each(fn ($o) => $o->submit());
-
-        // @todo this doesn't work. 
-        // collect($this->offers)->each(function ($o) {
-        //     if ($o->amount_offered > 0) {
-        //         $this->validate($o->rules);
-        //     }
-        // })->each(fn ($o) => $o->submit());
 
         PlayerAwaitingResults::fire(player_id: $this->player->id);
 

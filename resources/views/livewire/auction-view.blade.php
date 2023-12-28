@@ -66,6 +66,14 @@
                         </p>
                     </div>
 
+                    @if(session()->has('error'))
+                        <div class="mt-4 flex flex-col">
+                            <p class="text-sm font-semibold leading-6 text-red-900">
+                                {{ session('error') }}
+                            </p>
+                        </div>
+                    @endif
+
                     <button wire:click="submit">
                         Submit
                     </button>
@@ -73,4 +81,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>

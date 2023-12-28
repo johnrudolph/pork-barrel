@@ -32,7 +32,7 @@ class OfferDTO extends LivewireDTO implements SerializedByVerbs
         )->toArray();
 
         $this->rules = collect($this->options)->mapWithKeys(fn ($option, $option_name) => 
-            ['offers.'.$this->bureaucrat::SLUG.'.data.'.$option_name => $option['rules']]
+            [$option_name => $option['rules']]
         )->toArray();
     }
 
