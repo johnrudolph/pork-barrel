@@ -2,11 +2,11 @@
 
 namespace App\DTOs;
 
-use App\Models\Round;
-use App\Models\Player;
 use App\Events\OfferSubmitted;
-use Thunk\Verbs\SerializedByVerbs;
+use App\Models\Player;
+use App\Models\Round;
 use Illuminate\Support\Facades\Validator;
+use Thunk\Verbs\SerializedByVerbs;
 use Thunk\Verbs\Support\Normalization\NormalizeToPropertiesAndClassName;
 
 class OfferDTO extends LivewireDTO implements SerializedByVerbs

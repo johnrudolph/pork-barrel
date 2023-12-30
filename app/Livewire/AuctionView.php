@@ -9,7 +9,6 @@ use App\Models\Game;
 use App\Models\Player;
 use App\Models\Round;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
