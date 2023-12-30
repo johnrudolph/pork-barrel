@@ -18,6 +18,15 @@ class OfferSubmitted extends Event
 
     public OfferDTO $offer;
 
+    public function validate(RoundState $state)
+    {
+        dump($this->offer);
+        $this->assert(
+            assertion: ! $this->offer->validate()->errors()->all(),
+            message: 'Offer for '.$this->offer->bureaucrat::NAME.' did not include all required fields'
+        );
+    }
+
     public function applyToRoundState(RoundState $state)
     {
         $state->offers->push($this->offer);

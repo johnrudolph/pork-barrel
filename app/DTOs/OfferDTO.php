@@ -2,10 +2,11 @@
 
 namespace App\DTOs;
 
-use App\Events\OfferSubmitted;
-use App\Models\Player;
 use App\Models\Round;
+use App\Models\Player;
+use App\Events\OfferSubmitted;
 use Thunk\Verbs\SerializedByVerbs;
+use Illuminate\Support\Facades\Validator;
 use Thunk\Verbs\Support\Normalization\NormalizeToPropertiesAndClassName;
 
 class OfferDTO extends LivewireDTO implements SerializedByVerbs
@@ -17,7 +18,7 @@ class OfferDTO extends LivewireDTO implements SerializedByVerbs
         public int $round_id,
         public string $bureaucrat,
         public int $amount_offered = 0,
-        public int $modified_amount = 0,
+        public int $amount_modified = 0,
         public bool $awarded = false,
         public bool $is_blocked = false,
         public ?array $options = null,
@@ -31,6 +32,11 @@ class OfferDTO extends LivewireDTO implements SerializedByVerbs
 
         $this->rules = collect($this->options)->mapWithKeys(fn ($option, $option_name) => [$option_name => $option['rules']]
         )->toArray();
+    }
+
+    public function validate()
+    {
+        return Validator::make($this->data, $this->rules);
     }
 
     public function submit()

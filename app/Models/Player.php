@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\DTOs\OfferDTO;
 use App\Events\OfferSubmitted;
 use App\Events\PlayerReceivedMoney;
 use App\States\PlayerState;
@@ -47,12 +48,16 @@ class Player extends Model
 
     public function submitOffer(Round $round, $bureaucrat, $amount, ?array $data = null)
     {
-        OfferSubmitted::fire(
+        $offer = new OfferDTO(
             player_id: $this->id,
             round_id: $round->id,
             bureaucrat: $bureaucrat,
-            amount: $amount,
+            amount_offered: $amount,
             data: $data,
         );
+
+        dd($offer);
+
+        $offer->submit();
     }
 }

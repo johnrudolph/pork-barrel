@@ -43,7 +43,7 @@ class RoundEnded extends Event
             ->each(fn ($action) => ActionAppliedAtEndOfRound::fire(
                 round_id: $state->id,
                 player_id: $action->player_id,
-                amount: $action->modified_amount,
+                amount: $action->amount_modified + $action->amount_offered,
                 bureaucrat: $action->bureaucrat,
                 data: $action->data,
             ));

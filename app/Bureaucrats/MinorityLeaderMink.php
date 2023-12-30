@@ -45,7 +45,7 @@ class MinorityLeaderMink extends Bureaucrat
         }
     }
 
-    public static function activityFeedDescription(?array $data = null)
+    public static function activityFeedDescription(RoundState $state, ?array $data = null)
     {
         return 'You had the highest bid for the Minority Leader Mink. Next round, you will receive 10 money if you make no offers.';
     }

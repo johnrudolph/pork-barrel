@@ -42,7 +42,7 @@ class AwaitingNextRoundView extends Component
             ->filter(fn ($o) => $o->player_id === $this->player->id)
             ->map(fn ($o) => [
                 'bureaucrat' => $o->bureaucrat,
-                'offer' => $o->modified_amount,
+                'offer' => $o->amount_offered + $o->amount_modified,
                 'awarded' => $o->awarded,
                 'is_blocked' => $o->is_blocked,
             ]);

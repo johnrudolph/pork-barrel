@@ -75,12 +75,13 @@ class AuctionView extends Component
     public function offerDataIsValid()
     {
         $errors = collect($this->offers)
-            ->filter(fn ($o) => $o->amount_offered > 0)
+            ->filter(fn ($o) => $o->amount_offered > 0 && $o->rules)
             ->map(function ($o) {
-                return Validator::make($o->data, $o->rules)->fails()
+                return Validator::make($o->data, $o->rules)->errors()->all()
                     ? 'Please fill out options for '.$o->bureaucrat::NAME.'.'
                     : null;
-            });
+            })
+            ->filter(fn ($e) => $e !== null);
 
         if ($errors->count() === 0) {
             session()->forget('error');

@@ -34,14 +34,14 @@ class MajorityLeaderMare extends Bureaucrat
     {
         $round->offers = $round->offers->transform(function ($o) use ($player) {
             if ($o->player_id === $player->id) {
-                $o->modified_amount += 1;
+                $o->amount_modified += 1;
             }
 
             return $o;
         });
     }
 
-    public static function activityFeedDescription(?array $data = null)
+    public static function activityFeedDescription(RoundState $state, ?array $data = null)
     {
         return 'You had the highest bid for the Majority Leader Mare. Next round, 1 money will be added to each of your offers.';
     }
