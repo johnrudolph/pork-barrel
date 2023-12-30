@@ -77,7 +77,7 @@ class AuctionView extends Component
         $errors = collect($this->offers)
             ->filter(fn ($o) => $o->amount_offered > 0 && $o->rules)
             ->map(function ($o) {
-                return Validator::make($o->data, $o->rules)->errors()->all()
+                return $o->validate()->errors()->all()
                     ? 'Please fill out options for '.$o->bureaucrat::NAME.'.'
                     : null;
             })

@@ -20,7 +20,6 @@ class OfferSubmitted extends Event
 
     public function validate(RoundState $state)
     {
-        dump($this->offer);
         $this->assert(
             assertion: ! $this->offer->validate()->errors()->all(),
             message: 'Offer for '.$this->offer->bureaucrat::NAME.' did not include all required fields'

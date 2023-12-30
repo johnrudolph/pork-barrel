@@ -56,8 +56,6 @@ class Player extends Model
             data: $data,
         );
 
-        dd($offer);
-
         $offer->submit();
     }
 }

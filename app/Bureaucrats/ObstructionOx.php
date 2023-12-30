@@ -41,7 +41,6 @@ class ObstructionOx extends Bureaucrat
 
     public static function handleOnAwarded(PlayerState $player, RoundState $round, $amount, ?array $data = null)
     {
-        dd($data);
         ActionWasBlocked::fire(
             round_id: $round->id,
             bureaucrat: $data['bureaucrat'],
