@@ -1,8 +1,4 @@
 <div>
-<div class="my-4 overflow-hidden">
-    <p class="pl-8">Round {{ $this->round()->round_number }} of 8</p>
-</div>
-<livewire:headlines :game="$game" :key="'headline'"/>
 <div class="py-4 text-purple">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border">
@@ -15,63 +11,68 @@
                     </p>
                 </div>
                 <ul role="list" class="divide-y divide-salmon px-6 py-6 sm:px-6 lg:px-8">
-                    @foreach($bureaucrats as $i => $b)
-                        <li class="flex flex-col items-center justify-between gap-x-6 py-5 {{ $loop->index % 2 === 0 ? 'bg-white' : 'bg-gray' }}"
-                            x-data="{ show: false }"
-                            {{-- :class="show ? 'bg-gray-200' : 'bg-white'" --}}
-                        >
+                    @foreach($offers as $i => $o)
+                        <li class="flex flex-col items-center justify-between gap-x-6 py-5 {{ $loop->index % 2 === 0 ? 'bg-white' : 'bg-gray' }}">
                             <div class="w-full">
-                            <div class="flex justify-between">
-                                <p class="text-sm font-semibold leading-6 text-gray-900">{{ $b['class']::NAME }}</p>
-                                <div class="flex">
-                                    <button 
-                                        class="text-red font-extrabold text-m w-8 h-6"
-                                        wire:click="decrement('{{ $b['class']::SLUG }}')"
-                                    >
-                                        -
-                                    </button>
-                                    <span 
-                                        wire:model="bureaucrats.{{ $b['class']::SLUG }}.offer"
-                                        class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium text-white bg-teal"
-                                    >
-                                        {{ $b['offer'] }}
-                                    </span>
-                                    <button 
-                                        class="text-teal font-extrabold text-m w-8 h-6"
-                                        wire:click="increment('{{ $b['class']::SLUG }}')"
-                                    >
-                                        +
-                                    </button>
+                                <div class="flex justify-between">
+                                    <p class="text-sm font-semibold leading-6 text-gray-900">{{ $o->bureaucrat::NAME }}</p>
+                                    <div class="flex">
+                                        <button 
+                                            class="text-red font-extrabold text-m w-8 h-6"
+                                            wire:click="decrement('{{ $o->bureaucrat::SLUG }}')"
+                                        >
+                                            -
+                                        </button>
+                                        <span 
+                                            wire:model="offers.{{ $o->bureaucrat::SLUG }}.amount_offered"
+                                            class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium text-white bg-teal"
+                                        >
+                                            {{ $o->amount_offered }}
+                                        </span>
+                                        <button 
+                                            class="text-teal font-extrabold text-m w-8 h-6"
+                                            wire:click="increment('{{ $o->bureaucrat::SLUG }}')"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                                {{-- <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-                                    <p class="whitespace-nowrap">{{ $b['class']::SHORT_DESCRIPTION }}</p>
-                                </div> --}}
-                            </div>
                             <div class="w-full mt-2 text-sm">
-                                <p>{{ $b['class']::EFFECT }}</p>
-                                <p class="mt-2 italic text-gray-400 text-xs">{{ $b['class']::DIALOG }}</p>
-                                @foreach(collect($b['class']::options($game->currentRound(), $this->player())) as $key => $value)
+                                <p>{{ $o->bureaucrat::EFFECT }}</p>
+                                <p class="mt-2 italic text-gray-400 text-xs">{{ $o->bureaucrat::DIALOG }}</p>
+                                @if($o->data)
+                                @foreach(collect($o->data) as $key => $value)
                                     <select
-                                        wire:model="bureaucrats.{{ $b['class']::SLUG }}.data.{{ $key }}"
+                                        wire:model="offers.{{ $o->bureaucrat::SLUG }}.data.{{ $key }}"
                                         class="mt-2 w-full text-sm"
                                     >
-                                        @foreach($value as $key => $option)
-                                            <option value="{{ $key }}">{{ $option }}</option>
+                                        <option value="" placeholder>{{ $o->options[$key]['placeholder'] }}</option>
+                                        @foreach($o->options[$key]['options'] as $id => $option)
+                                            <option value="{{ $id }}">{{ $option }}</option>
                                         @endforeach
                                     </select>
                                 @endforeach
+                                @endif
                             </div>
                         </li>
                     @endforeach
                     <div class="mt-4 flex flex-col">
                         <p class="text-sm font-semibold leading-6 text-gray-900">
-                            Total Offers: {{ collect($bureaucrats)->sum('bid') }}
+                            Total Offers: {{ collect($offers)->sum('ammount_offered') }}
                         </p>
                         <p class="text-sm font-semibold leading-6 text-gray-900">
-                            Money available to offer: {{ $money - collect($bureaucrats)->sum('offer') }}
+                            Money available to offer: {{ $money - collect($offers)->sum('ammount_offered') }}
                         </p>
                     </div>
+
+                    @if(session()->has('error'))
+                        <div class="mt-4 flex flex-col">
+                            <p class="text-sm font-semibold leading-6 text-red-900">
+                                {{ session('error') }}
+                            </p>
+                        </div>
+                    @endif
 
                     <button wire:click="submit">
                         Submit
@@ -80,4 +81,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>

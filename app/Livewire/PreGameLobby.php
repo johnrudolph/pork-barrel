@@ -2,11 +2,26 @@
 
 namespace App\Livewire;
 
+use App\Models\Game;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class PreGameLobby extends Component
 {
-    public $game;
+    public Game $game;
+
+    #[Computed]
+    public function players()
+    {
+        return $this->game->players->map(fn ($p) => $p->user->name);
+    }
+
+    #[On('echo:games.{game.id},GameUpdated')]
+    public function gameUpdated()
+    {
+        // $this->initializeProperties();
+    }
 
     public function startGame()
     {

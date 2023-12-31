@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\DTOs\OfferDTO;
 use App\Events\AuctionEnded;
 use App\Events\PlayerAwaitingResults;
 use App\Models\Game;
@@ -13,21 +14,18 @@ use Livewire\Component;
 
 class AuctionView extends Component
 {
-    public ?int $player_id = null;
-
     public Game $game;
 
-    public array $bureaucrats;
+    public $offers;
 
     public int $money;
 
-    public array $offers;
+    public Player $player;
 
-    #[Computed]
-    public function player()
-    {
-        return Auth::user()->currentPlayer();
-    }
+    protected $listeners = [
+        'echo:games.{game.id},GameUpdated' => '$refresh',
+        'echo:players.{player.id},PlayerUpdated' => '$refresh',
+    ];
 
     #[Computed]
     public function round()
@@ -42,21 +40,24 @@ class AuctionView extends Component
 
     public function initializeProperties(Player $player, Round $round)
     {
-        $this->player_id = $player->id;
+        $this->player = Auth::user()->currentPlayer();
 
-        $this->money = $this->player()->state()->money;
+        $this->money = $this->player->state()->money;
 
-        $this->bureaucrats = collect($round->state()->bureaucrats)->mapWithKeys(function ($b) {
-            $data_array = $b::expectedData($this->game->currentRound(), $this->player());
-
-            return [$b::SLUG => ['class' => $b, 'offer' => 0, 'data' => $data_array ?? null]];
-        })->toArray();
+        foreach ($this->round->state()->bureaucrats as $b) {
+            $this->offers[$b::SLUG] = new OfferDTO(
+                player_id: $this->player->id,
+                round_id: $this->round->id,
+                bureaucrat: $b,
+            );
+        }
     }
 
     public function increment($bureacrat_slug)
     {
-        if (collect($this->bureaucrats)->sum('offer') < $this->money) {
-            $this->bureaucrats[$bureacrat_slug]['offer']++;
+        if (collect($this->offers)->sum('offer') < $this->money) {
+            $this->offers[$bureacrat_slug]->amount_offered++;
+            $this->money--;
         } else {
             // @todo: tell the user they don't have enough money
         }
@@ -64,30 +65,53 @@ class AuctionView extends Component
 
     public function decrement($bureacrat_slug)
     {
-        if ($this->bureaucrats[$bureacrat_slug]['offer'] > 0) {
-            $this->bureaucrats[$bureacrat_slug]['offer']--;
+        if ($this->offers[$bureacrat_slug]->amount_offered > 0) {
+            $this->offers[$bureacrat_slug]->amount_offered--;
+            $this->money++;
         }
+    }
+
+    public function offerDataIsValid()
+    {
+        $errors = collect($this->offers)
+            ->filter(fn ($o) => $o->amount_offered > 0 && $o->rules)
+            ->map(function ($o) {
+                return $o->validate()->errors()->all()
+                    ? 'Please fill out options for '.$o->bureaucrat::NAME.'.'
+                    : null;
+            })
+            ->filter(fn ($e) => $e !== null);
+
+        if ($errors->count() === 0) {
+            session()->forget('error');
+
+            return true;
+        }
+
+        session()->flash('error', $errors->implode(' '));
+
+        return false;
     }
 
     public function submit()
     {
-        collect($this->bureaucrats)
-            ->filter(fn ($b) => $b['offer'] > 0)
-            ->each(fn ($b) => $this->player
-                ->submitOffer($this->game->currentRound(), $b['class'], $b['offer'], $b['data'] ?? null)
-            );
+        if (! $this->offerDataIsValid()) {
+            return;
+        }
 
-        PlayerAwaitingResults::fire(player_id: $this->player()->id);
+        collect($this->offers)
+            ->filter(fn ($o) => $o->amount_offered > 0)
+            ->each(fn ($o) => $o->submit());
+
+        PlayerAwaitingResults::fire(player_id: $this->player->id);
 
         if (
             $this->game->state()->playerStates()
                 ->filter(fn ($p) => $p->status === 'waiting')
                 ->count() === $this->game->players->count()
         ) {
-            AuctionEnded::fire(round_id: $this->round()->id);
+            AuctionEnded::fire(round_id: $this->round->id);
         }
-
-        $this->initializeProperties($this->player(), $this->game->currentRound());
     }
 
     public function render()

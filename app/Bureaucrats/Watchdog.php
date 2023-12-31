@@ -24,13 +24,25 @@ class Watchdog extends Bureaucrat
     public static function options(Round $round, Player $player)
     {
         return [
-            'bureaucrat' => collect($round->state()->bureaucrats)
-                ->reject(fn ($b) => $b === static::class)
-                ->mapWithKeys(fn ($b) => [$b => $b::NAME]),
-            'player' => $round->game->players
-                ->reject(fn ($p) => $p->id === $player->id)
-                ->mapWithKeys(fn ($p) => [$p->id => $p->user->name])
-                ->toArray(),
+            'bureaucrat' => [
+                'type' => 'select',
+                'options' => collect($round->state()->bureaucrats)
+                    ->reject(fn ($b) => $b === static::class)
+                    ->mapWithKeys(fn ($b) => [$b => $b::NAME]),
+                'label' => 'Bureaucrat',
+                'placeholder' => 'Select a bureaucrat',
+                'rules' => 'required',
+            ],
+            'player' => [
+                'type' => 'select',
+                'options' => $round->game->players
+                    ->reject(fn ($p) => $p->id === $player->id)
+                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
+                    ->toArray(),
+                'label' => 'Bureaucrat',
+                'placeholder' => 'Select an industry',
+                'rules' => 'required',
+            ],
         ];
     }
 
@@ -57,5 +69,16 @@ class Watchdog extends Bureaucrat
                 'description' => 'In a shocking discovery, the Watchdog has exposed so and so for bribing bureaucrat. They have been fined.',
             ]);
         }
+    }
+
+    public static function activityFeedDescription(RoundState $state, ?array $data = null)
+    {
+        $guess_was_correct = $state->actionsWonBy($data['player'])->contains($data['bureaucrat']);
+
+        $acused_industry = PlayerState::load($data['player'])->industry;
+
+        return $guess_was_correct
+            ? 'You had the highest bid for the Watchdog. You correctly accused '.$acused_industry.' of bribing '.($data['bureaucrat'])::NAME.'. They have been fined 5 money.'
+            : 'You had the highest bid for the Watchdog. You incorrectly accused '.$acused_industry.' of bribing '.($data['bureaucrat'])::NAME.'.';
     }
 }

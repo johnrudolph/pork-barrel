@@ -22,7 +22,7 @@ class Bureaucrat
     public static function all()
     {
         return collect([
-            // BailoutBunny::class,
+            BailoutBunny::class,
             ObstructionOx::class,
             GamblinGoat::class,
             MajorityLeaderMare::class,
@@ -60,15 +60,8 @@ class Bureaucrat
         //
     }
 
-    public static function activityFeedDescription(?array $data = null)
+    public static function activityFeedDescription(RoundState $state, ?array $data = null)
     {
         return 'You had the highest bid for '.static::NAME;
-    }
-
-    public static function expectedData(Round $round, Player $player)
-    {
-        return collect(static::options($round, $player))->mapWithKeys(function ($v, $k) {
-            return [$k => null];
-        })->toArray();
     }
 }

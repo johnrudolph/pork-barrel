@@ -20,4 +20,9 @@ class GameStarted extends Event
     {
         $state->status = 'in-progress';
     }
+
+    public function handle()
+    {
+        GameUpdated::dispatch($this->game_id);
+    }
 }

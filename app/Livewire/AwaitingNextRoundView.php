@@ -16,40 +16,46 @@ class AwaitingNextRoundView extends Component
 
     public Game $game;
 
-    public $offers_made;
+    public Player $player;
 
-    #[Computed]
-    public function player()
-    {
-        return Auth::user()->currentPlayer();
-    }
+    protected $listeners = [
+        'echo:games.{game.id},GameUpdated' => '$refresh',
+        'echo:players.{player.id},PlayerUpdated' => '$refresh',
+    ];
+
+    // #[Computed]
+    // public function player()
+    // {
+    //     return Auth::user()->currentPlayer();
+    // }
 
     #[Computed]
     public function round()
     {
-        return RoundState::load($this->player()->state()->current_round_id);
+        return RoundState::load($this->player->state()->current_round_id);
     }
 
-    public function mount(Player $player)
+    #[Computed]
+    public function offersMade()
     {
-        $this->initializeProperties();
-    }
-
-    public function initializeProperties()
-    {
-        $this->offers_made = $this->round()->offers
-            ->filter(fn ($o) => $o->player_id === $this->player()->id)
+        return $this->round->offers
+            ->filter(fn ($o) => $o->player_id === $this->player->id)
             ->map(fn ($o) => [
                 'bureaucrat' => $o->bureaucrat,
-                'offer' => $o->modified_amount,
+                'offer' => $o->amount_offered + $o->amount_modified,
                 'awarded' => $o->awarded,
                 'is_blocked' => $o->is_blocked,
             ]);
     }
 
+    public function mount()
+    {
+        $this->player = Auth::user()->currentPlayer();
+    }
+
     public function readyUp()
     {
-        PlayerReadiedUp::fire(player_id: $this->player()->id, game_id: $this->game->id);
+        PlayerReadiedUp::fire(player_id: $this->player->id, game_id: $this->game->id);
     }
 
     public function render()

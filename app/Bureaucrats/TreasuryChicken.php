@@ -48,7 +48,7 @@ class TreasuryChicken extends Bureaucrat
         );
     }
 
-    public static function activityFeedDescription(?array $data = null)
+    public static function activityFeedDescription(RoundState $state, ?array $data = null)
     {
         return 'You had the highest bid for the Treasury Chicken. Your money is now tied up in a treasury bond, and you will get it back with 25% interest at the end of the game.';
     }

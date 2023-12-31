@@ -15,4 +15,9 @@ class PlayerAwaitingResults extends Event
     {
         $state->status = 'waiting';
     }
+
+    public function handle()
+    {
+        PlayerUpdated::dispatch($this->player_id);
+    }
 }

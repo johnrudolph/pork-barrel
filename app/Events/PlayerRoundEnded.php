@@ -28,5 +28,7 @@ class PlayerRoundEnded extends Event
                 round_id: $this->round_id
             );
         }
+
+        PlayerUpdated::dispatch($this->player_id);
     }
 }

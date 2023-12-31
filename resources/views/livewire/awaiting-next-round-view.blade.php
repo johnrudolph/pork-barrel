@@ -1,7 +1,6 @@
-<div wire:poll>
+<div>
     <div class="my-4 max-w-7xl mx-auto sm:px-6 lg:px-8 overflow-hidden flex flex-row justify-between">
-        <p class="pl-8">Round {{ $this->round()->round_number }} of 8</p>
-        @if($this->round()->status === 'complete')
+        @if($this->round->status === 'complete')
             <button 
                 wire:click="readyUp"
                 class="rounded-md bg-teal mr-4 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -10,7 +9,6 @@
             </button>
         @endif
     </div>
-    <livewire:headlines :game="$game" :key="'headline'"/>
     <div class="py-4 text-purple max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border">
             <div class="bg-white px-6 py-6 sm:px-6 lg:px-8">
@@ -34,11 +32,11 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
-                                    @foreach($offers_made as $o)
+                                    @foreach($this->offers_made as $o)
                                         <tr>
                                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ $o['bureaucrat']::NAME }}</td>
                                             <td>
-                                                @if($this->round()->status === 'auction')
+                                                @if($this->round->status === 'auction')
                                                     <p>?</p>
                                                 @elseif ($o['is_blocked'])
                                                     <p class="text-red">Blocked</p>
@@ -60,6 +58,4 @@
             </div>
         </div>
     </div>
-    <livewire:scoreboard :game="$game" :key="'scoreboard'"/>
-    <livewire:money-log :game="$game" :key="'log'"/>
 </div>
