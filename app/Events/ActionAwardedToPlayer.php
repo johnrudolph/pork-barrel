@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\DTOs\OfferDTO;
 use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -17,17 +18,13 @@ class ActionAwardedToPlayer extends Event
 
     public string $activity_feed_description;
 
-    public string $bureaucrat;
-
-    public int $amount;
-
-    public ?array $data;
+    public OfferDTO $offer;
 
     public function applyToRound(RoundState $state)
     {
         $state->offers = $state->offers
             ->transform(function ($o) {
-                if ($o->player_id === $this->player_id && $o->bureaucrat === $this->bureaucrat) {
+                if ($o->player_id === $this->player_id && $o->bureaucrat === $this->offer->bureaucrat) {
                     $o->awarded = true;
                 }
 
@@ -37,18 +34,17 @@ class ActionAwardedToPlayer extends Event
 
     public function handle()
     {
-        $this->bureaucrat::handleOnAwarded(
+        $this->offer->bureaucrat::handleOnAwarded(
             $this->state(PlayerState::class),
             $this->state(RoundState::class),
-            $this->amount,
-            $this->data
+            $this->offer,
         );
 
         PlayerSpentMoney::fire(
             player_id: $this->player_id,
             round_id: $this->round_id,
             activity_feed_description: $this->activity_feed_description,
-            amount: $this->amount,
+            amount: $this->offer->amount_offered,
         );
     }
 }

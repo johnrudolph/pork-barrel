@@ -2,7 +2,9 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
+use App\Events\OfferAmountModified;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -18,30 +20,30 @@ class MajorityLeaderMare extends Bureaucrat
 
     const EFFECT = 'After you submit your offers next round, 1 money will be added to each.';
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
+
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
         ActionEffectAppliedToFutureRound::fire(
             player_id: $player->id,
             round_id: $round->game()->nextRound()->id,
-            bureaucrat: static::class,
-            amount: $amount,
-            data: $data,
-            hook: $round::HOOKS['on_auction_ended']
+            offer: $offer,
         );
     }
 
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
     {
-        $round->offers = $round->offers->transform(function ($o) use ($player) {
-            if ($o->player_id === $player->id) {
-                $o->amount_modified += 1;
-            }
-
-            return $o;
-        });
+        $round->offers
+            ->filter(fn ($o) => $o->player_id === $original_offer->player_id)
+            ->each(fn ($o) => OfferAmountModified::fire(
+                player_id: $o->player_id,
+                round_id: $round->id,
+                offer: $o,
+                amount_modified: 1,
+            ));
     }
 
-    public static function activityFeedDescription(RoundState $state, ?array $data = null)
+    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
     {
         return 'You had the highest bid for the Majority Leader Mare. Next round, 1 money will be added to each of your offers.';
     }

@@ -12,7 +12,9 @@ use App\Events\GameCreated;
 use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
 use App\Events\RoundStarted;
+use App\Livewire\MoneyLog;
 use App\Models\Game;
+use App\Models\MoneyLogEntry;
 use App\Models\Player;
 use App\Models\User;
 use App\RoundModifiers\RoundModifier;
@@ -24,6 +26,8 @@ uses(DatabaseMigrations::class);
 
 // @todo: in general, could we test this code without creating a whole game?
 beforeEach(function () {
+    Verbs::commitImmediately();
+
     $this->user_1 = User::factory()->create();
     $this->user_2 = User::factory()->create();
 
@@ -44,12 +48,8 @@ beforeEach(function () {
         player_id: Snowflake::make()->id(),
     );
 
-    Verbs::commit();
-
     $this->game = Game::find($event->game_id);
     GameStarted::fire(game_id: $this->game->id);
-
-    Verbs::commit();
 
     $this->game = Game::find($event->game_id);
 
@@ -67,12 +67,10 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
     );
 
     $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 10);
-    Verbs::commit();
 
     $this->assertEquals(10, $this->john->state()->money);
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     $amount_earned = $this->john->state()->money;
 
@@ -97,9 +95,7 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
     $this->john->submitOffer($this->game->currentRound(), ObstructionOx::class, 10, ['bureaucrat' => BailoutBunny::class]);
     $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 10);
 
-    Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     $this->assertTrue(
         $this->game->currentRound()->state()->offers
@@ -130,10 +126,8 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
     );
 
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 10);
-    Verbs::commit();
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     $this->assertEquals(10, $this->john->state()->money);
 
@@ -153,8 +147,6 @@ it('fines a player if they were caught by the watchdog', function () {
         round_modifier: RoundModifier::class,
     );
 
-    Verbs::commit();
-
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
     $this->daniel->submitOffer(
         $this->game->currentRound(),
@@ -163,9 +155,7 @@ it('fines a player if they were caught by the watchdog', function () {
         ['bureaucrat' => BailoutBunny::class, 'player' => $this->john->id]
     );
 
-    Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     $this->assertEquals(4, $this->john->state()->money);
 
@@ -187,9 +177,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
 
     $this->john->submitOffer($this->game->currentRound(), MajorityLeaderMare::class, 1);
 
-    Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     RoundStarted::fire(
         game_id: $this->game->id,
@@ -207,9 +195,23 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 2);
     $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 2);
 
-    Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
+
+    $this->assertEquals(
+        1, 
+        $this->game->currentRound()->state()->offers
+            ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
+            ->first()
+            ->amount_modified
+    );
+
+    $this->assertEquals(
+        1, 
+        $this->game->currentRound()->state()->offers
+            ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === BailoutBunny::class)
+            ->first()
+            ->amount_modified
+    );
 
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->john->id,
@@ -248,11 +250,11 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     ]);
 
     $this->assertTrue($this->game->currentRound()->state()->
-        actions_from_previous_rounds_that_resolve_this_round->first()['bureaucrat'] === MajorityLeaderMare::class
+        offers_from_previous_rounds_that_resolve_this_round->first()->bureaucrat === MajorityLeaderMare::class
     );
 
     $this->assertTrue($this->game->currentRound()->next()->state()->
-        actions_from_previous_rounds_that_resolve_this_round->count() === 0
+        offers_from_previous_rounds_that_resolve_this_round->count() === 0
     );
 
     $this->assertFalse($this->daniel->state()->has_bailout);
@@ -269,9 +271,7 @@ it('gives you 10 money if you make no offers after getting the minority leader m
 
     $this->john->submitOffer($this->game->currentRound(), MinorityLeaderMink::class, 1);
 
-    Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     RoundStarted::fire(
         game_id: $this->game->id,
@@ -281,16 +281,14 @@ it('gives you 10 money if you make no offers after getting the minority leader m
         round_modifier: RoundModifier::class,
     );
 
-    Verbs::commit();
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     $this->assertTrue($this->game->currentRound()->state()->
-        actions_from_previous_rounds_that_resolve_this_round->first()['bureaucrat'] === MinorityLeaderMink::class
+        offers_from_previous_rounds_that_resolve_this_round->first()->bureaucrat === MinorityLeaderMink::class
     );
 
     $this->assertTrue($this->game->currentRound()->next()->state()->
-        actions_from_previous_rounds_that_resolve_this_round->count() === 0
+        offers_from_previous_rounds_that_resolve_this_round->count() === 0
     );
 
     $this->assertEquals(29, $this->john->state()->money);

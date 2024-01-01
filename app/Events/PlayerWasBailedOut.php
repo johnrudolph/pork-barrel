@@ -17,6 +17,11 @@ class PlayerWasBailedOut extends Event
 
     public function apply(PlayerState $state)
     {
+        $state->has_bailout = false;
+    }
+
+    public function handle()
+    {
         PlayerReceivedMoney::fire(
             player_id: $this->player_id,
             round_id: $this->round_id,
@@ -24,11 +29,6 @@ class PlayerWasBailedOut extends Event
             activity_feed_description: 'You received a bailout. No one needs a stronger safety net than you.',
         );
 
-        $state->has_bailout = false;
-    }
-
-    public function handle()
-    {
         Headline::create([
             'round_id' => $this->round_id,
             'game_id' => RoundState::load($this->round_id)->game()->id,

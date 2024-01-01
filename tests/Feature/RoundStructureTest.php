@@ -16,6 +16,7 @@ use Thunk\Verbs\Facades\Verbs;
 uses(DatabaseMigrations::class);
 
 beforeEach(function () {
+    Verbs::commitImmediately();
     $user = User::factory()->create();
 
     $user_2 = User::factory()->create();
@@ -24,8 +25,6 @@ beforeEach(function () {
         user_id: $user->id,
         game_id: Snowflake::make()->id(),
     );
-
-    Verbs::commit();
 
     PlayerJoinedGame::fire(
         game_id: $event->game_id,
@@ -39,13 +38,9 @@ beforeEach(function () {
         user_id: $user_2->id,
     );
 
-    Verbs::commit();
-
     $this->game = Game::find($event->game_id);
 
     $this->game->start();
-
-    Verbs::commit();
 
     $this->john = Player::all()->first();
     $this->daniel = Player::all()->last();
@@ -61,7 +56,6 @@ it('seeds rounds for new games', function () {
 
 it('progresses to the next round after rounds end', function () {
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
     $this->game->currentRound()->next()->start();
 
     $this->assertEquals('complete', $this->game->rounds->first()->fresh()->status);
@@ -81,7 +75,6 @@ it('sets the appropriate statuses and current_round_ids as rounds proceed', func
 
     $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
     PlayerAwaitingResults::fire(player_id: $this->john->id);
-    Verbs::commit();
 
     $this->assertTrue($this->game->currentRound()->state()->status === 'auction');
     $this->assertTrue($this->john->state()->current_round_id === $round_1_id);
@@ -89,14 +82,12 @@ it('sets the appropriate statuses and current_round_ids as rounds proceed', func
 
     $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
     AuctionEnded::fire(round_id: $round_1_id);
-    Verbs::commit();
 
     $this->assertTrue($this->game->currentRound()->state()->status === 'complete');
     $this->assertTrue($this->game->state()->currentRound()->id === $round_1_id);
     $this->assertTrue($this->john->state()->current_round_id === $round_1_id);
     $this->assertTrue($this->john->state()->status === 'waiting');
     PlayerReadiedUp::fire(player_id: $this->daniel->id, game_id: $this->game->id);
-    Verbs::commit();
 
     $this->assertEquals($this->game->state()->currentRound()->id, $round_2_id);
     $this->assertEquals($this->game->state()->currentRound()->status, 'auction');

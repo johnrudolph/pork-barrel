@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\OfferDTO;
 use App\Events\PlayerAwardedBailout;
 use App\States\PlayerState;
 use App\States\RoundState;
@@ -25,7 +26,7 @@ class BailoutBunny extends Bureaucrat
         ];
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
         PlayerAwardedBailout::fire(
             player_id: $player->id,
@@ -33,7 +34,7 @@ class BailoutBunny extends Bureaucrat
         );
     }
 
-    public static function activityFeedDescription(RoundState $state, ?array $data = null)
+    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
     {
         return 'You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.';
     }

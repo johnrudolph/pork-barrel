@@ -12,6 +12,10 @@ use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
+beforeEach(function () {
+    Verbs::commitImmediately();
+});
+
 it('creates a game and player when a game is created', function () {
     $user = User::factory()->create();
 
@@ -19,8 +23,6 @@ it('creates a game and player when a game is created', function () {
         user_id: $user->id,
         game_id: Snowflake::make()->id(),
     );
-
-    Verbs::commit();
 
     $game = Game::find($event->game_id);
 
@@ -51,8 +53,6 @@ it('changes a players currentGame when they join a new game', function () {
         user_id: $user->id,
     );
 
-    Verbs::commit();
-
     $game = Game::find($event->game_id);
 
     $this->assertEquals($game->id, $user->fresh()->currentGame->id);
@@ -67,8 +67,6 @@ it('changes a players currentGame when they join a new game', function () {
         player_id: Snowflake::make()->id(),
         user_id: $user->id,
     );
-
-    Verbs::commit();
 
     $game2 = Game::find($event2->game_id);
 
@@ -103,8 +101,6 @@ it('assigns random industries for each player', function () {
         player_id: Snowflake::make()->id(),
         user_id: $user_4->id,
     );
-
-    Verbs::commit();
 
     $this->assertTrue(
         GameState::load($event->game_id)->playerStates()

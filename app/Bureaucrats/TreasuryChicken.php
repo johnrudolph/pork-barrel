@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerPutMoneyInTreasury;
 use App\Events\PlayerReceivedMoney;
@@ -20,25 +21,22 @@ class TreasuryChicken extends Bureaucrat
 
     const EFFECT = 'The winning bidder will spend the money now, and at the end of the game will receive their money back with 25% interest (rounded down).';
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
         PlayerPutMoneyInTreasury::fire(
             player_id: $player->id,
             round_id: $round->id,
-            amount: $amount,
+            amount: $offer->amount_offered + $offer->amount_modified,
         );
 
         ActionEffectAppliedToFutureRound::fire(
             player_id: $player->id,
             round_id: $round->game()->round_ids->last(),
-            bureaucrat: static::class,
-            amount: $amount,
-            data: $data,
-            hook: $round::HOOKS['on_round_ended']
+            offer: $offer,
         );
     }
 
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
     {
         PlayerReceivedMoney::fire(
             player_id: $player->id,
@@ -48,7 +46,7 @@ class TreasuryChicken extends Bureaucrat
         );
     }
 
-    public static function activityFeedDescription(RoundState $state, ?array $data = null)
+    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
     {
         return 'You had the highest bid for the Treasury Chicken. Your money is now tied up in a treasury bond, and you will get it back with 25% interest at the end of the game.';
     }

@@ -27,7 +27,6 @@ class OfferDTO extends LivewireDTO implements SerializedByVerbs
     ) {
         $this->options = $this->bureaucrat::options(Round::find($round_id), Player::find($player_id));
 
-        // if($this->data)
         $this->data ??= collect($this->options)->mapWithKeys(fn ($v, $k) => [$k => null]
         )->toArray();
 

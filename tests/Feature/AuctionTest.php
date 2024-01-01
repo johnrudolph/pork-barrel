@@ -21,6 +21,8 @@ use Thunk\Verbs\Facades\Verbs;
 uses(DatabaseMigrations::class);
 
 beforeEach(function () {
+    Verbs::commitImmediately();
+
     $this->user_1 = User::factory()->create();
     $this->user_2 = User::factory()->create();
 
@@ -41,13 +43,9 @@ beforeEach(function () {
         player_id: Snowflake::make()->id(),
     );
 
-    Verbs::commit();
-
     $this->game = Game::find($event->game_id);
 
     GameStarted::fire(game_id: $this->game->id);
-
-    Verbs::commit();
 
     RoundStarted::fire(
         game_id: $this->game->id,
@@ -63,8 +61,6 @@ beforeEach(function () {
 
     $this->game->players
         ->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
-
-    Verbs::commit();
 
     $this->john = Player::first();
     $this->daniel = Player::get()->last();
@@ -105,7 +101,6 @@ it('records which player won each action', function () {
     $this->daniel->submitOffer($round, MinorityLeaderMink::class, 2);
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     $johns_actions = $round->state()->actionsWonBy($this->john->id)
         ->pluck('bureaucrat');
@@ -138,7 +133,6 @@ it('spends the money offerred by winners', function () {
     $this->daniel->submitOffer($round, $bureaucrats[3], 0);
 
     AuctionEnded::fire(round_id: $round->id);
-    Verbs::commit();
 
     // John spends 3, because he didn't win the second bureaucrat
     $this->assertEquals(17, $this->john->state()->money);

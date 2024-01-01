@@ -9,7 +9,7 @@ use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
-class OfferSubmitted extends Event
+class OfferAmountModified extends Event
 {
     #[StateId(PlayerState::class)]
     public int $player_id;
@@ -19,17 +19,19 @@ class OfferSubmitted extends Event
 
     public OfferDTO $offer;
 
-    public function validate(RoundState $state)
-    {
-        $this->assert(
-            assertion: ! $this->offer->validate()->errors()->all(),
-            message: 'Offer for '.$this->offer->bureaucrat::NAME.' did not include all required fields'
-        );
-    }
+    public int $amount_modified;
 
     public function applyToRoundState(RoundState $state)
     {
-        $state->offers->push($this->offer);
+        $state->offers
+            ->filter(fn ($o) => $o->bureaucrat === $this->offer->bureaucrat && $o->player_id === $this->player_id)
+            ->transform(function ($o) use ($state) {
+                if ($o->player_id === $state->id) {
+                    $o->amount_modified += $this->amount_modified;
+                }
+
+                return $o;
+            });
     }
 
     public function applyToPlayerState(PlayerState $state)
