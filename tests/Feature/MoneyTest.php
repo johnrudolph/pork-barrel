@@ -31,12 +31,6 @@ beforeEach(function () {
 
     PlayerJoinedGame::fire(
         game_id: $event->game_id,
-        user_id: $this->user_1->id,
-        player_id: Snowflake::make()->id(),
-    );
-
-    PlayerJoinedGame::fire(
-        game_id: $event->game_id,
         user_id: $this->user_2->id,
         player_id: Snowflake::make()->id(),
     );

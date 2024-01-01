@@ -20,7 +20,7 @@ class MinorityLeaderMink extends Bureaucrat
 
     const EFFECT = 'If you make no offers next round, you will earn 10 money.';
 
-    const EFFECT_REQUIRES_DECISION = true;
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {

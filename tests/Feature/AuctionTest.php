@@ -17,6 +17,7 @@ use App\RoundModifiers\RoundModifier;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
+use Thunk\Verbs\Models\VerbEvent;
 
 uses(DatabaseMigrations::class);
 
@@ -29,12 +30,6 @@ beforeEach(function () {
     $event = GameCreated::fire(
         user_id: $this->user_1->id,
         game_id: Snowflake::make()->id(),
-    );
-
-    PlayerJoinedGame::fire(
-        game_id: $event->game_id,
-        user_id: $this->user_1->id,
-        player_id: Snowflake::make()->id(),
     );
 
     PlayerJoinedGame::fire(
@@ -123,14 +118,9 @@ it('spends the money offerred by winners', function () {
     $bureaucrats = $round->state()->bureaucrats;
 
     $this->john->submitOffer($round, $bureaucrats[0], 1);
-    $this->john->submitOffer($round, $bureaucrats[1], 0);
-    $this->john->submitOffer($round, $bureaucrats[2], 2);
-    $this->john->submitOffer($round, $bureaucrats[3], 0);
-
-    $this->daniel->submitOffer($round, $bureaucrats[0], 0);
-    $this->daniel->submitOffer($round, $bureaucrats[1], 1);
-    $this->daniel->submitOffer($round, $bureaucrats[2], 2);
-    $this->daniel->submitOffer($round, $bureaucrats[3], 0);
+    $this->john->submitOffer($round, $bureaucrats[1], 2);
+    $this->daniel->submitOffer($round, $bureaucrats[1], 2);
+    $this->daniel->submitOffer($round, $bureaucrats[2], 1);
 
     AuctionEnded::fire(round_id: $round->id);
 

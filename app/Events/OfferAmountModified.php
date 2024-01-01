@@ -25,10 +25,8 @@ class OfferAmountModified extends Event
     {
         $state->offers
             ->filter(fn ($o) => $o->bureaucrat === $this->offer->bureaucrat && $o->player_id === $this->player_id)
-            ->transform(function ($o) use ($state) {
-                if ($o->player_id === $state->id) {
-                    $o->amount_modified += $this->amount_modified;
-                }
+            ->transform(function ($o) {
+                $o->amount_modified += $this->amount_modified;
 
                 return $o;
             });

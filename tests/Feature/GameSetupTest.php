@@ -47,12 +47,6 @@ it('changes a players currentGame when they join a new game', function () {
         game_id: Snowflake::make()->id(),
     );
 
-    PlayerJoinedGame::fire(
-        game_id: $event->game_id,
-        player_id: Snowflake::make()->id(),
-        user_id: $user->id,
-    );
-
     $game = Game::find($event->game_id);
 
     $this->assertEquals($game->id, $user->fresh()->currentGame->id);
@@ -60,12 +54,6 @@ it('changes a players currentGame when they join a new game', function () {
     $event2 = GameCreated::fire(
         user_id: $user->id,
         game_id: Snowflake::make()->id(),
-    );
-
-    PlayerJoinedGame::fire(
-        game_id: $event2->game_id,
-        player_id: Snowflake::make()->id(),
-        user_id: $user->id,
     );
 
     $game2 = Game::find($event2->game_id);

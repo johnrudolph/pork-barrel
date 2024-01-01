@@ -18,6 +18,11 @@ class ActionEffectAppliedToFutureRound extends Event
 
     public OfferDTO $offer;
 
+    public function applyToPlayer(PlayerState $state)
+    {
+        //
+    }
+
     public function applyToRound(RoundState $state)
     {
         $state->offers_from_previous_rounds_that_resolve_this_round
