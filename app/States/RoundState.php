@@ -17,16 +17,9 @@ class RoundState extends State
 
     public Collection $offers;
 
-    public Collection $actions_from_previous_rounds_that_resolve_this_round;
+    public Collection $offers_from_previous_rounds_that_resolve_this_round;
 
     public string $round_modifier;
-
-    const HOOKS = [
-        'on_round_started' => 'on_round_started',
-        'on_offer_submitted' => 'on_offer_submitted',
-        'on_auction_ended' => 'on_auction_ended',
-        'on_round_ended' => 'on_round_ended',
-    ];
 
     public function game(): GameState
     {

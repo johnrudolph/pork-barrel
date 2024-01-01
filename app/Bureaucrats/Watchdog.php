@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\OfferDTO;
 use App\Events\PlayerSpentMoney;
 use App\Models\Headline;
 use App\Models\Player;
@@ -46,17 +47,16 @@ class Watchdog extends Bureaucrat
         ];
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
         if (
             $round->offers->filter(fn ($o) => $o->awarded === true
-                && $o->bureaucrat === $data['bureaucrat']
-                && $o->player_id === $data['player']
+                && $o->bureaucrat === $offer->bureaucrat
+                && $o->player_id === $offer->player_id
             )
         ) {
-            // @todo: something is wrong here. $data['player'] is null
             PlayerSpentMoney::fire(
-                player_id: $data['player'],
+                player_id: $offer->data['player'],
                 round_id: $round->id,
                 amount: 5,
                 activity_feed_description: 'Fined by the Watchdog. Bribery is not tolarated around these parts.',
@@ -71,14 +71,16 @@ class Watchdog extends Bureaucrat
         }
     }
 
-    public static function activityFeedDescription(RoundState $state, ?array $data = null)
+    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
     {
-        $guess_was_correct = $state->actionsWonBy($data['player'])->contains($data['bureaucrat']);
+        $guess_was_correct = $state->actionsWonBy($offer->data['player'])->contains($offer->data['bureaucrat']);
 
-        $acused_industry = PlayerState::load($data['player'])->industry;
+        $acused_industry = PlayerState::load($offer->data['player'])->industry;
+
+        $acused_bureaucrat = $offer->data['bureaucrat']::NAME;
 
         return $guess_was_correct
-            ? 'You had the highest bid for the Watchdog. You correctly accused '.$acused_industry.' of bribing '.($data['bureaucrat'])::NAME.'. They have been fined 5 money.'
-            : 'You had the highest bid for the Watchdog. You incorrectly accused '.$acused_industry.' of bribing '.($data['bureaucrat'])::NAME.'.';
+            ? 'You had the highest bid for the Watchdog. You correctly accused '.$acused_industry.' of bribing '.$acused_bureaucrat.'. They have been fined 5 money.'
+            : 'You had the highest bid for the Watchdog. You incorrectly accused '.$acused_industry.' of bribing '.$acused_bureaucrat.'.';
     }
 }

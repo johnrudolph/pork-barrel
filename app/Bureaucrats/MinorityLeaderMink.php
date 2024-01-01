@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
 use App\States\PlayerState;
@@ -19,21 +20,18 @@ class MinorityLeaderMink extends Bureaucrat
 
     const EFFECT = 'If you make no offers next round, you will earn 10 money.';
 
-    const EFFECT_REQUIRES_DECISION = true;
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
         ActionEffectAppliedToFutureRound::fire(
             player_id: $player->id,
             round_id: $round->game()->nextRound()->id,
-            bureaucrat: static::class,
-            amount: $amount,
-            data: $data,
-            hook: $round::HOOKS['on_auction_ended']
+            offer: $offer,
         );
     }
 
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
     {
         if ($round->offers->filter(fn ($o) => $o['player_id'])->count() === 0) {
             PlayerReceivedMoney::fire(
@@ -45,7 +43,7 @@ class MinorityLeaderMink extends Bureaucrat
         }
     }
 
-    public static function activityFeedDescription(RoundState $state, ?array $data = null)
+    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
     {
         return 'You had the highest bid for the Minority Leader Mink. Next round, you will receive 10 money if you make no offers.';
     }

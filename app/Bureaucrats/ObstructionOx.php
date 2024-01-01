@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\OfferDTO;
 use App\Events\ActionWasBlocked;
 use App\Models\Player;
 use App\Models\Round;
@@ -39,13 +40,15 @@ class ObstructionOx extends Bureaucrat
         ];
     }
 
-    public static function handleOnAwarded(PlayerState $player, RoundState $round, $amount, ?array $data = null)
+    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
+        $b = $offer->data['bureaucrat'];
+
         ActionWasBlocked::fire(
             round_id: $round->id,
-            bureaucrat: $data['bureaucrat'],
-            headline: $data['bureaucrat']::NAME.' Ousted',
-            description: 'The Obstructionist Ox blocked '.$data['bureaucrat']::NAME.' from taking action this round.'
+            bureaucrat: $b,
+            headline: $b::NAME.' Ousted',
+            description: 'The Obstructionist Ox blocked '.$b::NAME.' from taking action this round.'
         );
     }
 }

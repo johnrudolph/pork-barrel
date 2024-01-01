@@ -20,6 +20,7 @@ use Thunk\Verbs\Lifecycle\StateManager;
 uses(DatabaseMigrations::class);
 
 beforeEach(function () {
+    Verbs::commitImmediately();
     $this->user_1 = User::factory()->create();
     $this->user_2 = User::factory()->create();
 
@@ -30,23 +31,13 @@ beforeEach(function () {
 
     PlayerJoinedGame::fire(
         game_id: $event->game_id,
-        user_id: $this->user_1->id,
-        player_id: Snowflake::make()->id(),
-    );
-
-    PlayerJoinedGame::fire(
-        game_id: $event->game_id,
         user_id: $this->user_2->id,
         player_id: Snowflake::make()->id(),
     );
 
-    Verbs::commit();
-
     $this->game = Game::find($event->game_id);
 
     GameStarted::fire(game_id: $this->game->id);
-
-    Verbs::commit();
 
     $this->round_started = RoundStarted::fire(
         game_id: $this->game->id,
@@ -55,8 +46,6 @@ beforeEach(function () {
         bureaucrats: [BailoutBunny::class, GamblinGoat::class],
         round_modifier: RoundModifier::class,
     );
-
-    Verbs::commit();
 
     $this->john = Player::first();
     $this->daniel = Player::get()->last();
@@ -68,9 +57,7 @@ it('gives players 10 money to start each round', function () {
     $this->assertEquals(10, $this->john->state()->money);
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
     $this->game->currentRound()->next()->start();
-    Verbs::commit();
 
     $this->assertEquals(20, $this->john->state()->money);
 });
@@ -78,10 +65,8 @@ it('gives players 10 money to start each round', function () {
 it('creates money log entries when players win auctions', function () {
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
     $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
-    Verbs::commit();
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    Verbs::commit();
 
     $johns_spending = MoneyLogEntry::where('player_id', $this->john->id)
         ->where('amount', '<', 1)

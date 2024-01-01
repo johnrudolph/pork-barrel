@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Bureaucrats\Bureaucrat;
 use App\Models\Round;
 use App\States\PlayerState;
 use App\States\RoundState;
@@ -27,27 +28,25 @@ class RoundEnded extends Event
         $state = $this->state(RoundState::class);
         $players = collect($state->game()->players);
 
-        $state->actions_from_previous_rounds_that_resolve_this_round
-            ->filter(fn ($a) => $a['hook'] === $state::HOOKS['on_round_ended'])
-            ->each(fn ($a) => $a['bureaucrat']::handleInFutureRound(
-                PlayerState::load($a['player_id']),
+        $state->offers_from_previous_rounds_that_resolve_this_round
+            ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_ended'])
+            ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
+                PlayerState::load($o->player_id),
                 RoundState::load($this->round_id),
-                $a['amount'],
-                $a['data'],
+                $o,
             ));
 
         $state->offers
             ->filter(fn ($o) => $o->awarded === true
                 && ! $o->is_blocked
             )
-            ->each(fn ($action) => ActionAppliedAtEndOfRound::fire(
+            ->each(fn ($offer) => ActionAppliedAtEndOfRound::fire(
                 round_id: $state->id,
-                player_id: $action->player_id,
-                amount: $action->amount_modified + $action->amount_offered,
-                bureaucrat: $action->bureaucrat,
-                data: $action->data,
+                player_id: $offer->player_id,
+                offer: $offer,
             ));
 
+        // @todo is this not its own event? 
         $state->round_modifier::handleOnRoundEnd($state);
 
         $state->game()->players->each(fn ($p) => PlayerRoundEnded::fire(
