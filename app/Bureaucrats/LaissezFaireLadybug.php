@@ -7,25 +7,25 @@ use App\States\RoundState;
 use App\DTOs\OfferDTO;
 use App\Events\PlayerIncomeChanged;
 
-class TaxTurkey extends Bureaucrat
+class CronyCrocodile extends Bureaucrat
 {
-    const NAME = 'Tax Turkey';
+    const NAME = 'Crony Crocodile';
 
-    const SLUG = 'tax-turkey';
+    const SLUG = 'crony-crocodile';
 
-    const SHORT_DESCRIPTION = 'Permanently reduce the income of another industry.';
+    const SHORT_DESCRIPTION = 'Permanently increase your income.';
 
-    const DIALOG = 'There are only two things certain in life: death and taxes.';
+    const DIALOG = "I am not a crook. I'm just a crocodile.";
 
     const EFFECT = 'Choose another industry to increase their taxes. Their income will permanently decrease by 1.';
 
     public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
         PlayerIncomeChanged::fire(
-            player_id: $offer->data['player'],
+            player_id: $player->id,
             round_id: $round->id,
-            amount: -1,
-            activity_feed_description: "You were taxed by the Tax Turkey."
+            amount: 1,
+            activity_feed_description: "Your income was increased by the Crony Crocodile."
         );
     }
 }

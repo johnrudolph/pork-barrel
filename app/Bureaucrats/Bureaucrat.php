@@ -33,13 +33,14 @@ class Bureaucrat
     {
         return collect([
             BailoutBunny::class,
+            BrinksmanshipBronco::class,
             ObstructionOx::class,
             GamblinGoat::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
             // OffshoreOtter::class,
             // PolicePiggy::class,
-            // TaxTurkey::class,
+            TaxTurkey::class,
             TreasuryChicken::class,
             Watchdog::class,
         ]);
@@ -51,6 +52,11 @@ class Bureaucrat
     }
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    {
+        //
+    }
+
+    public static function handleGlobalEffectOnRoundEnd(RoundState $round)
     {
         //
     }
@@ -72,6 +78,6 @@ class Bureaucrat
 
     public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
     {
-        return 'You had the highest bid for '.static::NAME;
+        return 'You had the highest offer for '.static::NAME;
     }
 }
