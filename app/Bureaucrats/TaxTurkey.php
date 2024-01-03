@@ -6,6 +6,8 @@ use App\States\PlayerState;
 use App\States\RoundState;
 use App\DTOs\OfferDTO;
 use App\Events\PlayerIncomeChanged;
+use App\Models\Player;
+use App\Models\Round;
 
 class TaxTurkey extends Bureaucrat
 {
@@ -18,6 +20,22 @@ class TaxTurkey extends Bureaucrat
     const DIALOG = 'There are only two things certain in life: death and taxes.';
 
     const EFFECT = 'Choose another industry to increase their taxes. Their income will permanently decrease by 1.';
+
+    public static function options(Round $round, Player $player)
+    {
+        return [
+            'player' => [
+                'type' => 'select',
+                'options' => $round->game->players
+                    ->reject(fn ($p) => $p->id === $player->id)
+                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
+                    ->toArray(),
+                'label' => 'Industry',
+                'placeholder' => 'Select an industry',
+                'rules' => 'required',
+            ],
+        ];
+    }
 
     public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
     {

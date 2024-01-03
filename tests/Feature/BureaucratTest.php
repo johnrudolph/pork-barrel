@@ -2,11 +2,16 @@
 
 use App\Bureaucrats\BailoutBunny;
 use App\Bureaucrats\BrinksmanshipBronco;
+use App\Bureaucrats\Bureaucrat;
+use App\Bureaucrats\CronyCrocodile;
+use App\Bureaucrats\ForecastFox;
 use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
 use App\Bureaucrats\ObstructionOx;
 use App\Bureaucrats\PonziPony;
+use App\Bureaucrats\SubsidySloth;
+use App\Bureaucrats\TaxTurkey;
 use App\Bureaucrats\TreasuryChicken;
 use App\Bureaucrats\Watchdog;
 use App\Events\AuctionEnded;
@@ -410,4 +415,70 @@ it('doubles the offer for all losers of Ponzi Pony', function () {
         'amount' => -10,
         'description' => "You had the highest offer for Ponzi Pony",
     ]);
+});
+
+it('adjusts income for Crony Crocodile and Tax Turkey', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [CronyCrocodile::class, TaxTurkey::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), CronyCrocodile::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), TaxTurkey::class, 1, ['player' => $this->jacob->id]);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(11, $this->john->state()->income);
+    $this->assertEquals(10, $this->daniel->state()->income);
+    $this->assertEquals(9, $this->jacob->state()->income);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [Bureaucrat::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    $this->assertEquals(20, $this->john->state()->money);
+    $this->assertEquals(19, $this->daniel->state()->money);
+    $this->assertEquals(19, $this->jacob->state()->money);
+});
+
+it('rewards players for correctly guessing who will be in first or last place', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [SubsidySloth::class, ForecastFox::class, BailoutBunny::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    // john is the poorest. Jacob and Daniel are tied for richest. Daniel's guesses are right, Jacob's are wrong
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 9);
+    $this->daniel->submitOffer($this->game->currentRound(), SubsidySloth::class, 1, ['player' => $this->john->id]);
+    $this->daniel->submitOffer($this->game->currentRound(), ForecastFox::class, 1, ['player' => $this->daniel->id]);
+    $this->jacob->submitOffer($this->game->currentRound(), SubsidySloth::class, 1, ['player' => $this->daniel->id]);
+    $this->jacob->submitOffer($this->game->currentRound(), ForecastFox::class, 1, ['player' => $this->john->id]);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(1, $this->john->state()->money);
+    $this->assertEquals(8, $this->daniel->state()->money);
+    $this->assertEquals(8, $this->jacob->state()->money);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [Bureaucrat::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    $this->assertEquals(18, $this->john->state()->money);
+    $this->assertEquals(25, $this->daniel->state()->money);
+    $this->assertEquals(18, $this->jacob->state()->money);
 });

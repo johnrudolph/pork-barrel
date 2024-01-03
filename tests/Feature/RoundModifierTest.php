@@ -9,6 +9,9 @@ use App\Events\RoundStarted;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
+use App\RoundConstructor\RoundConstructor;
+use App\RoundModifiers\LameDuckSession;
+use App\RoundModifiers\LegislativeFrenzy;
 use App\RoundModifiers\TaxTheRich;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -54,4 +57,20 @@ it('takes 5 money from the richeset player at the end of the round', function ()
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
 
     $this->assertEquals(5, $this->daniel->state()->money);
+});
+
+it('changes the number of bureaucrats chosen for Lame Duck and Legislative Frenzy', function () {
+    $constructor = new RoundConstructor(
+        round: $this->game->rounds->first()->state(),
+        round_modifier: LameDuckSession::class,
+    );
+
+    $this->assertEquals(2, collect($constructor->bureaucrats)->count());
+
+    $constructor = new RoundConstructor(
+        round: $this->game->rounds->first()->state(),
+        round_modifier: LegislativeFrenzy::class,
+    );
+
+    $this->assertEquals(6, collect($constructor->bureaucrats)->count());
 });

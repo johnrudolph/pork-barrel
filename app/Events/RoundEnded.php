@@ -47,15 +47,14 @@ class RoundEnded extends Event
             ));
 
         $state->bureaucrats->each(fn ($b) => $b::handleGlobalEffectOnRoundEnd($state));
-
-        $state->round_modifier::handleOnRoundEnd($state);
         
-        // @todo is this not its own event? 
         $state->game()->players->each(fn ($p) => PlayerRoundEnded::fire(
             player_id: $p,
             round_id: $this->round_id,
         )
         );
+
+        $state->round_modifier::handleOnRoundEnd($state);
 
         GameUpdated::dispatch($this->state(RoundState::class)->game_id);
     }
