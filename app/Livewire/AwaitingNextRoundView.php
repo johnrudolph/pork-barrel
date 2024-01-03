@@ -23,12 +23,6 @@ class AwaitingNextRoundView extends Component
         'echo:players.{player.id},PlayerUpdated' => '$refresh',
     ];
 
-    // #[Computed]
-    // public function player()
-    // {
-    //     return Auth::user()->currentPlayer();
-    // }
-
     #[Computed]
     public function round()
     {

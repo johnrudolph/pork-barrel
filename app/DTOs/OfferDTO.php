@@ -34,6 +34,11 @@ class OfferDTO extends LivewireDTO implements SerializedByVerbs
         )->toArray();
     }
 
+    public function netOffer()
+    {
+        return $this->amount_offered + $this->amount_modified;
+    }
+
     public function validate()
     {
         return Validator::make($this->data, $this->rules);

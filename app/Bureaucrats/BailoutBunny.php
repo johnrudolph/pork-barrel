@@ -19,13 +19,6 @@ class BailoutBunny extends Bureaucrat
 
     const EFFECT = 'If you ever have 0 money after an auction, you will receive $10.';
 
-    public static function rules(): array
-    {
-        return [
-            'something' => 'string|required',
-        ];
-    }
-
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
         PlayerAwardedBailout::fire(
