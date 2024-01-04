@@ -2,12 +2,12 @@
 
 namespace App\Bureaucrats;
 
-use App\States\PlayerState;
-use App\States\RoundState;
 use App\DTOs\OfferDTO;
 use App\Events\PlayerIncomeChanged;
 use App\Models\Player;
 use App\Models\Round;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class TaxTurkey extends Bureaucrat
 {
@@ -43,7 +43,7 @@ class TaxTurkey extends Bureaucrat
             player_id: $offer->data['player'],
             round_id: $round->id,
             amount: -1,
-            activity_feed_description: "You were taxed by the Tax Turkey."
+            activity_feed_description: 'You were taxed by the Tax Turkey.'
         );
     }
 }

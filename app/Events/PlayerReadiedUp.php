@@ -26,7 +26,7 @@ class PlayerReadiedUp extends Event
         $game = GameState::load($this->game_id);
 
         if ($game->currentRound()->status === 'complete') {
-            $game->nextRound()->start();
+            $game->nextRound()->roundModel()->start();
         }
     }
 }

@@ -18,7 +18,7 @@ class SubsidySloth extends Bureaucrat
 
     const SHORT_DESCRIPTION = "Guess which industry will have the least money, and give them money if you're right.";
 
-    const DIALOG = "Sometimes you have to give a little to get a little.";
+    const DIALOG = 'Sometimes you have to give a little to get a little.';
 
     const EFFECT = 'Select an industry. If that industry has the least money at the beginning of the next round (before everyone receives income), they will receive 7 money.';
 
@@ -40,7 +40,7 @@ class SubsidySloth extends Bureaucrat
     }
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
-    {  
+    {
         ActionEffectAppliedToFutureRound::fire(
             player_id: $player->id,
             round_id: $round->game()->nextRound()->id,
@@ -49,12 +49,12 @@ class SubsidySloth extends Bureaucrat
     }
 
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
-    {    
+    {
         $min_money = $round->game()->playerStates()
             ->min(fn ($p) => $p->money);
 
         $guess = PlayerState::load($original_offer->data['player']);
-        
+
         if ($guess->money === $min_money) {
             PlayerReceivedMoney::fire(
                 player_id: $guess->id,

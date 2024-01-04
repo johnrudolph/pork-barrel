@@ -55,7 +55,7 @@ it('selects bureaucrats and a round modifier for a round', function () {
 
 it('prioritizes bureaucrats and modifiers that have not been selected in previous rounds', function () {
     $round_1 = $this->game->rounds->first();
-    
+
     $round_1->start();
     AuctionEnded::fire(round_id: $round_1->id);
     RoundEnded::fire(round_id: $round_1->id);

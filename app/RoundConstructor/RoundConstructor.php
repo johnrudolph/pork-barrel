@@ -25,8 +25,6 @@ class RoundConstructor
             ->map(fn ($r) => $r->round_modifier)
             ->flatten();
 
-        
-
         return RoundModifier::all()
             ->shuffle()
             ->sortByDesc(function ($modifier) use ($modifiers_used_this_game) {
@@ -47,10 +45,9 @@ class RoundConstructor
 
         $bureaucrats = Bureaucrat::all()
             ->shuffle()
-            ->sortByDesc(fn ($bureaucrat) => 
-                $bureaucrat::suitability($this) - $bureaucrats_used_this_game
-                    ->filter(fn ($b) => $b === $bureaucrat)
-                    ->count() * 0.1
+            ->sortByDesc(fn ($bureaucrat) => $bureaucrat::suitability($this) - $bureaucrats_used_this_game
+                ->filter(fn ($b) => $b === $bureaucrat)
+                ->count() * 0.1
             )
             ->take($this->number_of_bureaucrats)
             ->toArray();
@@ -58,10 +55,8 @@ class RoundConstructor
         return $bureaucrats;
     }
 
-
-
     // HELPERS //
-    
+
     public function isFinalRound(): bool
     {
         return $this->round->round_number === 8;

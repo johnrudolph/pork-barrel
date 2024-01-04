@@ -47,7 +47,7 @@ class RoundEnded extends Event
             ));
 
         $state->bureaucrats->each(fn ($b) => $b::handleGlobalEffectOnRoundEnd($state));
-        
+
         $state->game()->players->each(fn ($p) => PlayerRoundEnded::fire(
             player_id: $p,
             round_id: $this->round_id,

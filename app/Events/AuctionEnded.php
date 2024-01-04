@@ -2,11 +2,11 @@
 
 namespace App\Events;
 
+use App\Bureaucrats\Bureaucrat;
 use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
-use App\Bureaucrats\Bureaucrat;
 
 class AuctionEnded extends Event
 {
@@ -35,6 +35,8 @@ class AuctionEnded extends Event
                 )
                 )
             );
+
+        $round->round_modifier::handleOnAuctionEnded($round);
 
         RoundEnded::fire(round_id: $this->round_id);
     }

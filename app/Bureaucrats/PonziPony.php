@@ -7,7 +7,7 @@ use App\States\RoundState;
 
 class PonziPony extends Bureaucrat
 {
-    const NAME = "Ponzi Pony";
+    const NAME = 'Ponzi Pony';
 
     const SLUG = 'ponzi-pony';
 
@@ -15,7 +15,7 @@ class PonziPony extends Bureaucrat
 
     const DIALOG = "Trust me, this is a sure thing. Just don't offer me more than the others.";
 
-    const EFFECT = "If you have the highest offer, you will lose your offer. Otherwise, you will pay nothing, and receive the amount you offered.";
+    const EFFECT = 'If you have the highest offer, you will lose your offer. Otherwise, you will pay nothing, and receive the amount you offered.';
 
     public static function handleGlobalEffectOnRoundEnd(RoundState $round)
     {
@@ -24,14 +24,14 @@ class PonziPony extends Bureaucrat
 
         $top_offer = $offers_for_pony
             ->max(fn ($o) => $o->netOffer());
-        
+
         $offers_for_pony
             ->filter(fn ($o) => $o->netOffer() < $top_offer)
             ->each(fn ($o) => PlayerReceivedMoney::fire(
                 player_id: $o->player_id,
                 round_id: $round->id,
                 amount: $o->netOffer(),
-                activity_feed_description: "You did not have the highest offer for Ponzi Pony, and you got a return of your offer."
+                activity_feed_description: 'You did not have the highest offer for Ponzi Pony, and you got a return of your offer.'
             ));
     }
 }

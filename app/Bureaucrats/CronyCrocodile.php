@@ -2,10 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\States\PlayerState;
-use App\States\RoundState;
 use App\DTOs\OfferDTO;
 use App\Events\PlayerIncomeChanged;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class CronyCrocodile extends Bureaucrat
 {
@@ -25,7 +25,7 @@ class CronyCrocodile extends Bureaucrat
             player_id: $player->id,
             round_id: $round->id,
             amount: 1,
-            activity_feed_description: "Your income was increased by the Crony Crocodile."
+            activity_feed_description: 'Your income was increased by the Crony Crocodile.'
         );
     }
 }

@@ -20,14 +20,12 @@ use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
 use App\Events\RoundStarted;
 use App\Models\Game;
-use App\Models\MoneyLogEntry;
 use App\Models\Player;
 use App\Models\User;
 use App\RoundModifiers\RoundModifier;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
-use Thunk\Verbs\Models\VerbEvent;
 
 uses(DatabaseMigrations::class);
 
@@ -207,7 +205,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
 
     $this->assertEquals(
-        1, 
+        1,
         $this->game->currentRound()->state()->offers
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
             ->first()
@@ -215,7 +213,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     );
 
     $this->assertEquals(
-        1, 
+        1,
         $this->game->currentRound()->state()->offers
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === BailoutBunny::class)
             ->first()
@@ -351,31 +349,31 @@ it('allocates offers to winners for the Brinksmanship Bronco', function () {
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->daniel->id,
         'amount' => -10,
-        'description' => "You had the highest offer for Brinksmanship Bronco",
+        'description' => 'You had the highest offer for Brinksmanship Bronco',
     ]);
 
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->daniel->id,
         'amount' => 14,
-        'description' => "You received the all the offers for Brinksmanship Bronco.",
+        'description' => 'You received the all the offers for Brinksmanship Bronco.',
     ]);
 
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->jacob->id,
         'amount' => -10,
-        'description' => "You had the highest offer for Brinksmanship Bronco",
+        'description' => 'You had the highest offer for Brinksmanship Bronco',
     ]);
 
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->jacob->id,
         'amount' => 14,
-        'description' => "You received the all the offers for Brinksmanship Bronco.",
+        'description' => 'You received the all the offers for Brinksmanship Bronco.',
     ]);
 
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->john->id,
         'amount' => -8,
-        'description' => "You did not have the highest offer for Brinksmanship Bronco.",
+        'description' => 'You did not have the highest offer for Brinksmanship Bronco.',
     ]);
 });
 
@@ -401,19 +399,19 @@ it('doubles the offer for all losers of Ponzi Pony', function () {
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->john->id,
         'amount' => 8,
-        'description' => "You did not have the highest offer for Ponzi Pony, and you got a return of your offer.",
+        'description' => 'You did not have the highest offer for Ponzi Pony, and you got a return of your offer.',
     ]);
 
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->daniel->id,
         'amount' => -10,
-        'description' => "You had the highest offer for Ponzi Pony",
+        'description' => 'You had the highest offer for Ponzi Pony',
     ]);
 
     $this->assertDatabaseHas('money_log_entries', [
         'player_id' => $this->jacob->id,
         'amount' => -10,
-        'description' => "You had the highest offer for Ponzi Pony",
+        'description' => 'You had the highest offer for Ponzi Pony',
     ]);
 });
 

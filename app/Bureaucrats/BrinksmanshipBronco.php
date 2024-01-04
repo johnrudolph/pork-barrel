@@ -10,7 +10,7 @@ use App\States\RoundState;
 
 class BrinksmanshipBronco extends Bureaucrat
 {
-    const NAME = "Brinksmanship Bronco";
+    const NAME = 'Brinksmanship Bronco';
 
     const SLUG = 'brinksmanship-bronco';
 
@@ -24,7 +24,7 @@ class BrinksmanshipBronco extends Bureaucrat
     {
         $offers_for_bronco = $round->offers
             ->filter(fn ($o) => $o->bureaucrat === static::class);
-        
+
         $sum_offered = $offers_for_bronco
             ->sum(fn ($o) => $o->netOffer());
 
@@ -36,7 +36,7 @@ class BrinksmanshipBronco extends Bureaucrat
             player_id: $player->id,
             round_id: $round->id,
             amount: intval($sum_offered / $number_of_winners),
-            activity_feed_description: "You received the all the offers for Brinksmanship Bronco."
+            activity_feed_description: 'You received the all the offers for Brinksmanship Bronco.'
         );
     }
 
@@ -47,14 +47,14 @@ class BrinksmanshipBronco extends Bureaucrat
 
         $winning_offer = $offers_for_bronco
             ->max(fn ($o) => $o->netOffer());
-        
+
         $offers_for_bronco
             ->filter(fn ($o) => $o->netOffer() < $winning_offer)
             ->each(fn ($o) => PlayerSpentMoney::fire(
                 player_id: $o->player_id,
                 round_id: $round->id,
                 amount: $o->amount_offered,
-                activity_feed_description: "You did not have the highest offer for Brinksmanship Bronco."
+                activity_feed_description: 'You did not have the highest offer for Brinksmanship Bronco.'
             ));
     }
 }

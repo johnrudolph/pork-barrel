@@ -18,6 +18,10 @@ class RoundModifier
     public static function all()
     {
         return collect([
+            AlwaysABridesmaid::class,
+            CampaignFinanceReform::class,
+            CampaignSeason::class,
+            Hegemony::class,
             LameDuckSession::class,
             LegislativeFrenzy::class,
             TaxTheRich::class,
