@@ -35,10 +35,13 @@ class Bureaucrat
         return collect([
             BailoutBunny::class,
             BrinksmanshipBronco::class,
+            DilemmaDinosaur::class,
             ForecastFox::class,
+            FrozenFrog::class,
             GamblinGoat::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
+            MuckrakingMule::class,
             ObstructionOx::class,
             // OffshoreOtter::class,
             // PolicePiggy::class,

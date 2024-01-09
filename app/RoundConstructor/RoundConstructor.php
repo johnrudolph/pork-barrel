@@ -57,8 +57,20 @@ class RoundConstructor
 
     // HELPERS //
 
-    public function isFinalRound(): bool
+    public function stageOfGame(): string
     {
-        return $this->round->round_number === 8;
+        if ($this->round->round_number < 3) {
+            return 'early';
+        }
+
+        if ($this->round->round_number < 6) {
+            return 'mid';
+        }
+
+        if ($this->round->round_number < 8) {
+            return 'late';
+        }
+
+        return 'in-round';
     }
 }

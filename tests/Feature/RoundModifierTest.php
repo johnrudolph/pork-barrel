@@ -13,7 +13,10 @@ use App\Models\Player;
 use App\Models\User;
 use App\RoundConstructor\RoundConstructor;
 use App\RoundModifiers\AlwaysABridesmaid;
+use App\RoundModifiers\Astroturfing;
+use App\RoundModifiers\CampaignFinanceReform;
 use App\RoundModifiers\CampaignSeason;
+use App\RoundModifiers\Hegemony;
 use App\RoundModifiers\LameDuckSession;
 use App\RoundModifiers\LegislativeFrenzy;
 use App\RoundModifiers\TaxTheRich;
@@ -132,4 +135,67 @@ it('rewards you for making offers that are not rewarded with Always A Bridesmaid
     $this->assertEquals(6, $this->jacob->state()->money);
 });
 
-// campaign finance
+it('grants rewards even if you do not have the highest offer with Campaign Finance Reform', function () {
+    GameStarted::fire(game_id: $this->game->id);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->rounds->first()->id,
+        bureaucrats: [BailoutBunny::class],
+        round_modifier: CampaignFinanceReform::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 8);
+    $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 6);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(2, $this->john->state()->money);
+    $this->assertEquals(4, $this->daniel->state()->money);
+
+    $this->assertTrue($this->john->state()->has_bailout);
+    $this->assertTrue($this->daniel->state()->has_bailout);
+});
+
+it('refunds the largest offer for Hegemony', function () {
+    GameStarted::fire(game_id: $this->game->id);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->rounds->first()->id,
+        bureaucrats: [BailoutBunny::class],
+        round_modifier: Hegemony::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 8);
+    $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 6);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(6, $this->john->state()->money);
+    $this->assertEquals(10, $this->daniel->state()->money);
+});
+
+it('refunds offers under 4 for Astroturfing', function () {
+    GameStarted::fire(game_id: $this->game->id);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->rounds->first()->id,
+        bureaucrats: [BailoutBunny::class, MajorityLeaderMare::class],
+        round_modifier: Astroturfing::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 3);
+    $this->john->submitOffer($this->game->currentRound(), MajorityLeaderMare::class, 2);
+    $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 3);
+    $this->daniel->submitOffer($this->game->currentRound(), MajorityLeaderMare::class, 7);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(12, $this->john->state()->money);
+    $this->assertEquals(3, $this->daniel->state()->money);
+});

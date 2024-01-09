@@ -11,7 +11,7 @@ class CampaignSeason extends RoundModifier
 
     const EFFECT = 'If you only make an offer to 1 Bureaucrat this round, you receive 5 money.';
 
-    const FLAVOR_TEXT = "Corporations are lining up to support their favorite candidates.";
+    const FLAVOR_TEXT = 'Corporations are lining up to support their favorite candidates.';
 
     public static function handleOnRoundEnd(RoundState $round_state)
     {

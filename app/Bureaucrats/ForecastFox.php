@@ -32,7 +32,7 @@ class ForecastFox extends Bureaucrat
                 'options' => $round->game->players
                     ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
                     ->toArray(),
-                'label' => 'Bureaucrat',
+                'label' => 'Industry',
                 'placeholder' => 'Select an industry',
                 'rules' => 'required',
             ],

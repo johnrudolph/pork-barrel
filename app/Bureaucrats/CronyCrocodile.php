@@ -17,7 +17,7 @@ class CronyCrocodile extends Bureaucrat
 
     const DIALOG = "I am not a crook. I'm just a crocodile.";
 
-    const EFFECT = 'Choose another industry to increase their taxes. Their income will permanently decrease by 1.';
+    const EFFECT = 'Permanently increase your income by 1.';
 
     public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
     {

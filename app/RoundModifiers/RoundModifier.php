@@ -19,6 +19,7 @@ class RoundModifier
     {
         return collect([
             AlwaysABridesmaid::class,
+            Astroturfing::class,
             CampaignFinanceReform::class,
             CampaignSeason::class,
             Hegemony::class,

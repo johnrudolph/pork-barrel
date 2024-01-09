@@ -4,10 +4,13 @@ use App\Bureaucrats\BailoutBunny;
 use App\Bureaucrats\BrinksmanshipBronco;
 use App\Bureaucrats\Bureaucrat;
 use App\Bureaucrats\CronyCrocodile;
+use App\Bureaucrats\DilemmaDinosaur;
 use App\Bureaucrats\ForecastFox;
+use App\Bureaucrats\FrozenFrog;
 use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
+use App\Bureaucrats\MuckrakingMule;
 use App\Bureaucrats\ObstructionOx;
 use App\Bureaucrats\PonziPony;
 use App\Bureaucrats\SubsidySloth;
@@ -479,4 +482,130 @@ it('rewards players for correctly guessing who will be in first or last place', 
     $this->assertEquals(18, $this->john->state()->money);
     $this->assertEquals(25, $this->daniel->state()->money);
     $this->assertEquals(18, $this->jacob->state()->money);
+});
+
+it('rewards players for guessing which player belongs to an industry', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [MuckrakingMule::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    $this->daniel->submitOffer(
+        $this->game->currentRound(),
+        MuckrakingMule::class,
+        1,
+        [
+            'player' => $this->john->id,
+            'industry' => $this->john->state()->industry,
+        ]
+    );
+
+    $this->jacob->submitOffer(
+        $this->game->currentRound(),
+        MuckrakingMule::class,
+        1,
+        [
+            'player' => $this->john->id,
+            'industry' => $this->daniel->state()->industry,
+        ]
+    );
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(10, $this->john->state()->money);
+    $this->assertEquals(14, $this->daniel->state()->money);
+    $this->assertEquals(9, $this->jacob->state()->money);
+
+    $this->assertDatabaseHas('headlines', [
+        'headline' => 'Muckraking Mule Exposes Lobbyist',
+        'description' => "{$this->john->user->name} was exposed as a corporate lobbyist for {$this->john->state()->industry}.",
+    ]);
+});
+
+it('freezes half the moeny of a player with the Frozen Frog', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [FrozenFrog::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    $this->daniel->submitOffer($this->game->currentRound(), FrozenFrog::class, 1, ['player' => $this->john->id]);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(5, $this->john->state()->money);
+    $this->assertEquals(9, $this->daniel->state()->money);
+
+    $this->assertDatabaseHas('money_log_entries', [
+        'player_id' => $this->john->id,
+        'amount' => -5,
+        'description' => 'Half of your assets have been frozen. You will receive them back at the end of the next round.',
+    ]);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [Bureaucrat::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    $this->assertEquals(15, $this->john->state()->money);
+    $this->assertEquals(19, $this->daniel->state()->money);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(20, $this->john->state()->money);
+    $this->assertEquals(19, $this->daniel->state()->money);
+});
+
+it('does the prisoners dilemma for the Dilemma Dino', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [DilemmaDinosaur::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(20, $this->john->state()->money);
+    $this->assertEquals(20, $this->daniel->state()->money);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [DilemmaDinosaur::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), DilemmaDinosaur::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(32, $this->john->state()->money);
+    $this->assertEquals(30, $this->daniel->state()->money);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 3,
+        round_id: $this->game->state()->round_ids[2],
+        bureaucrats: [DilemmaDinosaur::class],
+        round_modifier: RoundModifier::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), DilemmaDinosaur::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), DilemmaDinosaur::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(40, $this->john->state()->money);
+    $this->assertEquals(38, $this->daniel->state()->money);
 });

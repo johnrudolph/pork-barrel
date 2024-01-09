@@ -3,8 +3,6 @@
 namespace App\RoundModifiers;
 
 use App\Events\PlayerReceivedMoney;
-use App\Events\PlayerSpentMoney;
-use App\States\PlayerState;
 use App\States\RoundState;
 
 class Hegemony extends RoundModifier
@@ -13,7 +11,7 @@ class Hegemony extends RoundModifier
 
     const EFFECT = 'The player who makes the largest offer this round will be refunded for 50% of that offer.';
 
-    const FLAVOR_TEXT = "The rich get richer.";
+    const FLAVOR_TEXT = 'The rich get richer.';
 
     public static function handleOnRoundEnd(RoundState $round_state)
     {

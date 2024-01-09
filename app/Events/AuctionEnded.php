@@ -36,7 +36,7 @@ class AuctionEnded extends Event
                 )
             );
 
-        $round->round_modifier::handleOnAuctionEnded($round);
+        $round->round_modifier::handleOnAuctionEnd($round);
 
         RoundEnded::fire(round_id: $this->round_id);
     }
