@@ -2,8 +2,6 @@
 
 namespace App\Events;
 
-use App\Bureaucrats\Bureaucrat;
-use App\RoundModifiers\RoundModifier;
 use App\States\GameState;
 use App\States\PlayerState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -28,12 +26,7 @@ class PlayerReadiedUp extends Event
         $game = GameState::load($this->game_id);
 
         if ($game->currentRound()->status === 'complete') {
-            RoundStarted::fire(
-                game_id: $this->game_id,
-                round_id: $game->nextRound()->id,
-                bureaucrats: Bureaucrat::all()->random(4)->toArray(),
-                round_modifier: RoundModifier::all()->random(),
-            );
+            $game->nextRound()->roundModel()->start();
         }
     }
 }

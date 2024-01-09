@@ -6,7 +6,6 @@ use App\DTOs\OfferDTO;
 use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Event;
-use Thunk\Verbs\Models\VerbEvent;
 
 class ActionAppliedAtEndOfRound extends Event
 {

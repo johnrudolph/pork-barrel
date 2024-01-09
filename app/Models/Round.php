@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Bureaucrats\Bureaucrat;
 use App\Events\RoundStarted;
-use App\RoundModifiers\RoundModifier;
+use App\RoundConstructor\RoundConstructor;
 use App\States\RoundState;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,12 +41,14 @@ class Round extends Model
 
     public function start()
     {
+        $constructor = new RoundConstructor(round: $this->state());
+
         RoundStarted::fire(
             round_id: $this->id,
             game_id: $this->game->id,
             round_number: $this->round_number,
-            bureaucrats: Bureaucrat::all()->random(5)->toArray(),
-            round_modifier: RoundModifier::all()->random(),
+            bureaucrats: $constructor->bureaucrats,
+            round_modifier: $constructor->round_modifier,
         );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Bureaucrats\Bureaucrat;
 use App\States\GameState;
 use App\States\PlayerState;
 use App\States\RoundState;
@@ -36,6 +37,14 @@ class RoundStarted extends Event
 
     public function handle()
     {
+        $this->state(RoundState::class)->offers_from_previous_rounds_that_resolve_this_round
+            ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_started'])
+            ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
+                PlayerState::load($o->player_id),
+                RoundState::load($this->round_id),
+                $o,
+            ));
+
         collect($this->state(RoundState::class)->game()->players)->each(fn ($player_id) => PlayerReceivedMoney::fire(
             player_id: $player_id,
             round_id: $this->round_id,
