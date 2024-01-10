@@ -57,6 +57,11 @@ class RoundConstructor
 
     // HELPERS //
 
+    public function numberOfPlayers(): int
+    {
+        return $this->round->game()->players->count();
+    }
+
     public function stageOfGame(): string
     {
         if ($this->round->round_number < 3) {

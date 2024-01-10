@@ -5,6 +5,7 @@ use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
 use App\Bureaucrats\TaxTurkey;
+use App\Bureaucrats\Watchdog;
 use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
@@ -128,4 +129,30 @@ it('spends the money offerred by winners', function () {
 
     // Daniel spends 3, because he didn't win the first bureaucrat
     $this->assertEquals(17, $this->daniel->state()->money);
+});
+
+it('throws validation errors for invalid submissions', function () {
+    $this->expect(fn () => $this->john->submitOffer(
+        $this->game->currentRound(),
+        BailoutBunny::class,
+        0
+    ))->toThrow('Offer for Bailout Bunny must be greater than 0');
+
+    $this->john->submitOffer(
+        $this->game->currentRound(),
+        BailoutBunny::class,
+        1
+    );
+
+    $this->expect(fn () => $this->john->submitOffer(
+        $this->game->currentRound(),
+        BailoutBunny::class,
+        8
+    ))->toThrow('Player already submitted offer for Bailout Bunny.');
+
+    $this->expect(fn () => $this->john->submitOffer(
+        $this->game->currentRound(),
+        Watchdog::class,
+        8
+    ))->toThrow('Offer for Watchdog did not include all required fields.');
 });

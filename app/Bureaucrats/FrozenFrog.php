@@ -53,7 +53,7 @@ class FrozenFrog extends Bureaucrat
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
         PlayerMoneyFrozen::fire(
-            player_id: $offer->data['player'],
+            player_id: (int) $offer->data['player'],
             round_id: $round->id,
             amount: (int) round(PlayerState::load($offer->data['player'])->money / 2),
             activity_feed_description: 'Half of your assets have been frozen. You will receive them back at the end of the next round.',
@@ -69,7 +69,7 @@ class FrozenFrog extends Bureaucrat
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
     {
         PlayerMoneyUnfrozen::fire(
-            player_id: $original_offer->data['player'],
+            player_id: (int) $original_offer->data['player'],
             round_id: $round->id,
             amount: PlayerState::load($original_offer->data['player'])->money_frozen,
             activity_feed_description: 'Your assets have been unfrozen. You now have access to all of your money.',

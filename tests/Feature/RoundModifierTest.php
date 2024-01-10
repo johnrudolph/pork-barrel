@@ -87,7 +87,7 @@ it('changes the number of bureaucrats chosen for Lame Duck and Legislative Frenz
         round_modifier: LegislativeFrenzy::class,
     );
 
-    $this->assertEquals(6, collect($constructor->bureaucrats)->count());
+    $this->assertEquals(5, collect($constructor->bureaucrats)->count());
 });
 
 it('rewards you for only making one offer in Campaign Season', function () {

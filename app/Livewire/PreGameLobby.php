@@ -20,7 +20,7 @@ class PreGameLobby extends Component
     #[On('echo:games.{game.id},GameUpdated')]
     public function gameUpdated()
     {
-        // $this->initializeProperties();
+        //
     }
 
     public function startGame()

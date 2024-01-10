@@ -56,7 +56,7 @@ class Watchdog extends Bureaucrat
             )
         ) {
             PlayerSpentMoney::fire(
-                player_id: $offer->data['player'],
+                player_id: (int) $offer->data['player'],
                 round_id: $round->id,
                 amount: 5,
                 activity_feed_description: 'Fined by the Watchdog. Bribery is not tolarated around these parts.',

@@ -13,7 +13,7 @@ class RoundModifier
 
     const FLAVOR_TEXT = '';
 
-    const NUMBER_OF_BUREAUCRATS = 4;
+    const NUMBER_OF_BUREAUCRATS = 3;
 
     public static function all()
     {

@@ -23,6 +23,8 @@ class Bureaucrat
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = '';
 
+    const HAS_WINNER = true;
+
     const HOOKS = [
         'on_round_started' => 'on_round_started',
         'on_offer_submitted' => 'on_offer_submitted',
@@ -43,8 +45,6 @@ class Bureaucrat
             MinorityLeaderMink::class,
             MuckrakingMule::class,
             ObstructionOx::class,
-            // OffshoreOtter::class,
-            // PolicePiggy::class,
             SubsidySloth::class,
             TaxTurkey::class,
             TreasuryChicken::class,

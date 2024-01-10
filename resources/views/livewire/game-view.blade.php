@@ -10,15 +10,12 @@
     <!-- headlines -->
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="px-6 py-8 sm:px-6 sm:py-8 lg:px-8 bg-teal text-white">
-                @if ($this->round->state()->status === 'in-progress')
+            <div class="px-6 py-8 sm:px-6 sm:py-8 lg:px-16 bg-teal text-white">
                 <div>
-                    <p class="text-sm font-semibold leading-6">Today's headlines</p>
-                    <p class="mt-2">{{ $this->round_modifier::HEADLINE }}</p>
+                    <p>{{ $this->round_modifier::HEADLINE }}</p>
                     <p class="mt-2 italic text-xs">{{ $this->round_modifier::FLAVOR_TEXT }}</p>
                     <p class="mt-2 text-sm">{{ $this->round_modifier::EFFECT }}</p>
                 </div>
-                @endif
 
                 @if($this->other_headlines->count() > 0)
                 <div x-data="{ open: false }">

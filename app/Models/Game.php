@@ -42,12 +42,7 @@ class Game extends Model
     {
         GameStarted::fire(game_id: $this->id);
 
-        RoundStarted::fire(
-            game_id: $this->id,
-            round_id: $this->state()->round_ids[0],
-            bureaucrats: Bureaucrat::all()->random(4)->toArray(),
-            round_modifier: RoundModifier::all()->random(),
-        );
+        $this->rounds->first()->start();
     }
 
     public function currentRound()

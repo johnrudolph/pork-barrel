@@ -18,6 +18,8 @@ class DilemmaDinosaur extends Bureaucrat
 
     const EFFECT = 'If no one makes me an offer, everyone will receive 10 money. If one person makes me an offer, they will receive 2x their offer. If multiple people make me an offer, they will lose 2x their offer.';
 
+    const HAS_WINNER = false;
+
     public static function handleGlobalEffectOnRoundEnd(RoundState $round)
     {
         $offers_for_dino = $round->offers

@@ -27,7 +27,7 @@ class Hegemony extends RoundModifier
                     player_id: $p,
                     round_id: $round_state->id,
                     activity_feed_description: 'Received hegemony refund',
-                    amount: $max_offer / 2,
+                    amount: (int) ceil($max_offer / 2),
                 );
             }
         });

@@ -99,9 +99,15 @@ class AuctionView extends Component
             return;
         }
 
-        collect($this->offers)
-            ->filter(fn ($o) => $o->amount_offered > 0)
-            ->each(fn ($o) => $o->submit());
+        try {
+            collect($this->offers)
+                ->filter(fn ($o) => $o->amount_offered > 0)
+                ->each(fn ($o) => $o->submit());
+        } catch (\Throwable $th){
+            //
+        }
+
+
 
         PlayerAwaitingResults::fire(player_id: $this->player->id);
 
