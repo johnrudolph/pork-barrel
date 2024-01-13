@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerReceivedMoney;
 use App\States\RoundState;
 
@@ -31,7 +32,8 @@ class PonziPony extends Bureaucrat
                 player_id: $o->player_id,
                 round_id: $round->id,
                 amount: $o->netOffer(),
-                activity_feed_description: 'You did not have the highest offer for Ponzi Pony, and you got a return of your offer.'
+                activity_feed_description: 'You did not have the highest offer for Ponzi Pony, and you got a return of your offer.',
+                type: MoneyLogEntry::TYPE_AWARD,
             ));
     }
 }

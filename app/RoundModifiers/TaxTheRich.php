@@ -2,6 +2,7 @@
 
 namespace App\RoundModifiers;
 
+use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerSpentMoney;
 use App\States\PlayerState;
 use App\States\RoundState;
@@ -19,10 +20,10 @@ class TaxTheRich extends RoundModifier
         $player_states = collect($round_state->game()->players)
             ->map(fn ($player_id) => PlayerState::load($player_id));
 
-        $most_cash_held = $player_states->max(fn ($state) => $state->money
+        $most_cash_held = $player_states->max(fn ($state) => $state->availableMoney()
         );
 
-        $richest_players = $player_states->filter(fn ($state) => $state->money === $most_cash_held
+        $richest_players = $player_states->filter(fn ($state) => $state->availableMoney() === $most_cash_held
         );
 
         $richest_players->each(fn ($state) => PlayerSpentMoney::fire(
@@ -30,6 +31,7 @@ class TaxTheRich extends RoundModifier
             round_id: $round_state->id,
             activity_feed_description: 'Taxed the rich',
             amount: 5,
+            type: MoneyLogEntry::TYPE_PENALIZE,
         )
         );
     }

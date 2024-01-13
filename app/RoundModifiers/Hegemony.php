@@ -2,6 +2,7 @@
 
 namespace App\RoundModifiers;
 
+use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerReceivedMoney;
 use App\States\RoundState;
 
@@ -28,6 +29,7 @@ class Hegemony extends RoundModifier
                     round_id: $round_state->id,
                     activity_feed_description: 'Received hegemony refund',
                     amount: (int) ceil($max_offer / 2),
+                    type: MoneyLogEntry::TYPE_AWARD,
                 );
             }
         });

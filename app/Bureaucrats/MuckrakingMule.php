@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\Events\PlayerReceivedMoney;
 use App\Models\Headline;
@@ -68,6 +69,7 @@ class MuckrakingMule extends Bureaucrat
                 round_id: $round->id,
                 amount: 5,
                 activity_feed_description: "You exposed {$acusee->user->name} as a corporate lobbyist for {$acusee->state()->industry}.",
+                type: MoneyLogEntry::TYPE_AWARD,
             );
 
             Headline::create([

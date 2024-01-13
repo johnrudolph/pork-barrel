@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Bureaucrats\Bureaucrat;
+use App\DTOs\MoneyLogEntry;
 use App\States\GameState;
 use App\States\PlayerState;
 use App\States\RoundState;
@@ -50,6 +51,7 @@ class RoundStarted extends Event
             round_id: $this->round_id,
             amount: PlayerState::load($player_id)->income,
             activity_feed_description: 'Received income',
+            type: MoneyLogEntry::TYPE_INCOME,
         )
         );
 

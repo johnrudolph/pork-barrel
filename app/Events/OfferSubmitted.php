@@ -22,6 +22,11 @@ class OfferSubmitted extends Event
     public function validate(RoundState $state)
     {
         $this->assert(
+            assertion: $this->state(PlayerState::class)->availableMoney() >= $this->offer->amount_offered,
+            message: 'The player does not have enough money to make this offer.'
+        );
+        
+        $this->assert(
             assertion: ! $this->offer->validate()->errors()->all(),
             message: 'Offer for '.$this->offer->bureaucrat::NAME.' did not include all required fields.'
         );
@@ -32,10 +37,9 @@ class OfferSubmitted extends Event
         );
 
         $this->assert(
-            assertion: $state->offers->filter(fn ($o) => 
-                    $o->bureaucrat === $this->offer->bureaucrat
+            assertion: $state->offers->filter(fn ($o) => $o->bureaucrat === $this->offer->bureaucrat
                     && $o->player_id === $this->player_id
-                )->count() === 0,
+            )->count() === 0,
             message: 'Player already submitted offer for '.$this->offer->bureaucrat::NAME.'.'
         );
     }

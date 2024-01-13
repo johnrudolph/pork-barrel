@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
@@ -39,6 +40,7 @@ class MinorityLeaderMink extends Bureaucrat
                 round_id: $round->id,
                 amount: 10,
                 activity_feed_description: "You made no offers. That'll show 'em",
+                type: MoneyLogEntry::TYPE_AWARD,
             );
         }
     }

@@ -42,7 +42,7 @@ class AuctionView extends Component
     {
         $this->player = Auth::user()->currentPlayer();
 
-        $this->money = $this->player->state()->money;
+        $this->money = $this->player->state()->availableMoney();
 
         foreach ($this->round->state()->bureaucrats as $b) {
             $this->offers[$b::SLUG] = new OfferDTO(
@@ -103,11 +103,9 @@ class AuctionView extends Component
             collect($this->offers)
                 ->filter(fn ($o) => $o->amount_offered > 0)
                 ->each(fn ($o) => $o->submit());
-        } catch (\Throwable $th){
+        } catch (\Throwable $th) {
             //
         }
-
-
 
         PlayerAwaitingResults::fire(player_id: $this->player->id);
 

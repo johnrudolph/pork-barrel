@@ -14,6 +14,8 @@ class PlayerReadiedUp extends Event
 
     public int $game_id;
 
+    // @todo important to validate here so they don't jump ahead two rounds.
+
     public function applyToPlayerState(PlayerState $state)
     {
         $state->status = 'auction';

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('round_id');
             $table->foreignId('game_id');
-            $table->string('headline');
-            $table->string('description');
+            $table->text('headline');
+            $table->text('description');
             $table->boolean('is_round_modifier')->default(false);
             $table->timestamps();
         });

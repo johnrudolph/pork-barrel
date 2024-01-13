@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\Events\PlayerSpentMoney;
 use App\Models\Headline;
@@ -60,12 +61,13 @@ class Watchdog extends Bureaucrat
                 round_id: $round->id,
                 amount: 5,
                 activity_feed_description: 'Fined by the Watchdog. Bribery is not tolarated around these parts.',
+                type: MoneyLogEntry::TYPE_PENALIZE,
             );
 
             Headline::create([
                 'round_id' => $round->id,
                 'game_id' => $round->game()->id,
-                'headline' => 'So and so industry caught bribing officials!',
+                'headline' => PlayerState::load((int) $offer->data['player'])->industry.' caught bribing officials!',
                 'description' => 'In a shocking discovery, the Watchdog has exposed so and so for bribing bureaucrat. They have been fined.',
             ]);
         }

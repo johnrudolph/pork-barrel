@@ -55,7 +55,7 @@ class FrozenFrog extends Bureaucrat
         PlayerMoneyFrozen::fire(
             player_id: (int) $offer->data['player'],
             round_id: $round->id,
-            amount: (int) round(PlayerState::load($offer->data['player'])->money / 2),
+            amount: (int) round(PlayerState::load($offer->data['player'])->availableMoney() / 2),
             activity_feed_description: 'Half of your assets have been frozen. You will receive them back at the end of the next round.',
         );
 

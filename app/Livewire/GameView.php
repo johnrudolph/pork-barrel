@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Game;
-use App\Models\MoneyLogEntry;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -62,16 +61,14 @@ class GameView extends Component
             ->map(fn ($p) => [
                 'player_id' => $p->id,
                 'industry' => $p->industry,
-                'money' => $p->money,
+                'money' => $p->availableMoney(),
             ]);
     }
 
     #[Computed]
     public function moneyLogEntries()
     {
-        return MoneyLogEntry::where('player_id', $this->player->id)
-            ->get()
-            ->sortByDesc('created_at');
+        return $this->player->state()->money_history->toArray();
     }
 
     public function mount($game)

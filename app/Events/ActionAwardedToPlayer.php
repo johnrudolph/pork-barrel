@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\States\PlayerState;
 use App\States\RoundState;
@@ -45,6 +46,7 @@ class ActionAwardedToPlayer extends Event
             round_id: $this->round_id,
             activity_feed_description: $this->activity_feed_description,
             amount: $this->offer->amount_offered,
+            type: MoneyLogEntry::TYPE_WIN_AUCTION,
         );
     }
 }
