@@ -32,19 +32,17 @@ class ActionAwardedToPlayer extends Event
             });
     }
 
+    public function applyToPlayer(PlayerState $state)
+    {
+        //
+    }
+
     public function handle()
     {
         $this->offer->bureaucrat::handleOnAwarded(
             $this->state(PlayerState::class),
             $this->state(RoundState::class),
             $this->offer,
-        );
-
-        PlayerSpentMoney::fire(
-            player_id: $this->player_id,
-            round_id: $this->round_id,
-            activity_feed_description: $this->activity_feed_description,
-            amount: $this->offer->amount_offered,
         );
     }
 }

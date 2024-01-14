@@ -2,6 +2,7 @@
 
 namespace App\RoundModifiers;
 
+use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerReceivedMoney;
 use App\States\RoundState;
 
@@ -27,6 +28,7 @@ class AlwaysABridesmaid extends RoundModifier
                         round_id: $round_state->id,
                         activity_feed_description: 'Received consolation prize',
                         amount: $failed_offers * 2,
+                        type: MoneyLogEntry::TYPE_AWARD,
                     );
                 }
             });

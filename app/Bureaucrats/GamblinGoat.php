@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\Events\PlayerReceivedMoney;
 use App\States\PlayerState;
@@ -25,7 +26,8 @@ class GamblinGoat extends Bureaucrat
             player_id: $player->id,
             round_id: $round->id,
             amount: rand(1, 10),
-            activity_feed_description: "The Gamlin' Goat's scheme paid off!"
+            activity_feed_description: "The Gamlin' Goat's scheme paid off!",
+            type: MoneyLogEntry::TYPE_AWARD,
         );
     }
 

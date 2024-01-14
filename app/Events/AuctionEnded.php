@@ -17,6 +17,8 @@ class AuctionEnded extends Event
     {
         $round = $this->state(RoundState::class);
 
+        $round->round_modifier::handleOnAuctionEnd($round);
+
         $round->offers_from_previous_rounds_that_resolve_this_round
             ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_auction_ended'])
             ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
@@ -35,8 +37,6 @@ class AuctionEnded extends Event
                 )
                 )
             );
-
-        $round->round_modifier::handleOnAuctionEnd($round);
 
         RoundEnded::fire(round_id: $this->round_id);
     }

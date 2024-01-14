@@ -26,7 +26,6 @@ class RoundEnded extends Event
         $round->save();
 
         $state = $this->state(RoundState::class);
-        $players = collect($state->game()->players);
 
         $state->offers_from_previous_rounds_that_resolve_this_round
             ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_ended'])

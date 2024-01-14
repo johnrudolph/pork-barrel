@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\DTOs\MoneyLogEntry;
 use App\Models\Headline;
 use App\States\PlayerState;
 use App\States\RoundState;
@@ -27,13 +28,14 @@ class PlayerWasBailedOut extends Event
             round_id: $this->round_id,
             amount: 10,
             activity_feed_description: 'You received a bailout. No one needs a stronger safety net than you.',
+            type: MoneyLogEntry::TYPE_AWARD,
         );
 
         Headline::create([
             'round_id' => $this->round_id,
             'game_id' => RoundState::load($this->round_id)->game()->id,
-            'headline' => 'So and so industry bailed out!',
-            'description' => "In order to have a just society, it's important that the mega-rich cannot fail. We've allocated some tax dollars to so and so industry to ensure they can pull themselves up by their own bootstraps, and then put that boot right back on your neck.",
+            'headline' => $this->state(PlayerState::class)->industry.' bailed out!',
+            'description' => 'After hitting rock bottom, the '.$this->state(PlayerState::class)->industry." industry has received a bailout. In order to have a just society, it's important that the mega-rich cannot fail. This corporate welfare will help this industry pick themselves up by their own bootstraps, and then put that boot right back on your neck.",
         ]);
     }
 }

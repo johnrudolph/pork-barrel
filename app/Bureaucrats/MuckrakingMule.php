@@ -2,11 +2,13 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\Events\PlayerReceivedMoney;
 use App\Models\Headline;
 use App\Models\Player;
 use App\Models\Round;
+use App\RoundConstructor\RoundConstructor;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -21,6 +23,15 @@ class MuckrakingMule extends Bureaucrat
     const DIALOG = "It's time to expose the corporate lobbyists in this town. Help me expose a huge story.";
 
     const EFFECT = 'Select a player and an industry. If that player works for that industry, there will be a headline exposing them, and you will earn 5 money.';
+
+    public static function suitability(RoundConstructor $constructor)
+    {
+        if ($constructor->numberOfPlayers() < 3) {
+            return 0;
+        }
+
+        return 1;
+    }
 
     public static function options(Round $round, Player $player)
     {
@@ -58,6 +69,7 @@ class MuckrakingMule extends Bureaucrat
                 round_id: $round->id,
                 amount: 5,
                 activity_feed_description: "You exposed {$acusee->user->name} as a corporate lobbyist for {$acusee->state()->industry}.",
+                type: MoneyLogEntry::TYPE_AWARD,
             );
 
             Headline::create([

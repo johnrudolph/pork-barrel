@@ -2,6 +2,7 @@
 
 namespace App\RoundModifiers;
 
+use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerReceivedMoney;
 use App\States\RoundState;
 
@@ -9,7 +10,7 @@ class Astroturfing extends RoundModifier
 {
     const HEADLINE = 'Astroturfing';
 
-    const EFFECT = 'For each offer you make of 3 or less, you will receive the amount offerred in return regardless of whether you had the highest offer.';
+    const EFFECT = 'For each offer you make of 3 or less, you will be paid back the amount you offered, regardless of whether you had the highest offer.';
 
     const FLAVOR_TEXT = 'The people are speaking, but who are they?';
 
@@ -22,6 +23,7 @@ class Astroturfing extends RoundModifier
                 round_id: $o->round_id,
                 activity_feed_description: 'Received astroturfing refund',
                 amount: $o->netOffer(),
+                type: MoneyLogEntry::TYPE_AWARD,
             ));
     }
 }

@@ -50,6 +50,8 @@ class AwaitingNextRoundView extends Component
     public function readyUp()
     {
         PlayerReadiedUp::fire(player_id: $this->player->id, game_id: $this->game->id);
+
+        return redirect()->route('games.show', ['game' => $this->game->id]);
     }
 
     public function render()

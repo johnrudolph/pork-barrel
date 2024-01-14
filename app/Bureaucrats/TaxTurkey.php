@@ -40,7 +40,7 @@ class TaxTurkey extends Bureaucrat
     public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
     {
         PlayerIncomeChanged::fire(
-            player_id: $offer->data['player'],
+            player_id: (int) $offer->data['player'],
             round_id: $round->id,
             amount: -1,
             activity_feed_description: 'You were taxed by the Tax Turkey.'

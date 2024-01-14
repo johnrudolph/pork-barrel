@@ -5,6 +5,7 @@ use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
 use App\Bureaucrats\TaxTurkey;
+use App\Bureaucrats\Watchdog;
 use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
@@ -52,9 +53,6 @@ beforeEach(function () {
             TaxTurkey::class],
         round_modifier: RoundModifier::class,
     );
-
-    $this->game->players
-        ->each(fn ($p) => $p->receiveMoney(10, 'Received starting money.'));
 
     $this->john = Player::first();
     $this->daniel = Player::get()->last();
@@ -118,14 +116,40 @@ it('spends the money offerred by winners', function () {
 
     $this->john->submitOffer($round, $bureaucrats[0], 1);
     $this->john->submitOffer($round, $bureaucrats[1], 2);
-    $this->daniel->submitOffer($round, $bureaucrats[1], 2);
+    $this->daniel->submitOffer($round, $bureaucrats[1], 1);
     $this->daniel->submitOffer($round, $bureaucrats[2], 1);
 
     AuctionEnded::fire(round_id: $round->id);
 
     // John spends 3, because he didn't win the second bureaucrat
-    $this->assertEquals(17, $this->john->state()->money);
+    $this->assertEquals(2, $this->john->state()->availableMoney());
 
     // Daniel spends 3, because he didn't win the first bureaucrat
-    $this->assertEquals(17, $this->daniel->state()->money);
+    $this->assertEquals(4, $this->daniel->state()->availableMoney());
+});
+
+it('throws validation errors for invalid submissions', function () {
+    $this->expect(fn () => $this->john->submitOffer(
+        $this->game->currentRound(),
+        BailoutBunny::class,
+        0
+    ))->toThrow('Offer for Bailout Bunny must be greater than 0');
+
+    $this->john->submitOffer(
+        $this->game->currentRound(),
+        BailoutBunny::class,
+        1
+    );
+
+    $this->expect(fn () => $this->john->submitOffer(
+        $this->game->currentRound(),
+        BailoutBunny::class,
+        4
+    ))->toThrow('Player already submitted offer for Bailout Bunny.');
+
+    $this->expect(fn () => $this->john->submitOffer(
+        $this->game->currentRound(),
+        Watchdog::class,
+        4
+    ))->toThrow('Offer for Watchdog did not include all required fields.');
 });

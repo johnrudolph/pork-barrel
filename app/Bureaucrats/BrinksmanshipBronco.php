@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\Events\PlayerReceivedMoney;
 use App\Events\PlayerSpentMoney;
@@ -36,7 +37,8 @@ class BrinksmanshipBronco extends Bureaucrat
             player_id: $player->id,
             round_id: $round->id,
             amount: intval($sum_offered / $number_of_winners),
-            activity_feed_description: 'You received the all the offers for Brinksmanship Bronco.'
+            activity_feed_description: 'You received the all the offers for Brinksmanship Bronco.',
+            type: MoneyLogEntry::TYPE_AWARD,
         );
     }
 
@@ -54,7 +56,8 @@ class BrinksmanshipBronco extends Bureaucrat
                 player_id: $o->player_id,
                 round_id: $round->id,
                 amount: $o->amount_offered,
-                activity_feed_description: 'You did not have the highest offer for Brinksmanship Bronco.'
+                activity_feed_description: 'You did not have the highest offer for Brinksmanship Bronco.',
+                type: MoneyLogEntry::TYPE_PENALIZE,
             ));
     }
 }

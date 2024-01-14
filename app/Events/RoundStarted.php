@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Bureaucrats\Bureaucrat;
+use App\DTOs\MoneyLogEntry;
 use App\States\GameState;
 use App\States\PlayerState;
 use App\States\RoundState;
@@ -37,6 +38,8 @@ class RoundStarted extends Event
 
     public function handle()
     {
+        $this->round_modifier::handleOnRoundStart($this->state(RoundState::class));
+
         $this->state(RoundState::class)->offers_from_previous_rounds_that_resolve_this_round
             ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_started'])
             ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
@@ -50,6 +53,7 @@ class RoundStarted extends Event
             round_id: $this->round_id,
             amount: PlayerState::load($player_id)->income,
             activity_feed_description: 'Received income',
+            type: MoneyLogEntry::TYPE_INCOME,
         )
         );
 

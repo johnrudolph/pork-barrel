@@ -7,33 +7,15 @@
         <p class="pl-8">Round {{ $this->round->round_number }} of 8</p>
     </div>
 
-    <!-- headlines -->
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <!-- round modifier -->
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" wire:key="round-modifier">
         <div class="overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="px-6 py-8 sm:px-6 sm:py-8 lg:px-8 bg-teal text-white">
-                @if ($this->round->state()->status === 'in-progress')
+            <div class="px-6 py-8 sm:px-6 sm:py-8 lg:px-16 bg-teal text-white">
                 <div>
-                    <p class="text-sm font-semibold leading-6">Today's headlines</p>
-                    <p class="mt-2">{{ $this->round_modifier::HEADLINE }}</p>
+                    <p>{{ $this->round_modifier::HEADLINE }}</p>
                     <p class="mt-2 italic text-xs">{{ $this->round_modifier::FLAVOR_TEXT }}</p>
                     <p class="mt-2 text-sm">{{ $this->round_modifier::EFFECT }}</p>
                 </div>
-                @endif
-
-                @if($this->other_headlines->count() > 0)
-                <div x-data="{ open: false }">
-                    <button x-on:click="open = ! open" class="text-sm text-purple mt-2">Show previous headlines</button>
-                
-                    <div x-show="open" class="mt-2">
-                        @foreach($this->other_headlines as $h)
-                            <div>
-                                <p class="mt-2">{{ $h->headline }}</p>
-                                <p class="mt-2 text-sm">{{ $h->description }}</p>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
             </div>
         </div>
     </div>
@@ -46,7 +28,7 @@
     @endif
 
     <!-- scoreboard -->
-    <div class="py-4 text-purple max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 text-purple max-w-7xl mx-auto sm:px-6 lg:px-8" wire:key="scoreboard">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border">
             <div class="bg-white px-6 py-6 sm:px-6 lg:px-8">
                 <div class="px-4 sm:px-6 lg:px-8">
@@ -85,47 +67,76 @@
         </div>
     </div>
 
+    <!-- headlines -->
+    @if($this->headlines->count() > 0)
+    <div class="max-w-7xl mx-auto mt-8 sm:px-6 lg:px-8" wire:key="headlines">
+        <div class="overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="px-6 py-8 sm:px-6 sm:py-8 lg:px-16 bg-gray-200 text-purple">
+                <div class="mt-2">
+                    <p>Latest Headlines</p>
+                    @foreach($this->headlines as $h)
+                        <p class="mt-4 font-bold">{{ $h->headline }}</p>
+                        <p class="mt-2 text-sm">{{ $h->description }}</p>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- money log -->
-    <div class="py-4 text-purple max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 text-purple max-w-7xl mx-auto sm:px-6 lg:px-8" wire:key="money-log">
         <div class="overflow-hidden sm:rounded-lg">
             <div class="px-6 py-6 sm:px-6 lg:px-8">
                 <div class="px-4 sm:px-6 lg:px-8">
                     <div class="flow-root">
-                    <p class="text-sm font-semibold text-gray-900 mb-4">Your Money History</p>
-                    <ul role="list" class="-mb-8">
-                        @foreach($this->money_log_entries as $entry)
-                        <li>
-                        <div class="relative pb-8">
-                            <span class="absolute left-4 top-4 h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                            <div>
-                                @if($entry->amount > 0)
-                                <span class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center ring-8 ring-white">
-                                    💰
-                                </span>
-                                @else
-                                <span class="h-8 w-8 rounded-full bg-red-500 flex items-center justify-center ring-8 ring-white">
-                                    💸
-                                </span>
-                                @endif
-                            </div>
-                            <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
-                                <div>
-                                <p class="text-sm text-gray-500">{{ $entry->description }}</p>
+                        <p class="text-sm font-semibold text-gray-900 mb-4">Your Money History</p>
+                        @foreach(collect(range($this->game->state()->current_round_number, 1)) as $round_number)
+                            <p class="mb-8"> Round {{ $round_number }} </p>
+                            <ul role="list" class="">
+                                @foreach($this->money_log_entries->filter(fn ($e) => $e->round_number === $round_number) as $entry)
+                                <li>
+                                <div class="relative pb-8">
+                                    <div class="relative flex space-x-3">
+                                        @if($entry->amount > 0)
+                                        <div>
+                                            <span class="h-8 w-8 rounded-full bg-teal flex items-center justify-center ring-8 ring-white">
+                                                💰
+                                            </span>
+                                        </div>
+                                        <div class="flex min-w-0 flex-1 justify-between pl-4 space-x-4 pt-1.5 text-teal">
+                                            <div>
+                                            <p class="text-sm">{{ $entry->description }}</p>
+                                            </div>
+                                            <div class="whitespace-nowrap text-right text-sm">
+                                            <p>{{ $entry->amount }}</p>
+                                            </div>
+                                        </div>
+                                        @else
+                                        <div>
+                                            <span class="h-8 w-8 rounded-full bg-red flex items-center justify-center ring-8 ring-white">
+                                                💸
+                                            </span>
+                                        </div>
+                                        <div class="flex min-w-0 flex-1 justify-between pl-4 space-x-4 pt-1.5 text-red">
+                                            <div>
+                                                <p class="text-sm">{{ $entry->description }}</p>
+                                            </div>
+                                            <div class="whitespace-nowrap text-right text-sm">
+                                                <p>{{ $entry->amount }}</p>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div class="whitespace-nowrap text-right text-sm text-gray-500">
-                                <p>{{ $entry->amount }}</p>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                        </li>
+                                </li>
+                                @endforeach
+                            </ul>
                         @endforeach
-                    </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div> 
-
     @endif
 </div>

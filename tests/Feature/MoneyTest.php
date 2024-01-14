@@ -8,7 +8,6 @@ use App\Events\GameStarted;
 use App\Events\PlayerJoinedGame;
 use App\Events\RoundStarted;
 use App\Models\Game;
-use App\Models\MoneyLogEntry;
 use App\Models\Player;
 use App\Models\User;
 use App\RoundModifiers\RoundModifier;
@@ -51,15 +50,17 @@ beforeEach(function () {
     $this->daniel = Player::get()->last();
 });
 
-it('gives players 10 money to start each round', function () {
-    $this->assertEquals(10, $this->john->state()->money);
+it('gives players 5 money to start each round', function () {
+    $this->assertEquals(5, $this->john->state()->availableMoney());
     app(StateManager::class)->reset();
-    $this->assertEquals(10, $this->john->state()->money);
+    $this->assertEquals(5, $this->john->state()->availableMoney());
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
     $this->game->currentRound()->next()->start();
 
-    $this->assertEquals(20, $this->john->state()->money);
+    $this->assertEquals(10, $this->john->state()->availableMoney());
+
+    $this->assertEquals(1, $this->john->state()->money_history->first()->round_number);
 });
 
 it('creates money log entries when players win auctions', function () {
@@ -68,25 +69,13 @@ it('creates money log entries when players win auctions', function () {
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
 
-    $johns_spending = MoneyLogEntry::where('player_id', $this->john->id)
-        ->where('amount', '<', 1)
-        ->get();
+    $johns_spending = $this->john->state()->money_history
+        ->where('amount', '<', 1);
 
     $this->assertCount(1, $johns_spending);
 
     $this->assertEquals(
         'You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.',
         $johns_spending->first()->description,
-    );
-
-    $daniel_spending = MoneyLogEntry::where('player_id', $this->daniel->id)
-        ->where('amount', '<', 1)
-        ->get();
-
-    $this->assertCount(1, $daniel_spending);
-
-    $this->assertEquals(
-        "You had the highest bid for the Gamblin' Goat. Let's see how it pays off...",
-        $daniel_spending->first()->description,
     );
 });

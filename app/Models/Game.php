@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use App\Bureaucrats\Bureaucrat;
 use App\Events\GameEnded;
 use App\Events\GameStarted;
-use App\Events\RoundStarted;
-use App\RoundModifiers\RoundModifier;
 use App\States\GameState;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,12 +39,7 @@ class Game extends Model
     {
         GameStarted::fire(game_id: $this->id);
 
-        RoundStarted::fire(
-            game_id: $this->id,
-            round_id: $this->state()->round_ids[0],
-            bureaucrats: Bureaucrat::all()->random(4)->toArray(),
-            round_modifier: RoundModifier::all()->random(),
-        );
+        $this->rounds->first()->start();
     }
 
     public function currentRound()

@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
@@ -51,16 +52,17 @@ class ForecastFox extends Bureaucrat
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
     {
         $max_money = $round->game()->playerStates()
-            ->max(fn ($p) => $p->money);
+            ->max(fn ($p) => $p->availableMoney());
 
         $guess = PlayerState::load($original_offer->data['player']);
 
-        if ($guess->money === $max_money) {
+        if ($guess->availableMoney() === $max_money) {
             PlayerReceivedMoney::fire(
                 player_id: $player->id,
                 round_id: $round->id,
                 amount: 7,
                 activity_feed_description: 'You correctly predicted that '.$guess->industry.' would have the most money.',
+                type: MoneyLogEntry::TYPE_AWARD,
             );
         }
     }

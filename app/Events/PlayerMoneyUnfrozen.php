@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\MoneyLogEntry;
+use App\DTOs\MoneyLogEntry;
 use App\States\PlayerState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
@@ -20,18 +20,15 @@ class PlayerMoneyUnfrozen extends Event
 
     public function apply(PlayerState $state)
     {
-        $state->money += $this->amount;
-
         $state->money_frozen -= $this->amount;
-    }
 
-    public function handle()
-    {
-        MoneyLogEntry::create([
-            'player_id' => $this->player_id,
-            'round_id' => $this->round_id,
-            'amount' => -$this->amount,
-            'description' => $this->activity_feed_description,
-        ]);
+        $state->money_history->push(new MoneyLogEntry(
+            player_id: $this->player_id,
+            round_id: $this->round_id,
+            round_number: $state->game()->round_ids->search($this->round_id) + 1,
+            amount: $this->amount,
+            description: $this->activity_feed_description,
+            type: MoneyLogEntry::TYPE_UNFREEZE,
+        ));
     }
 }

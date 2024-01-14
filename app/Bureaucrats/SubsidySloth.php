@@ -2,6 +2,7 @@
 
 namespace App\Bureaucrats;
 
+use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
@@ -51,16 +52,17 @@ class SubsidySloth extends Bureaucrat
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
     {
         $min_money = $round->game()->playerStates()
-            ->min(fn ($p) => $p->money);
+            ->min(fn ($p) => $p->availableMoney());
 
         $guess = PlayerState::load($original_offer->data['player']);
 
-        if ($guess->money === $min_money) {
+        if ($guess->availableMoney() === $min_money) {
             PlayerReceivedMoney::fire(
                 player_id: $guess->id,
                 round_id: $round->id,
                 amount: 7,
                 activity_feed_description: 'You received a subsidy from Subsidy Sloth.',
+                type: MoneyLogEntry::TYPE_AWARD,
             );
         }
     }

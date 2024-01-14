@@ -22,7 +22,7 @@ class PlayerRoundEnded extends Event
     {
         $state = $this->state(PlayerState::class);
 
-        if ($state->has_bailout && $state->money === 0) {
+        if ($state->has_bailout && $state->availableMoney() === 0) {
             PlayerWasBailedOut::fire(
                 player_id: $this->player_id,
                 round_id: $this->round_id

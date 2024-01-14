@@ -37,6 +37,6 @@ class User extends Authenticatable
 
     public function currentPlayer()
     {
-        return $this->currentGame->players()->where('user_id', $this->id)->first();
+        return $this->currentGame->players->where('user_id', $this->id)->first();
     }
 }
