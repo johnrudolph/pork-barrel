@@ -25,6 +25,7 @@ class RoundModifier
             Hegemony::class,
             LameDuckSession::class,
             LegislativeFrenzy::class,
+            StimulusPackage::class,
             TaxTheRich::class,
         ]);
     }

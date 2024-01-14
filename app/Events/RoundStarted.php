@@ -38,6 +38,8 @@ class RoundStarted extends Event
 
     public function handle()
     {
+        $this->round_modifier::handleOnRoundStart($this->state(RoundState::class));
+
         $this->state(RoundState::class)->offers_from_previous_rounds_that_resolve_this_round
             ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_started'])
             ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(

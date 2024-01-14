@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\DTOs\OfferDTO;
-use App\Events\PlayerReceivedMoney;
 use App\States\PlayerState;
 use Glhd\Bits\Database\HasSnowflakes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

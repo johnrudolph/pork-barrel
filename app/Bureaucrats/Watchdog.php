@@ -64,11 +64,13 @@ class Watchdog extends Bureaucrat
                 type: MoneyLogEntry::TYPE_PENALIZE,
             );
 
+            $acused_industry = PlayerState::load((int) $offer->data['player'])->industry;
+
             Headline::create([
                 'round_id' => $round->id,
                 'game_id' => $round->game()->id,
-                'headline' => PlayerState::load((int) $offer->data['player'])->industry.' caught bribing officials!',
-                'description' => 'In a shocking discovery, the Watchdog has exposed so and so for bribing bureaucrat. They have been fined.',
+                'headline' => $acused_industry.' caught bribing officials!',
+                'description' => 'In a shocking discovery, the Watchdog has exposed the '.$acused_industry.' industry for bribing bureaucrat. They have been fined.',
             ]);
         }
     }

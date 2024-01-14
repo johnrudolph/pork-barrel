@@ -25,7 +25,7 @@ class OfferSubmitted extends Event
             assertion: $this->state(PlayerState::class)->availableMoney() >= $this->offer->amount_offered,
             message: 'The player does not have enough money to make this offer.'
         );
-        
+
         $this->assert(
             assertion: ! $this->offer->validate()->errors()->all(),
             message: 'Offer for '.$this->offer->bureaucrat::NAME.' did not include all required fields.'

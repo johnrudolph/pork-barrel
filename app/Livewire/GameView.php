@@ -49,9 +49,9 @@ class GameView extends Component
     }
 
     #[Computed]
-    public function otherHeadlines()
+    public function headlines()
     {
-        return $this->game->headlines;
+        return $this->game->headlines->sortByDesc('created_at');
     }
 
     #[Computed]
@@ -68,7 +68,8 @@ class GameView extends Component
     #[Computed]
     public function moneyLogEntries()
     {
-        return $this->player->state()->money_history->toArray();
+        return $this->player->state()->money_history
+            ->reverse();
     }
 
     public function mount($game)

@@ -150,6 +150,6 @@ it('throws validation errors for invalid submissions', function () {
     $this->expect(fn () => $this->john->submitOffer(
         $this->game->currentRound(),
         Watchdog::class,
-        8
+        4
     ))->toThrow('Offer for Watchdog did not include all required fields.');
 });

@@ -27,9 +27,9 @@ class PlayerSpentMoney extends Event
         $state->money_history->push(new MoneyLogEntry(
             player_id: $this->player_id,
             round_id: $this->round_id,
-            round_number: $state->current_round_number,
+            round_number: $state->game()->round_ids->search($this->round_id) + 1,
             amount: -$amount_zeroed,
-            description: $this->activity_feed_description, 
+            description: $this->activity_feed_description,
             type: $this->type,
         ));
     }

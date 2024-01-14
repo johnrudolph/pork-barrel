@@ -1,7 +1,6 @@
 <?php
 
 use App\Bureaucrats\BailoutBunny;
-use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
 use App\Events\AuctionEnded;
@@ -20,6 +19,7 @@ use App\RoundModifiers\CampaignSeason;
 use App\RoundModifiers\Hegemony;
 use App\RoundModifiers\LameDuckSession;
 use App\RoundModifiers\LegislativeFrenzy;
+use App\RoundModifiers\StimulusPackage;
 use App\RoundModifiers\TaxTheRich;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -194,4 +194,35 @@ it('refunds offers under 4 for Astroturfing', function () {
 
     $this->assertEquals(8, $this->john->state()->availableMoney());
     $this->assertEquals(1, $this->daniel->state()->availableMoney());
+});
+
+it('offers stimulus to players and takes it away if they fail to use it', function () {
+    GameStarted::fire(game_id: $this->game->id);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->rounds->first()->id,
+        bureaucrats: [BailoutBunny::class, MinorityLeaderMink::class],
+        round_modifier: StimulusPackage::class,
+    );
+
+    $this->assertEquals(20, $this->john->state()->availableMoney());
+    $this->assertEquals(20, $this->jacob->state()->availableMoney());
+    $this->assertEquals(20, $this->daniel->state()->availableMoney());
+
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), MinorityLeaderMink::class, 14);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    // John spends 1, and then loses the other 14
+    $this->assertEquals(5, $this->john->state()->availableMoney());
+
+    // Jacob spends nothing, then loses all 15
+    $this->assertEquals(5, $this->jacob->state()->availableMoney());
+
+    // Daniel spends all 15
+    $this->assertEquals(5, $this->daniel->state()->availableMoney());
 });

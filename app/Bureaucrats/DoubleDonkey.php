@@ -15,11 +15,11 @@ class DoubleDonkey extends Bureaucrat
 
     const SLUG = 'double-donkey';
 
-    const SHORT_DESCRIPTION = "Double your earnings this round.";
+    const SHORT_DESCRIPTION = 'Double your earnings this round.';
 
     const DIALOG = 'We like to celebrate the winners in this town.';
 
-    const EFFECT = 'At the beginning of the next round, you will receive all of your earnings (not including income) from this round again.';
+    const EFFECT = 'At the beginning of the next round, you will receive all of your earnings (from Bureaucrats) from this round again.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_started';
 

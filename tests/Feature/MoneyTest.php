@@ -59,6 +59,8 @@ it('gives players 5 money to start each round', function () {
     $this->game->currentRound()->next()->start();
 
     $this->assertEquals(10, $this->john->state()->availableMoney());
+
+    $this->assertEquals(1, $this->john->state()->money_history->first()->round_number);
 });
 
 it('creates money log entries when players win auctions', function () {

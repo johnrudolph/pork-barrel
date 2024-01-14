@@ -29,6 +29,7 @@ class PlayerPutMoneyInTreasury extends Event
             player_id: $this->player_id,
             round_id: $this->round_id,
             activity_feed_description: $this->activity_feed_description,
+            round_number: $this->state(PlayerState::class)->game()->round_ids->search($this->round_id) + 1,
             amount: $this->amount,
             type: MoneyLogEntry::TYPE_TREASURY,
         );

@@ -19,7 +19,7 @@ class ObstructionOx extends Bureaucrat
 
     const DIALOG = 'Obstructionism is the only way to not get things done in this town.';
 
-    const EFFECT = 'Select another bureaucrat this round, and cancel its action.';
+    const EFFECT = 'Select another bureaucrat this round, and cancel all of its offers. No one will give it money, and no one will receive its effect.';
 
     const EFFECT_REQUIRES_DECISION = true;
 

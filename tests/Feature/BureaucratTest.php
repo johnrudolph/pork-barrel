@@ -119,7 +119,7 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
 
     $this->assertFalse($this->daniel->state()->has_bailout);
 
-    $this->assertEquals(0, $this->daniel->state()->availableMoney());
+    $this->assertEquals(5, $this->daniel->state()->availableMoney());
 
     $this->assertDatabaseHas('headlines', [
         'round_id' => $this->game->rounds->first()->id,
