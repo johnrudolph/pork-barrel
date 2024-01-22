@@ -38,6 +38,7 @@ class InitializeGame extends Component
             game_id: $game->id,
             player_id: Snowflake::make()->id(),
             user_id: $this->user()->id,
+            name: $this->user()->name,
         );
 
         return redirect()->route('games.show', ['game' => $game->id]);

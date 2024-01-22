@@ -8,6 +8,7 @@ use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
 use App\Models\Player;
 use App\Models\Round;
+use App\RoundConstructor\RoundConstructor;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -24,6 +25,13 @@ class ForecastFox extends Bureaucrat
     const EFFECT = 'Select an industry. If that industry has the most money at the beginning of the next round (before everyone receives income), you will receive 7 money.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_started';
+
+    public static function suitability(RoundConstructor $constructor)
+    {
+        $constructor->isFinalRound()
+            ? 0
+            : 1;
+    }
 
     public static function options(Round $round, Player $player)
     {

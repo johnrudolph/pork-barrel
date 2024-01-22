@@ -62,6 +62,11 @@ class RoundConstructor
         return $this->round->game()->players->count();
     }
 
+    public function isFinalRound(): bool
+    {
+        return $this->round->round_number === 8;
+    }
+
     public function stageOfGame(): string
     {
         if ($this->round->round_number < 3) {

@@ -29,18 +29,21 @@ beforeEach(function () {
         game_id: $event->game_id,
         player_id: Snowflake::make()->id(),
         user_id: $user_2->id,
+        name: $user_2->name,
     );
 
     PlayerJoinedGame::fire(
         game_id: $event->game_id,
         player_id: Snowflake::make()->id(),
         user_id: $user_3->id,
+        name: $user_3->name,
     );
 
     PlayerJoinedGame::fire(
         game_id: $event->game_id,
         player_id: Snowflake::make()->id(),
         user_id: $user_4->id,
+        name: $user_4->name,
     );
 
     $this->game = Game::first();

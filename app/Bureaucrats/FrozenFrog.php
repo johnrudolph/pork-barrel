@@ -28,6 +28,7 @@ class FrozenFrog extends Bureaucrat
 
     public static function suitability(RoundConstructor $constructor)
     {
+        // @todo: test that this works. Not sure it does
         if ($constructor->stageOfGame() === 'late') {
             return 0;
         }

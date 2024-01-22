@@ -42,12 +42,14 @@ beforeEach(function () {
         game_id: $event->game_id,
         user_id: $this->user_2->id,
         player_id: Snowflake::make()->id(),
+        name: $this->user_2->name,
     );
 
     PlayerJoinedGame::fire(
         game_id: $event->game_id,
         user_id: $this->user_3->id,
         player_id: Snowflake::make()->id(),
+        name: $this->user_3->name,
     );
 
     $this->game = Game::find($event->game_id);
