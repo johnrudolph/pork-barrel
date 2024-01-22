@@ -1,14 +1,17 @@
 <?php
 
+use App\Bureaucrats\Bureaucrat;
 use App\Bureaucrats\GamblinGoat;
 use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\PlayerAwaitingResults;
 use App\Events\PlayerJoinedGame;
 use App\Events\PlayerReadiedUp;
+use App\Events\RoundStarted;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
+use App\RoundModifiers\RoundModifier;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -30,6 +33,7 @@ beforeEach(function () {
         game_id: $event->game_id,
         player_id: Snowflake::make()->id(),
         user_id: $user_2->id,
+        name: $user_2->name,
     );
 
     $this->game = Game::find($event->game_id);
@@ -89,4 +93,26 @@ it('sets the appropriate statuses and current_round_ids as rounds proceed', func
     $this->assertEquals($this->john->state()->status, 'waiting');
     $this->assertEquals($this->daniel->state()->current_round_id, $round_2_id);
     $this->assertEquals($this->daniel->state()->status, 'auction');
+});
+
+it('ends the game after the final round', function () {
+    collect(range($this->game->currentRound()->round_number, $this->game->rounds->count() - 1))
+        ->each(function ($round_number) {
+            AuctionEnded::fire(round_id: $this->game->state()->round_ids[$round_number - 1]);
+            Verbs::commit();
+
+            RoundStarted::fire(
+                game_id: $this->game->id,
+                round_number: $round_number + 1,
+                round_id: $this->game->state()->round_ids[$round_number],
+                bureaucrats: [Bureaucrat::class],
+                round_modifier: RoundModifier::class,
+            );
+
+            Verbs::commit();
+        });
+
+    AuctionEnded::fire(round_id: $this->game->state()->round_ids[7]);
+
+    $this->assertEquals('complete', $this->game->state()->status);
 });

@@ -55,6 +55,10 @@ class RoundEnded extends Event
 
         $state->round_modifier::handleOnRoundEnd($state);
 
+        if ($state->game()->currentRound()->round_number === 8) {
+            GameEnded::fire(game_id: $state->game_id);
+        }
+
         GameUpdated::dispatch($this->state(RoundState::class)->game_id);
     }
 }

@@ -3,10 +3,17 @@
         <livewire:pre-game-lobby :game="$game" wire:key="pre-gam"/>
     @else
     <!-- header -->
+    @if($game->state()->status === 'in-progress')
     <div class="my-4 overflow-hidden">
         <p class="pl-8">Round {{ $this->round->round_number }} of 8</p>
     </div>
+    @elseif($game->state()->status === 'complete')
+    <div class="my-4 overflow-hidden">
+        <p class="pl-8">Game over! Thanks for playing</p>
+    </div>
+    @endif
 
+    @if($this->game->state()->status === 'in-progress')
     <!-- round modifier -->
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" wire:key="round-modifier">
         <div class="overflow-hidden shadow-sm sm:rounded-lg">
@@ -19,11 +26,13 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- body -->
-    @if($this->player->state()->status === 'auction')
+    @if($this->game->state()->status === 'complete')
+    @elseif($this->player->state()->status === 'auction')
         <livewire:auction-view :game="$game" wire:key="auction-{{ $this->game->currentRound() }}"/>
-    @else($game->state()->status === 'in-progress')
+    @else($this->player->state()->status === 'waiting')
         <livewire:awaiting-next-round-view :game="$game" wire:key="round-{{ $this->game->currentRound() }}"/>
     @endif
 
@@ -52,8 +61,14 @@
                                         <tr>
                                             @if ($s['player_id'] === $this->player()->id)
                                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-bold text-gray-900 sm:pl-0">{{ $s['industry'] }} (you)</td>
+                                            @elseif($this->game->state()->status === 'complete')
+                                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                                                {{ $s['industry'] }} ({{ $s['player_name'] }})
+                                            </td>
                                             @else
-                                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ $s['industry'] }}</td>
+                                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                                                {{ $s['industry'] }}
+                                            </td>
                                             @endif
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $s['money'] }}</td>
                                         </tr>

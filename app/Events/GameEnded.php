@@ -13,6 +13,6 @@ class GameEnded extends Event
 
     public function applyToGame(GameState $state)
     {
-        $state->status = 'ended';
+        $state->status = 'complete';
     }
 }

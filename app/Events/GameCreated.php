@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Game;
+use App\Models\User;
 use App\States\GameState;
 use Glhd\Bits\Snowflake;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -40,6 +41,7 @@ class GameCreated extends Event
             game_id: $this->game_id,
             player_id: Snowflake::make()->id(),
             user_id: $this->user_id,
+            name: User::find($this->user_id)->name,
         );
     }
 }

@@ -5,6 +5,7 @@ namespace App\Bureaucrats;
 use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\OfferAmountModified;
+use App\RoundConstructor\RoundConstructor;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -21,6 +22,13 @@ class MajorityLeaderMare extends Bureaucrat
     const EFFECT = 'After you submit your offers next round, 1 money will be added to each.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
+
+    public static function suitability(RoundConstructor $constructor)
+    {
+        $constructor->isFinalRound()
+            ? 0
+            : 1;
+    }
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {

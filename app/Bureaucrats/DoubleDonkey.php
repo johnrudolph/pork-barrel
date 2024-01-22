@@ -6,6 +6,7 @@ use App\DTOs\MoneyLogEntry;
 use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
+use App\RoundConstructor\RoundConstructor;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -22,6 +23,13 @@ class DoubleDonkey extends Bureaucrat
     const EFFECT = 'At the beginning of the next round, you will receive all of your earnings (from Bureaucrats) from this round again.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_started';
+
+    public static function suitability(RoundConstructor $constructor)
+    {
+        $constructor->isFinalRound()
+            ? 0
+            : 1;
+    }
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {

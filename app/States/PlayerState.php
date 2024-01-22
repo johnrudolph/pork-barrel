@@ -9,6 +9,10 @@ class PlayerState extends State
 {
     public $game_id;
 
+    public $user_id;
+
+    public $name;
+
     public $money_in_treasury = 0;
 
     public $money_frozen = 0;

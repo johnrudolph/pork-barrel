@@ -58,8 +58,10 @@ class GameView extends Component
     public function scores()
     {
         return $this->game->state()->playerStates()
+            ->sortByDesc(fn ($p) => $p->availableMoney())
             ->map(fn ($p) => [
                 'player_id' => $p->id,
+                'player_name' => $p->name,
                 'industry' => $p->industry,
                 'money' => $p->availableMoney(),
             ]);

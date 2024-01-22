@@ -20,6 +20,8 @@ class PlayerJoinedGame extends Event
     #[StateId(PlayerState::class)]
     public int $player_id;
 
+    public string $name;
+
     public function applyToGameState(GameState $state)
     {
         $state->players->push($this->player_id);
@@ -28,6 +30,8 @@ class PlayerJoinedGame extends Event
     public function applyToPlayerState(PlayerState $state)
     {
         $state->game_id = $this->game_id;
+        $state->user_id = $this->user_id;
+        $state->name = $this->name;
         $state->current_round_id = $this->state(GameState::class)->round_ids->first();
         $state->current_round_number = 1;
         $state->industry = Industry::unusedRandomIndustry($this->state(GameState::class));
