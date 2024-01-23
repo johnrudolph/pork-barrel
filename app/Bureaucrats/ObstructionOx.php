@@ -3,7 +3,7 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\OfferDTO;
-use App\Events\ActionWasBlocked;
+use App\Events\BureaucratWasBlocked;
 use App\Models\Player;
 use App\Models\Round;
 use App\States\PlayerState;
@@ -44,7 +44,7 @@ class ObstructionOx extends Bureaucrat
     {
         $b = $offer->data['bureaucrat'];
 
-        ActionWasBlocked::fire(
+        BureaucratWasBlocked::fire(
             round_id: $round->id,
             bureaucrat: $b,
             headline: $b::NAME.' Ousted',

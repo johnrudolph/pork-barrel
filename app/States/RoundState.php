@@ -16,6 +16,8 @@ class RoundState extends State
 
     public Collection $bureaucrats;
 
+    public Collection $blocked_bureaucrats;
+
     public Collection $offers;
 
     public Collection $offers_from_previous_rounds_that_resolve_this_round;

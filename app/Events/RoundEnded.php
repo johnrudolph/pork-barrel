@@ -45,7 +45,9 @@ class RoundEnded extends Event
                 offer: $offer,
             ));
 
-        $state->bureaucrats->each(fn ($b) => $b::handleGlobalEffectOnRoundEnd($state));
+        $state->bureaucrats
+            ->reject(fn ($b) => $this->state(RoundState::class)->blocked_bureaucrats->contains($b))
+            ->each(fn ($b) => $b::handleGlobalEffectOnRoundEnd($state));
 
         $state->game()->players->each(fn ($p) => PlayerRoundEnded::fire(
             player_id: $p,
