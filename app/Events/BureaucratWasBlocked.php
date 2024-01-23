@@ -7,7 +7,7 @@ use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
-class ActionWasBlocked extends Event
+class BureaucratWasBlocked extends Event
 {
     #[StateId(RoundState::class)]
     public int $round_id;
@@ -20,6 +20,8 @@ class ActionWasBlocked extends Event
 
     public function applyToRoundState(RoundState $state)
     {
+        $state->blocked_bureaucrats->push($this->bureaucrat);
+
         $state->offers = $state->offers->transform(function ($o) {
             if ($o->bureaucrat === $this->bureaucrat) {
                 $o->is_blocked = true;

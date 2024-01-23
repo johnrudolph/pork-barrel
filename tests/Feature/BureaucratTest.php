@@ -103,10 +103,11 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
         game_id: $this->game->id,
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
-        bureaucrats: [BailoutBunny::class, ObstructionOx::class],
+        bureaucrats: [BailoutBunny::class, DilemmaDinosaur::class, ObstructionOx::class],
         round_modifier: RoundModifier::class,
     );
 
+    $this->jacob->submitOffer($this->game->currentRound(), ObstructionOx::class, 5, ['bureaucrat' => DilemmaDinosaur::class]);
     $this->john->submitOffer($this->game->currentRound(), ObstructionOx::class, 5, ['bureaucrat' => BailoutBunny::class]);
     $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 5);
 

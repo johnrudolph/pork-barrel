@@ -16,7 +16,7 @@
                             <div class="w-full">
                                 <div class="flex justify-between">
                                     <p class="text-sm font-semibold leading-6 text-gray-900">{{ $o->bureaucrat::NAME }}</p>
-                                    <div class="flex">
+                                    <div class="flex touch-none">
                                         <button 
                                             class="text-red font-extrabold text-m w-8 h-6"
                                             wire:click="decrement('{{ $o->bureaucrat::SLUG }}')"
