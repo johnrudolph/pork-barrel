@@ -9,7 +9,7 @@ use App\States\RoundState;
 
 class TaxTheRich extends RoundModifier
 {
-    const HEADLINE = 'Crackdown on the rich';
+    const HEADLINE = 'Tax the rich';
 
     const EFFECT = 'At the end of this round, the player with the most money loses 5 money.';
 

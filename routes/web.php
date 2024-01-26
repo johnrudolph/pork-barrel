@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Livewire\GameView;
+use App\Livewire\RulesPage;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect('register');
 });
+
+Route::get('rules', RulesPage::class)->name('rules');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

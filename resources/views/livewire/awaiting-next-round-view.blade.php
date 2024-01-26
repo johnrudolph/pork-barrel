@@ -50,7 +50,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $o['offer'] }}</td>
-                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $o['bureaucrat']::SHORT_DESCRIPTION }}</td>
+                                                <td class="px-3 py-4 text-sm text-gray-500">{{ $o['bureaucrat']::SHORT_DESCRIPTION }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
