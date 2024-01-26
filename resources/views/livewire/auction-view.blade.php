@@ -16,24 +16,36 @@
                             <div class="w-full">
                                 <div class="flex justify-between">
                                     <p class="text-sm font-semibold leading-6 text-gray-900">{{ $o->bureaucrat::NAME }}</p>
-                                    <div class="flex">
+                                    <div class="relative flex items-center max-w-[11rem]">
                                         <button 
-                                            class="text-red font-extrabold text-m w-8 h-6"
+                                            type="button" 
+                                            id="decrement-button" 
+                                            data-input-counter-decrement="bedrooms-input" 
                                             wire:click="decrement('{{ $o->bureaucrat::SLUG }}')"
+                                            class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
                                         >
-                                            -
+                                            <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                                            </svg>
                                         </button>
                                         <span 
-                                            wire:model="offers.{{ $o->bureaucrat::SLUG }}.amount_offered"
-                                            class="rounded-md whitespace-nowrap mt-0.5 px-1.5 py-0.5 text-xs font-medium text-white bg-teal"
+                                            class="bg-gray-50 w-11 h-11 font-medium text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full pb-6 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                         >
                                             {{ $o->amount_offered }}
                                         </span>
+                                        <div class="absolute bottom-1 start-1/2 -translate-x-1/2 rtl:translate-x-1/2 flex items-center text-xs text-gray-400 space-x-1 rtl:space-x-reverse">
+                                            <span>Offer</span>
+                                        </div>
                                         <button 
-                                            class="text-teal font-extrabold text-m w-8 h-6"
+                                            type="button" 
+                                            id="increment-button" 
+                                            data-input-counter-increment="bedrooms-input" 
                                             wire:click="increment('{{ $o->bureaucrat::SLUG }}')"
+                                            class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
                                         >
-                                            +
+                                            <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                                            </svg>
                                         </button>
                                     </div>
                                 </div>
