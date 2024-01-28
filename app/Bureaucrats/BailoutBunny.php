@@ -4,6 +4,7 @@ namespace App\Bureaucrats;
 
 use App\DTOs\OfferDTO;
 use App\Events\PlayerAwardedBailout;
+use App\RoundConstructor\RoundConstructor;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -17,7 +18,20 @@ class BailoutBunny extends Bureaucrat
 
     const DIALOG = 'Listen, no one needs a stronger safety net than the rich.';
 
-    const EFFECT = 'If you ever have 0 money after an auction, you will receive $10.';
+    const EFFECT = 'If you ever have 0 money after an auction, you will receive 10.';
+
+    public static function suitability(RoundConstructor $constructor): int
+    {
+        if ($constructor->stageOfGame() === 'early') {
+            return 2;
+        }
+
+        if ($constructor->stageOfGame() === 'late') {
+            return 0;
+        }
+
+        return 1;
+    }
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
     {

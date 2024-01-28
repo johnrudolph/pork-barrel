@@ -1,10 +1,8 @@
 <?php
 
 use App\Bureaucrats\DoubleDonkey;
-use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\PlayerJoinedGame;
-use App\Events\RoundEnded;
 use App\Models\Game;
 use App\Models\User;
 use App\RoundConstructor\RoundConstructor;
@@ -58,32 +56,7 @@ it('selects bureaucrats and a round template for a round', function () {
     $this->assertNotNull($this->game->currentRound()->state()->round_template);
 });
 
-// it('prioritizes bureaucrats and templates that have not been selected in previous rounds', function () {
-//     $round_1 = $this->game->rounds->first();
-
-//     $round_1->start();
-//     AuctionEnded::fire(round_id: $round_1->id);
-//     RoundEnded::fire(round_id: $round_1->id);
-
-//     $round_2 = $round_1->next();
-
-//     $round_2->start();
-
-//     $all_bureaucrats_selected = $round_1->state()->bureaucrats
-//         ->concat($round_2->state()->bureaucrats);
-
-//     $this->assertEquals(
-//         $all_bureaucrats_selected->count(),
-//         $all_bureaucrats_selected->unique()->count()
-//     );
-
-//     $this->assertNotEquals(
-//         $round_1->state()->round_template,
-//         $round_2->state()->round_template
-//     );
-// });
-
-it('has a helper for knowing the stages of the game', function() {
+it('has a helper for knowing the stages of the game', function () {
     $this->game->rounds->first()->start();
 
     expect(new RoundConstructor(round: $this->game->currentRound()->state()))

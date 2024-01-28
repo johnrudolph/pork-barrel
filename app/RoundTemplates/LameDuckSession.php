@@ -2,6 +2,10 @@
 
 namespace App\RoundTemplates;
 
+use App\Bureaucrats\Bureaucrat;
+use App\RoundTemplates\RoundTemplate;
+use App\RoundConstructor\RoundConstructor;
+
 class LameDuckSession extends RoundTemplate
 {
     const HEADLINE = 'Lame Duck Session';
@@ -10,5 +14,10 @@ class LameDuckSession extends RoundTemplate
 
     const FLAVOR_TEXT = 'Most lawmakers are at their vacation homes upstate, but a few are still in town.';
 
-    const NUMBER_OF_BUREAUCRATS = 2;
+    public static function randomlySelectedOtherBureaucrats(RoundConstructor $constructor)
+    {
+        $pool_of_random_bureaucrats = collect(Bureaucrat::all());
+
+        return $constructor->selectBureaucratsFromSubset($pool_of_random_bureaucrats, 2);
+    }
 }

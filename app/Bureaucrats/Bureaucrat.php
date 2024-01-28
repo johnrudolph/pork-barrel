@@ -36,8 +36,8 @@ class Bureaucrat
     {
         return collect([
             BailoutBunny::class,
-            BrinksmanshipBronco::class,
-            DilemmaDinosaur::class,
+            // BrinksmanshipBronco::class,
+            // DilemmaDinosaur::class,
             ForecastFox::class,
             FrozenFrog::class,
             GamblinGoat::class,

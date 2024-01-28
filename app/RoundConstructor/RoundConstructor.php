@@ -2,57 +2,52 @@
 
 namespace App\RoundConstructor;
 
-use App\Bureaucrats\Bureaucrat;
 use App\RoundTemplates\RoundTemplate;
 use App\States\RoundState;
+use Illuminate\Support\Collection;
 
 class RoundConstructor
 {
     public function __construct(
         public RoundState $round,
-        public ?int $number_of_bureaucrats = null,
         public ?string $round_template = null,
         public ?array $bureaucrats = null,
     ) {
-        $this->round_template ??= $this->selectModifier();
-        $this->number_of_bureaucrats ??= $this->round_template::NUMBER_OF_BUREAUCRATS;
-        $this->bureaucrats ??= $this->selectBureaucrats();
+        $this->round_template ??= $this->selectTemplate();
+        $this->bureaucrats ??= $this->round_template::selectBureaucrats($this);
     }
 
-    public function selectModifier()
+    public function selectTemplate()
     {
-        $modifiers_used_this_game = $this->round->game()->rounds()
+        $templates_used_this_game = $this->round->game()->rounds()
             ->map(fn ($r) => $r->round_template)
             ->flatten();
 
         return RoundTemplate::all()
             ->shuffle()
-            ->sortByDesc(function ($modifier) use ($modifiers_used_this_game) {
-                $adjustment_for_times_used = $modifiers_used_this_game
-                    ->filter(fn ($m) => $m === $modifier)
+            ->sortByDesc(function ($template) use ($templates_used_this_game) {
+                $adjustment_for_times_used = $templates_used_this_game
+                    ->filter(fn ($m) => $m === $template)
                     ->count() * 0.1;
 
-                return $modifier::suitability($this) - $adjustment_for_times_used;
+                return $template::suitability($this) - $adjustment_for_times_used;
             })
             ->first();
     }
 
-    public function selectBureaucrats()
+    public function selectBureaucratsFromSubset(Collection $bureaucrat_subset, int $number_to_select)
     {
         $bureaucrats_used_this_game = $this->round->game()->rounds()
             ->map(fn ($r) => $r->bureaucrats)
             ->flatten();
 
-        $bureaucrats = Bureaucrat::all()
+        return $bureaucrat_subset
             ->shuffle()
             ->sortByDesc(fn ($bureaucrat) => $bureaucrat::suitability($this) - $bureaucrats_used_this_game
                 ->filter(fn ($b) => $b === $bureaucrat)
                 ->count() * 0.1
             )
-            ->take($this->number_of_bureaucrats)
-            ->toArray();
-
-        return $bureaucrats;
+            ->take($number_to_select);
     }
 
     // HELPERS //
