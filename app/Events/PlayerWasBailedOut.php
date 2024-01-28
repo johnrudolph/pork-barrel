@@ -18,7 +18,7 @@ class PlayerWasBailedOut extends Event
 
     public function apply(PlayerState $state)
     {
-        $state->has_bailout = false;
+        // $state->has_bailout = false;
     }
 
     public function handle()

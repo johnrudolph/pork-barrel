@@ -48,7 +48,7 @@ class Round extends Model
             game_id: $this->game->id,
             round_number: $this->round_number,
             bureaucrats: $constructor->bureaucrats,
-            round_modifier: $constructor->round_modifier,
+            round_template: $constructor->round_template,
         );
     }
 }

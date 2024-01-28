@@ -36,8 +36,8 @@ class Bureaucrat
     {
         return collect([
             BailoutBunny::class,
-            BrinksmanshipBronco::class,
-            DilemmaDinosaur::class,
+            // BrinksmanshipBronco::class,
+            // DilemmaDinosaur::class,
             ForecastFox::class,
             FrozenFrog::class,
             GamblinGoat::class,
@@ -52,7 +52,7 @@ class Bureaucrat
         ]);
     }
 
-    public static function suitability(RoundConstructor $constructor)
+    public static function suitability(RoundConstructor $constructor): int
     {
         return 1;
     }

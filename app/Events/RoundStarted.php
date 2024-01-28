@@ -20,14 +20,14 @@ class RoundStarted extends Event
 
     public array $bureaucrats;
 
-    public string $round_modifier;
+    public string $round_template;
 
     // @todo: validate that this is possible and good
     public function applyToRoundState(RoundState $state)
     {
         $state->status = 'auction';
         collect($this->bureaucrats)->each(fn ($b) => $state->bureaucrats->push($b));
-        $state->round_modifier = $this->round_modifier;
+        $state->round_template = $this->round_template;
     }
 
     public function applyToGameState(GameState $state)
@@ -38,7 +38,7 @@ class RoundStarted extends Event
 
     public function handle()
     {
-        $this->round_modifier::handleOnRoundStart($this->state(RoundState::class));
+        $this->round_template::handleOnRoundStart($this->state(RoundState::class));
 
         $this->state(RoundState::class)->offers_from_previous_rounds_that_resolve_this_round
             ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_started'])

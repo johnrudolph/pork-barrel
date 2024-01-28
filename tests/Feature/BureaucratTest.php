@@ -26,7 +26,7 @@ use App\Events\RoundStarted;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
-use App\RoundModifiers\RoundModifier;
+use App\RoundTemplates\RoundTemplate;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -76,7 +76,7 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [GamblinGoat::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 5);
@@ -104,7 +104,7 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [BailoutBunny::class, DilemmaDinosaur::class, ObstructionOx::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->jacob->submitOffer($this->game->currentRound(), ObstructionOx::class, 5, ['bureaucrat' => DilemmaDinosaur::class]);
@@ -126,7 +126,7 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
 
     $this->assertDatabaseHas('headlines', [
         'round_id' => $this->game->rounds->first()->id,
-        'is_round_modifier' => false,
+        'is_round_template' => false,
         'headline' => 'Bailout Bunny Ousted',
         'description' => 'The Obstructionist Ox blocked Bailout Bunny from taking action this round.',
     ]);
@@ -138,7 +138,7 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [BailoutBunny::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 5);
@@ -154,7 +154,7 @@ it('fines a player if they were caught by the watchdog', function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [MajorityLeaderMare::class, Watchdog::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), MajorityLeaderMare::class, 1);
@@ -176,7 +176,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [MajorityLeaderMare::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), MajorityLeaderMare::class, 1);
@@ -188,7 +188,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
         round_number: 2,
         round_id: $this->game->state()->round_ids[1],
         bureaucrats: [GamblinGoat::class, BailoutBunny::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     // john and daniel should both get win the goat, despite daniel having a higher bid
@@ -250,7 +250,7 @@ it('gives you 10 money if you make no offers after getting the minority leader m
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [MinorityLeaderMink::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), MinorityLeaderMink::class, 1);
@@ -262,7 +262,7 @@ it('gives you 10 money if you make no offers after getting the minority leader m
         round_number: 2,
         round_id: $this->game->state()->round_ids[1],
         bureaucrats: [GamblinGoat::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
@@ -284,7 +284,7 @@ it('gives you a 50% return on your savings if you win the Treasury Chicken', fun
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [TreasuryChicken::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), TreasuryChicken::class, 4);
@@ -292,7 +292,7 @@ it('gives you a 50% return on your savings if you win the Treasury Chicken', fun
     $this->endGame($this->game);
 
     $this->assertEquals(
-        6,
+        5,
         $this->john->state()->money_history
             ->filter(fn ($entry) => $entry->description === 'Received 50% return on money saved in treasury')
             ->first()
@@ -306,7 +306,7 @@ it('allocates offers to winners for the Brinksmanship Bronco', function () {
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [BrinksmanshipBronco::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), BrinksmanshipBronco::class, 4);
@@ -326,7 +326,7 @@ it('doubles the offer for all losers of Ponzi Pony', function () {
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [PonziPony::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), PonziPony::class, 4);
@@ -346,7 +346,7 @@ it('adjusts income for Crony Crocodile and Tax Turkey', function () {
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [CronyCrocodile::class, TaxTurkey::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), CronyCrocodile::class, 1);
@@ -363,7 +363,7 @@ it('adjusts income for Crony Crocodile and Tax Turkey', function () {
         round_number: 2,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [Bureaucrat::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->assertEquals(10, $this->john->state()->availableMoney());
@@ -377,7 +377,7 @@ it('rewards players for correctly guessing who will be in first or last place', 
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [SubsidySloth::class, ForecastFox::class, BailoutBunny::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     // john is the poorest. Jacob and Daniel are tied for richest. Daniel's guesses are right, Jacob's are wrong
@@ -398,7 +398,7 @@ it('rewards players for correctly guessing who will be in first or last place', 
         round_number: 2,
         round_id: $this->game->state()->round_ids[1],
         bureaucrats: [Bureaucrat::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->assertEquals(13, $this->john->state()->availableMoney());
@@ -412,7 +412,7 @@ it('rewards players for guessing which player belongs to an industry', function 
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [MuckrakingMule::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->daniel->submitOffer(
@@ -453,7 +453,7 @@ it('freezes half the moeny of a player with the Frozen Frog', function () {
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [FrozenFrog::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->daniel->submitOffer($this->game->currentRound(), FrozenFrog::class, 1, ['player' => $this->john->id]);
@@ -468,7 +468,7 @@ it('freezes half the moeny of a player with the Frozen Frog', function () {
         round_number: 2,
         round_id: $this->game->state()->round_ids[1],
         bureaucrats: [Bureaucrat::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->assertEquals(7, $this->john->state()->availableMoney());
@@ -486,7 +486,7 @@ it('does the prisoners dilemma for the Dilemma Dino', function () {
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [DilemmaDinosaur::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
@@ -499,7 +499,7 @@ it('does the prisoners dilemma for the Dilemma Dino', function () {
         round_number: 2,
         round_id: $this->game->state()->round_ids[1],
         bureaucrats: [DilemmaDinosaur::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), DilemmaDinosaur::class, 1);
@@ -514,7 +514,7 @@ it('does the prisoners dilemma for the Dilemma Dino', function () {
         round_number: 3,
         round_id: $this->game->state()->round_ids[2],
         bureaucrats: [DilemmaDinosaur::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), DilemmaDinosaur::class, 1);
@@ -532,7 +532,7 @@ it('doubles your earnings with the Double Donkey', function () {
         round_number: 1,
         round_id: $this->game->state()->round_ids[0],
         bureaucrats: [DoubleDonkey::class, GamblinGoat::class, DilemmaDinosaur::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), DoubleDonkey::class, 3);
@@ -555,7 +555,7 @@ it('doubles your earnings with the Double Donkey', function () {
         round_number: 2,
         round_id: $this->game->state()->round_ids[1],
         bureaucrats: [Bureaucrat::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $doubled_earnings = $amount_from_goat + $amount_from_dino;

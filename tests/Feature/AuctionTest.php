@@ -14,7 +14,7 @@ use App\Events\RoundStarted;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
-use App\RoundModifiers\RoundModifier;
+use App\RoundTemplates\RoundTemplate;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -52,7 +52,7 @@ beforeEach(function () {
             MinorityLeaderMink::class,
             MajorityLeaderMare::class,
             TaxTurkey::class],
-        round_modifier: RoundModifier::class,
+        round_template: RoundTemplate::class,
     );
 
     $this->john = Player::first();

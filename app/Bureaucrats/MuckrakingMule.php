@@ -24,7 +24,7 @@ class MuckrakingMule extends Bureaucrat
 
     const EFFECT = 'Select a player and an industry. If that player works for that industry, there will be a headline exposing them, and you will earn 5 money.';
 
-    public static function suitability(RoundConstructor $constructor)
+    public static function suitability(RoundConstructor $constructor): int
     {
         if ($constructor->numberOfPlayers() < 3) {
             return 0;

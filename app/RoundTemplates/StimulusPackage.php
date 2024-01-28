@@ -1,20 +1,51 @@
 <?php
 
-namespace App\RoundModifiers;
+namespace App\RoundTemplates;
 
+use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\ForecastFox;
+use App\Bureaucrats\FrozenFrog;
+use App\Bureaucrats\GamblinGoat;
+use App\Bureaucrats\MajorityLeaderMare;
+use App\Bureaucrats\MinorityLeaderMink;
+use App\Bureaucrats\MuckrakingMule;
+use App\Bureaucrats\SubsidySloth;
+use App\Bureaucrats\TaxTurkey;
+use App\Bureaucrats\TreasuryChicken;
+use App\Bureaucrats\Watchdog;
 use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerReceivedMoney;
 use App\Events\PlayerSpentMoney;
+use App\RoundConstructor\RoundConstructor;
 use App\States\PlayerState;
 use App\States\RoundState;
 
-class StimulusPackage extends RoundModifier
+class StimulusPackage extends RoundTemplate
 {
     const HEADLINE = 'Stimulus Package';
 
     const EFFECT = 'Each of you has received a Stimulus Package of 15 money. If you offer less than 15 total money this round, you will lose the remainder of your Stimulus. For example, if you only offer 11 money this round, you will lose the remaining 4 of your Stimulus.';
 
     const FLAVOR_TEXT = 'We need to prime the pump on this economy! Build baby build!';
+
+    public static function randomlySelectedOtherBureaucrats(RoundConstructor $constructor)
+    {
+        $pool_of_random_bureaucrats = collect([
+            BailoutBunny::class,
+            ForecastFox::class,
+            FrozenFrog::class,
+            GamblinGoat::class,
+            MajorityLeaderMare::class,
+            MinorityLeaderMink::class,
+            MuckrakingMule::class,
+            SubsidySloth::class,
+            TaxTurkey::class,
+            TreasuryChicken::class,
+            Watchdog::class,
+        ]);
+
+        return $constructor->selectBureaucratsFromSubset($pool_of_random_bureaucrats, 4);
+    }
 
     public static function handleOnRoundStart(RoundState $round_state)
     {

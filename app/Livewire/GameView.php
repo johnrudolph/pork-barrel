@@ -43,9 +43,9 @@ class GameView extends Component
     }
 
     #[Computed]
-    public function roundModifier()
+    public function RoundTemplate()
     {
-        return $this->game->currentRound()->state()->round_modifier;
+        return $this->game->currentRound()->state()->round_template;
     }
 
     #[Computed]

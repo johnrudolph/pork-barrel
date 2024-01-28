@@ -20,7 +20,7 @@ class TreasuryChicken extends Bureaucrat
 
     const DIALOG = 'A penny saved is a penny earned.';
 
-    const EFFECT = 'The winning bidder will spend the money now, and at the end of the game will receive their money back with 50% interest (rounded down).';
+    const EFFECT = 'The winning bidder will spend the money now, and at the end of the game will receive their money back with 25% interest (rounded down).';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
 
@@ -45,7 +45,7 @@ class TreasuryChicken extends Bureaucrat
         PlayerReceivedMoney::fire(
             player_id: $player->id,
             round_id: $round->id,
-            amount: intval($player->money_in_treasury * 1.50),
+            amount: intval($player->money_in_treasury * 1.25),
             activity_feed_description: 'Received 50% return on money saved in treasury',
             type: MoneyLogEntry::TYPE_AWARD,
         );

@@ -2,7 +2,7 @@
     <div class="px-4 pt-8 sm:px-6 lg:px-8">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
-            <h1 class="text-base font-semibold leading-6 text-gray-900">Round Modifiers</h1>
+            <h1 class="text-base font-semibold leading-6 text-gray-900">Round Templates</h1>
             <p class="mt-2 text-sm text-gray-700"></p>
             </div>
         </div>
@@ -19,10 +19,9 @@
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
-                        @foreach($round_modifiers as $r)
+                        @foreach($round_templates as $r)
                     <tr>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ $r::HEADLINE}}</td>
-                        <td class=" px-3 py-4 text-sm text-gray-500">{{ $r::NUMBER_OF_BUREAUCRATS }}</td>
                         <td class=" px-3 py-4 text-sm text-gray-500">{{ $r::EFFECT }}</td>
                     </tr>
                         @endforeach
