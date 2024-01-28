@@ -29,7 +29,7 @@ class RoundSeeded extends Event
         $state->offers = collect();
         $state->bureaucrats = collect();
         $state->blocked_bureaucrats = collect();
-        $state->round_modifier = 'tbd';
+        $state->round_template = 'tbd';
         $state->offers_from_previous_rounds_that_resolve_this_round = collect();
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\RoundModifiers;
+namespace App\RoundTemplates;
 
 use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerReceivedMoney;
@@ -8,7 +8,7 @@ use App\Events\PlayerSpentMoney;
 use App\States\PlayerState;
 use App\States\RoundState;
 
-class StimulusPackage extends RoundModifier
+class StimulusPackage extends RoundTemplate
 {
     const HEADLINE = 'Stimulus Package';
 

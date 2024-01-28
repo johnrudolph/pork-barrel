@@ -11,7 +11,7 @@ use App\Events\RoundStarted;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
-use App\RoundModifiers\RoundModifier;
+use App\RoundTemplates\RoundTemplate;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -106,7 +106,7 @@ it('ends the game after the final round', function () {
                 round_number: $round_number + 1,
                 round_id: $this->game->state()->round_ids[$round_number],
                 bureaucrats: [Bureaucrat::class],
-                round_modifier: RoundModifier::class,
+                round_template: RoundTemplate::class,
             );
 
             Verbs::commit();

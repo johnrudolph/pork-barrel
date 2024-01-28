@@ -1,8 +1,8 @@
 <?php
 
-namespace App\RoundModifiers;
+namespace App\RoundTemplates;
 
-class LegislativeFrenzy extends RoundModifier
+class LegislativeFrenzy extends RoundTemplate
 {
     const HEADLINE = 'Legislative Frenzy';
 

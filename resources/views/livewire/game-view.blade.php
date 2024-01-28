@@ -14,14 +14,14 @@
     @endif
 
     @if($this->game->state()->status === 'in-progress')
-    <!-- round modifier -->
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" wire:key="round-modifier">
+    <!-- round template -->
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" wire:key="round-template">
         <div class="overflow-hidden shadow-sm sm:rounded-lg">
             <div class="px-6 py-8 sm:px-6 sm:py-8 lg:px-16 bg-teal text-white">
                 <div>
-                    <p>{{ $this->round_modifier::HEADLINE }}</p>
-                    <p class="mt-2 italic text-xs">{{ $this->round_modifier::FLAVOR_TEXT }}</p>
-                    <p class="mt-2 text-sm">{{ $this->round_modifier::EFFECT }}</p>
+                    <p>{{ $this->round_template::HEADLINE }}</p>
+                    <p class="mt-2 italic text-xs">{{ $this->round_template::FLAVOR_TEXT }}</p>
+                    <p class="mt-2 text-sm">{{ $this->round_template::EFFECT }}</p>
                 </div>
             </div>
         </div>

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\RoundModifiers;
+namespace App\RoundTemplates;
 
-class LameDuckSession extends RoundModifier
+class LameDuckSession extends RoundTemplate
 {
     const HEADLINE = 'Lame Duck Session';
 

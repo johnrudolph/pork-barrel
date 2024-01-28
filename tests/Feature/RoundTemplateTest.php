@@ -12,15 +12,15 @@ use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
 use App\RoundConstructor\RoundConstructor;
-use App\RoundModifiers\AlwaysABridesmaid;
-use App\RoundModifiers\Astroturfing;
-use App\RoundModifiers\CampaignFinanceReform;
-use App\RoundModifiers\CampaignSeason;
-use App\RoundModifiers\Hegemony;
-use App\RoundModifiers\LameDuckSession;
-use App\RoundModifiers\LegislativeFrenzy;
-use App\RoundModifiers\StimulusPackage;
-use App\RoundModifiers\TaxTheRich;
+use App\RoundTemplates\AlwaysABridesmaid;
+use App\RoundTemplates\Astroturfing;
+use App\RoundTemplates\CampaignFinanceReform;
+use App\RoundTemplates\CampaignSeason;
+use App\RoundTemplates\Hegemony;
+use App\RoundTemplates\LameDuckSession;
+use App\RoundTemplates\LegislativeFrenzy;
+use App\RoundTemplates\StimulusPackage;
+use App\RoundTemplates\TaxTheRich;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -67,7 +67,7 @@ it('takes 5 money from the richeset player at the end of the round', function ()
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [BailoutBunny::class],
-        round_modifier: TaxTheRich::class,
+        round_template: TaxTheRich::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
@@ -80,14 +80,14 @@ it('takes 5 money from the richeset player at the end of the round', function ()
 it('changes the number of bureaucrats chosen for Lame Duck and Legislative Frenzy', function () {
     $constructor = new RoundConstructor(
         round: $this->game->rounds->first()->state(),
-        round_modifier: LameDuckSession::class,
+        round_template: LameDuckSession::class,
     );
 
     $this->assertEquals(2, collect($constructor->bureaucrats)->count());
 
     $constructor = new RoundConstructor(
         round: $this->game->rounds->first()->state(),
-        round_modifier: LegislativeFrenzy::class,
+        round_template: LegislativeFrenzy::class,
     );
 
     $this->assertEquals(5, collect($constructor->bureaucrats)->count());
@@ -101,7 +101,7 @@ it('rewards you for only making one offer in Campaign Season', function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [BailoutBunny::class, MajorityLeaderMare::class],
-        round_modifier: CampaignSeason::class,
+        round_template: CampaignSeason::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
@@ -122,7 +122,7 @@ it('rewards you for making offers that are not rewarded with Always A Bridesmaid
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [BailoutBunny::class, MajorityLeaderMare::class],
-        round_modifier: AlwaysABridesmaid::class,
+        round_template: AlwaysABridesmaid::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
@@ -146,7 +146,7 @@ it('grants rewards even if you do not have the highest offer with Campaign Finan
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [BailoutBunny::class],
-        round_modifier: CampaignFinanceReform::class,
+        round_template: CampaignFinanceReform::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 5);
@@ -166,7 +166,7 @@ it('refunds half of the largest offer for Hegemony', function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [BailoutBunny::class],
-        round_modifier: Hegemony::class,
+        round_template: Hegemony::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 4);
@@ -186,7 +186,7 @@ it('refunds offers under 4 for Astroturfing', function () {
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [MinorityLeaderMink::class],
-        round_modifier: Astroturfing::class,
+        round_template: Astroturfing::class,
     );
 
     $this->john->submitOffer($this->game->currentRound(), MinorityLeaderMink::class, 3);
@@ -206,7 +206,7 @@ it('offers stimulus to players and takes it away if they fail to use it', functi
         round_number: 1,
         round_id: $this->game->rounds->first()->id,
         bureaucrats: [BailoutBunny::class, MinorityLeaderMink::class],
-        round_modifier: StimulusPackage::class,
+        round_template: StimulusPackage::class,
     );
 
     $this->assertEquals(20, $this->john->state()->availableMoney());

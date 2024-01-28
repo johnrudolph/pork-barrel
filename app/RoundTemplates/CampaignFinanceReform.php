@@ -1,11 +1,11 @@
 <?php
 
-namespace App\RoundModifiers;
+namespace App\RoundTemplates;
 
 use App\Events\ActionAwardedToPlayer;
 use App\States\RoundState;
 
-class CampaignFinanceReform extends RoundModifier
+class CampaignFinanceReform extends RoundTemplate
 {
     const HEADLINE = 'Campaign Finance Reform';
 

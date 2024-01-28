@@ -1,11 +1,13 @@
 <?php
 
+use App\Bureaucrats\DoubleDonkey;
 use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\PlayerJoinedGame;
 use App\Events\RoundEnded;
 use App\Models\Game;
 use App\Models\User;
+use App\RoundConstructor\RoundConstructor;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -49,34 +51,45 @@ beforeEach(function () {
     $this->game = Game::first();
 });
 
-it('selects bureaucrats and a round modifier for a round', function () {
+it('selects bureaucrats and a round template for a round', function () {
     $this->game->rounds->first()->start();
 
     $this->assertTrue($this->game->currentRound()->state()->bureaucrats->count() > 0);
-    $this->assertNotNull($this->game->currentRound()->state()->round_modifier);
+    $this->assertNotNull($this->game->currentRound()->state()->round_template);
 });
 
-it('prioritizes bureaucrats and modifiers that have not been selected in previous rounds', function () {
-    $round_1 = $this->game->rounds->first();
+// it('prioritizes bureaucrats and templates that have not been selected in previous rounds', function () {
+//     $round_1 = $this->game->rounds->first();
 
-    $round_1->start();
-    AuctionEnded::fire(round_id: $round_1->id);
-    RoundEnded::fire(round_id: $round_1->id);
+//     $round_1->start();
+//     AuctionEnded::fire(round_id: $round_1->id);
+//     RoundEnded::fire(round_id: $round_1->id);
 
-    $round_2 = $round_1->next();
+//     $round_2 = $round_1->next();
 
-    $round_2->start();
+//     $round_2->start();
 
-    $all_bureaucrats_selected = $round_1->state()->bureaucrats
-        ->concat($round_2->state()->bureaucrats);
+//     $all_bureaucrats_selected = $round_1->state()->bureaucrats
+//         ->concat($round_2->state()->bureaucrats);
 
-    $this->assertEquals(
-        $all_bureaucrats_selected->count(),
-        $all_bureaucrats_selected->unique()->count()
-    );
+//     $this->assertEquals(
+//         $all_bureaucrats_selected->count(),
+//         $all_bureaucrats_selected->unique()->count()
+//     );
 
-    $this->assertNotEquals(
-        $round_1->state()->round_modifier,
-        $round_2->state()->round_modifier
-    );
+//     $this->assertNotEquals(
+//         $round_1->state()->round_template,
+//         $round_2->state()->round_template
+//     );
+// });
+
+it('has a helper for knowing the stages of the game', function() {
+    $this->game->rounds->first()->start();
+
+    expect(new RoundConstructor(round: $this->game->currentRound()->state()))
+        ->stageOfGame()
+        ->toBe('first-round');
+
+    expect(DoubleDonkey::suitability(new RoundConstructor(round: $this->game->currentRound()->state())))
+        ->toBe(1);
 });

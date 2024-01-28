@@ -1,11 +1,11 @@
 <?php
 
-namespace App\RoundModifiers;
+namespace App\RoundTemplates;
 
 use App\RoundConstructor\RoundConstructor;
 use App\States\RoundState;
 
-class RoundModifier
+class RoundTemplate
 {
     const HEADLINE = '';
 

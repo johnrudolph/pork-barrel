@@ -26,7 +26,7 @@ class FrozenFrog extends Bureaucrat
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
 
-    public static function suitability(RoundConstructor $constructor)
+    public static function suitability(RoundConstructor $constructor): int
     {
         // @todo: test that this works. Not sure it does
         if ($constructor->stageOfGame() === 'late') {

@@ -52,7 +52,7 @@ class Bureaucrat
         ]);
     }
 
-    public static function suitability(RoundConstructor $constructor)
+    public static function suitability(RoundConstructor $constructor): int
     {
         return 1;
     }

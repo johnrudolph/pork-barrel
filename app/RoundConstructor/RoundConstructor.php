@@ -3,7 +3,7 @@
 namespace App\RoundConstructor;
 
 use App\Bureaucrats\Bureaucrat;
-use App\RoundModifiers\RoundModifier;
+use App\RoundTemplates\RoundTemplate;
 use App\States\RoundState;
 
 class RoundConstructor
@@ -11,21 +11,21 @@ class RoundConstructor
     public function __construct(
         public RoundState $round,
         public ?int $number_of_bureaucrats = null,
-        public ?string $round_modifier = null,
+        public ?string $round_template = null,
         public ?array $bureaucrats = null,
     ) {
-        $this->round_modifier ??= $this->selectModifier();
-        $this->number_of_bureaucrats ??= $this->round_modifier::NUMBER_OF_BUREAUCRATS;
+        $this->round_template ??= $this->selectModifier();
+        $this->number_of_bureaucrats ??= $this->round_template::NUMBER_OF_BUREAUCRATS;
         $this->bureaucrats ??= $this->selectBureaucrats();
     }
 
     public function selectModifier()
     {
         $modifiers_used_this_game = $this->round->game()->rounds()
-            ->map(fn ($r) => $r->round_modifier)
+            ->map(fn ($r) => $r->round_template)
             ->flatten();
 
-        return RoundModifier::all()
+        return RoundTemplate::all()
             ->shuffle()
             ->sortByDesc(function ($modifier) use ($modifiers_used_this_game) {
                 $adjustment_for_times_used = $modifiers_used_this_game
@@ -62,18 +62,17 @@ class RoundConstructor
         return $this->round->game()->players->count();
     }
 
-    public function isFinalRound(): bool
-    {
-        return $this->round->round_number === 8;
-    }
-
     public function stageOfGame(): string
     {
+        if ($this->round->round_number === 1) {
+            return 'first-round';
+        }
+
         if ($this->round->round_number < 3) {
             return 'early';
         }
 
-        if ($this->round->round_number < 6) {
+        if ($this->round->round_number < 7) {
             return 'mid';
         }
 
@@ -81,6 +80,6 @@ class RoundConstructor
             return 'late';
         }
 
-        return 'in-round';
+        return 'final-round';
     }
 }

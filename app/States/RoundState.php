@@ -22,7 +22,7 @@ class RoundState extends State
 
     public Collection $offers_from_previous_rounds_that_resolve_this_round;
 
-    public string $round_modifier;
+    public string $round_template;
 
     public function roundModel(): Round
     {

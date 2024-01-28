@@ -1,12 +1,12 @@
 <?php
 
-namespace App\RoundModifiers;
+namespace App\RoundTemplates;
 
 use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerReceivedMoney;
 use App\States\RoundState;
 
-class Astroturfing extends RoundModifier
+class Astroturfing extends RoundTemplate
 {
     const HEADLINE = 'Astroturfing';
 

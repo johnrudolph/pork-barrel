@@ -1,12 +1,12 @@
 <?php
 
-namespace App\RoundModifiers;
+namespace App\RoundTemplates;
 
 use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerReceivedMoney;
 use App\States\RoundState;
 
-class AlwaysABridesmaid extends RoundModifier
+class AlwaysABridesmaid extends RoundTemplate
 {
     const HEADLINE = 'Always A Bridesmaid';
 

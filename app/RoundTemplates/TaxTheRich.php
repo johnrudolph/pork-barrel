@@ -1,13 +1,13 @@
 <?php
 
-namespace App\RoundModifiers;
+namespace App\RoundTemplates;
 
 use App\DTOs\MoneyLogEntry;
 use App\Events\PlayerSpentMoney;
 use App\States\PlayerState;
 use App\States\RoundState;
 
-class TaxTheRich extends RoundModifier
+class TaxTheRich extends RoundTemplate
 {
     const HEADLINE = 'Tax the rich';
 

@@ -24,9 +24,9 @@ class MinorityLeaderMink extends Bureaucrat
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
 
-    public static function suitability(RoundConstructor $constructor)
+    public static function suitability(RoundConstructor $constructor): int
     {
-        $constructor->isFinalRound()
+        return $constructor->stageOfGame() === 'final-round'
             ? 0
             : 1;
     }
