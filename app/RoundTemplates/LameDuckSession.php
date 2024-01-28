@@ -3,6 +3,7 @@
 namespace App\RoundTemplates;
 
 use App\Bureaucrats\Bureaucrat;
+use App\Bureaucrats\ObstructionOx;
 use App\RoundTemplates\RoundTemplate;
 use App\RoundConstructor\RoundConstructor;
 
@@ -16,7 +17,8 @@ class LameDuckSession extends RoundTemplate
 
     public static function randomlySelectedOtherBureaucrats(RoundConstructor $constructor)
     {
-        $pool_of_random_bureaucrats = collect(Bureaucrat::all());
+        $pool_of_random_bureaucrats = Bureaucrat::all()
+            ->reject(fn ($b) => $b::class === ObstructionOx::class);
 
         return $constructor->selectBureaucratsFromSubset($pool_of_random_bureaucrats, 2);
     }
