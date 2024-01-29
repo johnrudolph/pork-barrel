@@ -18,7 +18,7 @@ class RejectedReindeer extends Bureaucrat
 
     const SHORT_DESCRIPTION = 'If none of your offers are accepted, receive 4 money.';
 
-    const EFFECT = 'For the rest of the game, none of your offers are accepted in a round, you will receive 4 money.';
+    const EFFECT = 'For the rest of the game, if none of your offers are accepted in a round, you will receive 4 money.';
 
     const DIALOG = "Sometimes you fit right in, and sometimes you've got a bright red nose.";
 
