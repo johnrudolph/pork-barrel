@@ -17,7 +17,7 @@ class FrugalFruitFly extends Bureaucrat
 
     const SHORT_DESCRIPTION = 'Only spend what is necessary when you win an auction.';
 
-    const EFFECT = 'For the rest of the game, if you are tied for the highest offer on an auction, your offer will be reduced as low as possible while still winning the auction.';
+    const EFFECT = 'For the rest of the game, when you have the highest offer on an auction, your offer will be reduced as low as possible while still winning the auction.';
 
     const DIALOG = 'Wasteful spending is for the other party.';
 
