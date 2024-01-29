@@ -20,7 +20,7 @@ class IndexIbex extends Bureaucrat
 
     const DIALOG = 'The market is a fickle beast. I will help you tame it.';
 
-    const EFFECT = "At the start of the next round, you will receive the average net earnings of all Industries (including everyone's earnings and expenses, but not including their regular income).";
+    const EFFECT = "At the start of the next round, you will receive the average net earnings of all Industries from this round (including everyone's earnings and expenses, but not including their regular income).";
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_started';
 
