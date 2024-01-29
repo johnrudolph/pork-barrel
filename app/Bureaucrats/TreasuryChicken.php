@@ -20,7 +20,7 @@ class TreasuryChicken extends Bureaucrat
 
     const DIALOG = 'A penny saved is a penny earned.';
 
-    const EFFECT = 'The winning bidder will spend the money now, and at the end of the game will receive their money back with 25% interest (rounded down).';
+    const EFFECT = 'The top offer will spend the money now, and at the end of the game will receive their money back with 25% interest (rounded down).';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
 
