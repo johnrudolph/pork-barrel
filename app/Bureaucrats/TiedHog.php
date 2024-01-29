@@ -17,9 +17,9 @@ class TiedHog extends Bureaucrat
 
     const SHORT_DESCRIPTION = 'Win every tied auction for the rest of the game.';
 
-    const DIALOG = "For the rest of the game, if you are tied for the highest offer on an auction, each of your opponents' offers will be reduced by 1 and you will win outright.";
+    const EFFECT = "For the rest of the game, if you are tied for the highest offer on an auction, each of your opponents' offers will be reduced by 1 and you will win outright.";
 
-    const EFFECT = 'Just tipping the scales for the good guys.';
+    const DIALOG = 'Just tipping the scales for the good guys.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
 
