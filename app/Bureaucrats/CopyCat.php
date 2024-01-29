@@ -22,7 +22,7 @@ class CopyCat extends Bureaucrat
 
     const DIALOG = 'And they say mimetics is just about violence...';
 
-    const EFFECT = "Choose another Industry. At the start of the next round, you will receive that Industry's net earning (including their earnings and expenses, but not including their regular income).";
+    const EFFECT = "Choose another Industry. At the start of the next round, you will receive that Industry's net earnings from this round (including their earnings and expenses, but not including their regular income).";
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_started';
 
