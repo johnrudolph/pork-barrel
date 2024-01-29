@@ -2,10 +2,12 @@
 
 namespace App\Events;
 
+use Thunk\Verbs\Event;
+use App\States\RoundState;
 use App\DTOs\MoneyLogEntry;
 use App\States\PlayerState;
+use App\Bureaucrats\Bureaucrat;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
-use Thunk\Verbs\Event;
 
 class PlayerSpentMoney extends Event
 {
@@ -32,5 +34,15 @@ class PlayerSpentMoney extends Event
             description: $this->activity_feed_description,
             type: $this->type,
         ));
+    }
+
+    public function handle()
+    {
+        $this->state(PlayerState::class)->perks
+            ->filter(fn ($perk) => $perk::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_spent_money'])
+            ->each(fn ($perk) => $perk::handlePerkInFutureRound(
+                PlayerState::load($this->player_id),
+                RoundState::load($this->round_id)
+            ));
     }
 }

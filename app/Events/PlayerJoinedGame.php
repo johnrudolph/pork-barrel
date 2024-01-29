@@ -36,6 +36,7 @@ class PlayerJoinedGame extends Event
         $state->current_round_number = 1;
         $state->industry = Industry::unusedRandomIndustry($this->state(GameState::class));
         $state->money_history = collect();
+        $state->perks = collect();
     }
 
     public function handle()

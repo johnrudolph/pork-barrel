@@ -155,7 +155,7 @@ it('grants rewards even if you do not have the highest offer with Campaign Finan
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
 
     $this->assertEquals(1, $this->daniel->state()->availableMoney());
-    $this->assertTrue($this->daniel->state()->has_bailout);
+    $this->assertTrue($this->daniel->state()->perks->contains(BailoutBunny::class));
 });
 
 it('refunds half of the largest offer for Hegemony', function () {

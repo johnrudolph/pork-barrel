@@ -20,15 +20,6 @@ class PlayerRoundEnded extends Event
 
     public function handle()
     {
-        $state = $this->state(PlayerState::class);
-
-        if ($state->has_bailout && $state->availableMoney() === 0) {
-            PlayerWasBailedOut::fire(
-                player_id: $this->player_id,
-                round_id: $this->round_id
-            );
-        }
-
         PlayerUpdated::dispatch($this->player_id);
     }
 }

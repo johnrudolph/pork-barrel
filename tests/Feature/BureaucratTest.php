@@ -16,6 +16,7 @@ use App\Bureaucrats\ObstructionOx;
 use App\Bureaucrats\PonziPony;
 use App\Bureaucrats\SubsidySloth;
 use App\Bureaucrats\TaxTurkey;
+use App\Bureaucrats\TiedHog;
 use App\Bureaucrats\TreasuryChicken;
 use App\Bureaucrats\Watchdog;
 use App\Events\AuctionEnded;
@@ -120,7 +121,7 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
             ->is_blocked === true
     );
 
-    $this->assertFalse($this->daniel->state()->has_bailout);
+    $this->assertFalse($this->daniel->state()->perks->contains(BailoutBunny::class));
 
     $this->assertEquals(5, $this->daniel->state()->availableMoney());
 
@@ -141,7 +142,19 @@ it('gives you a bailout if you ever reach 0 money after an auction', function ()
         round_template: RoundTemplate::class,
     );
 
-    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 5);
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [TreasuryChicken::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), TreasuryChicken::class, 9);
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
 
@@ -231,7 +244,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
             ->amount_modified
     );
 
-    $this->assertTrue($this->john->state()->has_bailout);
+    $this->assertTrue($this->john->state()->perks->contains(BailoutBunny::class));
 
     $this->assertTrue($this->game->currentRound()->state()->
         offers_from_previous_rounds_that_resolve_this_round->first()->bureaucrat === MajorityLeaderMare::class
@@ -241,7 +254,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
         offers_from_previous_rounds_that_resolve_this_round->count() === 0
     );
 
-    $this->assertFalse($this->daniel->state()->has_bailout);
+    $this->assertFalse($this->daniel->state()->perks->contains(BailoutBunny::class));
 });
 
 it('gives you 10 money if you make no offers after getting the minority leader mink', function () {
@@ -278,7 +291,7 @@ it('gives you 10 money if you make no offers after getting the minority leader m
     $this->assertEquals(19, $this->john->state()->availableMoney());
 });
 
-it('gives you a 50% return on your savings if you win the Treasury Chicken', function () {
+it('gives you a 25% return on your savings if you win the Treasury Chicken', function () {
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -561,4 +574,48 @@ it('doubles your earnings with the Double Donkey', function () {
     $doubled_earnings = $amount_from_goat + $amount_from_dino;
 
     $this->assertEquals(5 + $amount_from_goat + $amount_from_dino + $doubled_earnings, $this->john->state()->availableMoney());
+});
+
+it('breaks ties with the Tied Hog', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [TiedHog::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), TiedHog::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertTrue($this->john->state()->perks->contains(TiedHog::class));
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [GamblinGoat::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $round_2 = $this->game->currentRound();
+
+    $this->john->submitOffer($round_2, GamblinGoat::class, 1);
+    $this->daniel->submitOffer($round_2, GamblinGoat::class, 1);
+
+    AuctionEnded::fire(round_id: $round_2->id);
+
+    $this->assertEquals(
+        0, 
+        $round_2->state()->offers
+            ->filter(fn ($o) => $o->player_id === $this->daniel->id && $o->bureaucrat === GamblinGoat::class)
+            ->first()
+            ->netOffer()
+    );
+
+    $this->assertEquals(
+        10, 
+        $this->daniel->state()->availableMoney()
+    );
 });

@@ -27,6 +27,17 @@ class RoundEnded extends Event
 
         $state = $this->state(RoundState::class);
 
+        // apply all player perks for end of round
+        $state->game()->playerStates()
+            ->each(fn ($p) => 
+                $p->perks
+                    ->filter(fn ($perk) => $perk::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_ended'])
+                    ->each(fn ($perk) => $perk::handlePerkInFutureRound(
+                        PlayerState::load($p),
+                        RoundState::load($this->round_id)
+                    ))
+            );
+
         $state->offers_from_previous_rounds_that_resolve_this_round
             ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_ended'])
             ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
