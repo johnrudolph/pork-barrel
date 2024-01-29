@@ -30,25 +30,49 @@ class Bureaucrat
         'on_offer_submitted' => 'on_offer_submitted',
         'on_auction_ended' => 'on_auction_ended',
         'on_round_ended' => 'on_round_ended',
+        'on_spent_money' => 'on_spent_money',
     ];
 
     public static function all()
     {
         return collect([
             BailoutBunny::class,
+            BearhugBrownBear::class,
             // BrinksmanshipBronco::class,
+            CopyCat::class,
+            CronyCrocodile::class,
+            DoubleDonkey::class,
             // DilemmaDinosaur::class,
+            FeeCollectingFerret::class,
+            FocusedFoal::class,
             ForecastFox::class,
             FrozenFrog::class,
+            FrugalFruitFly::class,
             GamblinGoat::class,
+            IndexIbex::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
             MuckrakingMule::class,
             ObstructionOx::class,
+            PonziPony::class,
+            RejectedReindeer::class,
             SubsidySloth::class,
             TaxTurkey::class,
+            TiedHog::class,
             TreasuryChicken::class,
             Watchdog::class,
+        ]);
+    }
+
+    public static function perks()
+    {
+        return collect([
+            BailoutBunny::class,
+            FeeCollectingFerret::class,
+            FocusedFoal::class,
+            FrugalFruitFly::class,
+            RejectedReindeer::class,
+            TiedHog::class,
         ]);
     }
 
@@ -75,6 +99,11 @@ class Bureaucrat
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
     {
         // this gets called when the effect happens in a future round, and needs to be paired with static::HOOK_TO_APPLY_IN_FUTURE_ROUND
+    }
+
+    public static function handlePerkInFutureRound(PlayerState $player, RoundState $round)
+    {
+        // this gets called every round for players who have the perk
     }
 
     public static function handleOnGameEnd(PlayerState $player, RoundState $round, OfferDTO $offer)

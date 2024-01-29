@@ -19,6 +19,7 @@ use App\RoundTemplates\CampaignSeason;
 use App\RoundTemplates\Hegemony;
 use App\RoundTemplates\LameDuckSession;
 use App\RoundTemplates\LegislativeFrenzy;
+use App\RoundTemplates\PickYourPerks;
 use App\RoundTemplates\StimulusPackage;
 use App\RoundTemplates\TaxTheRich;
 use Glhd\Bits\Snowflake;
@@ -155,7 +156,7 @@ it('grants rewards even if you do not have the highest offer with Campaign Finan
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
 
     $this->assertEquals(1, $this->daniel->state()->availableMoney());
-    $this->assertTrue($this->daniel->state()->has_bailout);
+    $this->assertTrue($this->daniel->state()->perks->contains(BailoutBunny::class));
 });
 
 it('refunds half of the largest offer for Hegemony', function () {
@@ -227,4 +228,13 @@ it('offers stimulus to players and takes it away if they fail to use it', functi
 
     // Daniel spends all 15
     $this->assertEquals(5, $this->daniel->state()->availableMoney());
+});
+
+it('always selects Pick Your Perks for round 1', function () {
+    $constructor = new RoundConstructor(
+        round: $this->game->rounds->first()->state(),
+    );
+
+    $this->assertEquals(100, PickYourPerks::suitability($constructor));
+    $this->assertEquals(PickYourPerks::class, $constructor->round_template);
 });

@@ -21,8 +21,6 @@ class PlayerState extends State
 
     public $income = 5;
 
-    public $has_bailout = false;
-
     public $status = 'auction';
 
     public $current_round_id;
@@ -32,6 +30,8 @@ class PlayerState extends State
     public $industry;
 
     public Collection $money_history;
+
+    public Collection $perks;
 
     public function game(): GameState
     {

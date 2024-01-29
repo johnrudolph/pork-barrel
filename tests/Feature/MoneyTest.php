@@ -76,7 +76,7 @@ it('creates money log entries when players win auctions', function () {
     $this->assertCount(1, $johns_spending);
 
     $this->assertEquals(
-        'You had the highest bid for the Bailout Bunny. The next time you reach 0 money, you will receive 10 money.',
+        'You had the highest bid for the Bailout Bunny. Every time you reach 0 money, you will receive 10 money.',
         $johns_spending->first()->description,
     );
 });

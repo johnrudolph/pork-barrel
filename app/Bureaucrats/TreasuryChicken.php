@@ -30,7 +30,6 @@ class TreasuryChicken extends Bureaucrat
             player_id: $player->id,
             round_id: $round->id,
             amount: $offer->amount_offered + $offer->amount_modified,
-            activity_feed_description: 'You put money in the treasury. This will be returned to you with 50% interest at the end of the game.',
         );
 
         ActionEffectAppliedToFutureRound::fire(
@@ -53,6 +52,6 @@ class TreasuryChicken extends Bureaucrat
 
     public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
     {
-        return 'You had the highest bid for the Treasury Chicken. Your money is now tied up in a treasury bond, and you will get it back with 50% interest at the end of the game.';
+        return 'You had the highest bid for the Treasury Chicken. Your money is now tied up in a treasury bond, and you will get it back with 25% interest at the end of the game.';
     }
 }
