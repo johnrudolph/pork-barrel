@@ -37,19 +37,39 @@ class Bureaucrat
     {
         return collect([
             BailoutBunny::class,
+            BearhugBrownBear::class,
             // BrinksmanshipBronco::class,
+            CopyCat::class,
             // DilemmaDinosaur::class,
+            FeeCollectingFerret::class,
+            FocusedFoal::class,
             ForecastFox::class,
             FrozenFrog::class,
+            FrugalFruitFly::class,
             GamblinGoat::class,
+            IndexIbex::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
             MuckrakingMule::class,
             ObstructionOx::class,
+            RejectedReindeer::class,
             SubsidySloth::class,
             TaxTurkey::class,
+            TiedHog::class,
             TreasuryChicken::class,
             Watchdog::class,
+        ]);
+    }
+
+    public static function perks()
+    {
+        return collect([
+            BailoutBunny::class,
+            FeeCollectingFerret::class,
+            FocusedFoal::class,
+            FrugalFruitFly::class,
+            RejectedReindeer::class,
+            TiedHog::class,
         ]);
     }
 

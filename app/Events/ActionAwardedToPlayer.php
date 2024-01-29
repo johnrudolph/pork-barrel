@@ -16,8 +16,6 @@ class ActionAwardedToPlayer extends Event
     #[StateId(RoundState::class)]
     public int $round_id;
 
-    public string $activity_feed_description;
-
     public OfferDTO $offer;
 
     public function applyToRound(RoundState $state)

@@ -2,16 +2,14 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
-use App\Models\Headline;
-use App\States\RoundState;
 use App\DTOs\MoneyLogEntry;
-use App\States\PlayerState;
-use App\Bureaucrats\Bureaucrat;
+use App\DTOs\OfferDTO;
 use App\Events\PlayerGainedPerk;
-use App\Events\PlayerWasBailedOut;
 use App\Events\PlayerReceivedMoney;
+use App\Models\Headline;
 use App\RoundConstructor\RoundConstructor;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class BailoutBunny extends Bureaucrat
 {
@@ -53,7 +51,7 @@ class BailoutBunny extends Bureaucrat
                 activity_feed_description: 'You received a bailout. No one needs a stronger safety net than you.',
                 type: MoneyLogEntry::TYPE_AWARD,
             );
-    
+
             Headline::create([
                 'round_id' => $round->id,
                 'game_id' => $round->game()->id,
@@ -65,6 +63,6 @@ class BailoutBunny extends Bureaucrat
 
     public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
     {
-        return 'You had the highest bid for the Bailout Bunny. Every you reach 0 money, you will receive 10 money.';
+        return 'You had the highest bid for the Bailout Bunny. Every time you reach 0 money, you will receive 10 money.';
     }
 }

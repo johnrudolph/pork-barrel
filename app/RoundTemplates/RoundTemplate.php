@@ -21,9 +21,10 @@ class RoundTemplate
             Astroturfing::class,
             CampaignFinanceReform::class,
             CampaignSeason::class,
-            Hegemony::class,
+            // Hegemony::class,
             LameDuckSession::class,
             LegislativeFrenzy::class,
+            PickYourPerks::class,
             StimulusPackage::class,
             TaxTheRich::class,
         ]);

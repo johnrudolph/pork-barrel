@@ -19,6 +19,7 @@ use App\RoundTemplates\CampaignSeason;
 use App\RoundTemplates\Hegemony;
 use App\RoundTemplates\LameDuckSession;
 use App\RoundTemplates\LegislativeFrenzy;
+use App\RoundTemplates\PickYourPerks;
 use App\RoundTemplates\StimulusPackage;
 use App\RoundTemplates\TaxTheRich;
 use Glhd\Bits\Snowflake;
@@ -227,4 +228,13 @@ it('offers stimulus to players and takes it away if they fail to use it', functi
 
     // Daniel spends all 15
     $this->assertEquals(5, $this->daniel->state()->availableMoney());
+});
+
+it('always selects Pick Your Perks for round 1', function () {
+    $constructor = new RoundConstructor(
+        round: $this->game->rounds->first()->state(),
+    );
+
+    $this->assertEquals(100, PickYourPerks::suitability($constructor));
+    $this->assertEquals(PickYourPerks::class, $constructor->round_template);
 });

@@ -2,12 +2,12 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
-use App\States\RoundState;
+use App\Bureaucrats\Bureaucrat;
 use App\DTOs\MoneyLogEntry;
 use App\States\PlayerState;
-use App\Bureaucrats\Bureaucrat;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class PlayerSpentMoney extends Event
 {

@@ -6,19 +6,17 @@ use App\States\PlayerState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
-class PlayerPutMoneyInTreasury extends Event
+class PlayerLostPerk extends Event
 {
     #[StateId(PlayerState::class)]
     public int $player_id;
 
     public int $round_id;
 
-    public string $activity_feed_description;
-
-    public int $amount;
+    public string $perk;
 
     public function apply(PlayerState $state)
     {
-        $state->money_in_treasury += $this->amount;
+        $state->perks = $state->perks->reject(fn ($p) => $p === $this->perk);
     }
 }

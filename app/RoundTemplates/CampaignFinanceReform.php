@@ -51,7 +51,6 @@ class CampaignFinanceReform extends RoundTemplate
             ->each(fn ($o) => ActionAwardedToPlayer::fire(
                 player_id: $o->player_id,
                 round_id: $o->round_id,
-                activity_feed_description: $o->bureaucrat::activityFeedDescription($round_state, $o),
                 offer: $o
             ));
     }

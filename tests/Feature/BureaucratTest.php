@@ -1,19 +1,26 @@
 <?php
 
 use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\BearhugBrownBear;
 use App\Bureaucrats\BrinksmanshipBronco;
 use App\Bureaucrats\Bureaucrat;
+use App\Bureaucrats\CopyCat;
 use App\Bureaucrats\CronyCrocodile;
 use App\Bureaucrats\DilemmaDinosaur;
 use App\Bureaucrats\DoubleDonkey;
+use App\Bureaucrats\FeeCollectingFerret;
+use App\Bureaucrats\FocusedFoal;
 use App\Bureaucrats\ForecastFox;
 use App\Bureaucrats\FrozenFrog;
+use App\Bureaucrats\FrugalFruitFly;
 use App\Bureaucrats\GamblinGoat;
+use App\Bureaucrats\IndexIbex;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
 use App\Bureaucrats\MuckrakingMule;
 use App\Bureaucrats\ObstructionOx;
 use App\Bureaucrats\PonziPony;
+use App\Bureaucrats\RejectedReindeer;
 use App\Bureaucrats\SubsidySloth;
 use App\Bureaucrats\TaxTurkey;
 use App\Bureaucrats\TiedHog;
@@ -607,7 +614,7 @@ it('breaks ties with the Tied Hog', function () {
     AuctionEnded::fire(round_id: $round_2->id);
 
     $this->assertEquals(
-        0, 
+        0,
         $round_2->state()->offers
             ->filter(fn ($o) => $o->player_id === $this->daniel->id && $o->bureaucrat === GamblinGoat::class)
             ->first()
@@ -615,7 +622,295 @@ it('breaks ties with the Tied Hog', function () {
     );
 
     $this->assertEquals(
-        10, 
+        10,
         $this->daniel->state()->availableMoney()
     );
+});
+
+it('copies the net earnings of another player with Copy Cat', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [CopyCat::class, TreasuryChicken::class, GamblinGoat::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), CopyCat::class, 5, ['player' => $this->daniel->id]);
+
+    $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), TreasuryChicken::class, 4);
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [GamblinGoat::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->assertEquals(
+        $this->daniel->state()->availableMoney() - 5,
+        $this->john->state()->availableMoney()
+    );
+});
+
+it('copies the average net earnings of all players with Index Ibex', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [IndexIbex::class, TreasuryChicken::class, GamblinGoat::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), IndexIbex::class, 5);
+
+    $this->daniel->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
+    $this->jacob->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), TreasuryChicken::class, 4);
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [GamblinGoat::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $johns_net = $this->john->state()->availableMoney() - 5;
+    $daniels_net = $this->john->state()->availableMoney() - 5;
+    $jacobs_net = $this->john->state()->availableMoney() - 5;
+
+    $average = ($johns_net + $daniels_net + $jacobs_net) / 3;
+
+    $this->assertEquals(
+        $johns_net,
+        $average
+    );
+});
+
+it('only spends what is necessary with the Frugal Fruit Fly', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [FrugalFruitFly::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), FrugalFruitFly::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertTrue($this->john->state()->perks->contains(FrugalFruitFly::class));
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [GamblinGoat::class, TreasuryChicken::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $round_2 = $this->game->currentRound();
+
+    $this->john->submitOffer($round_2, GamblinGoat::class, 4);
+    $this->daniel->submitOffer($round_2, GamblinGoat::class, 1);
+    $this->john->submitOffer($round_2, TreasuryChicken::class, 4);
+
+    AuctionEnded::fire(round_id: $round_2->id);
+
+    $this->assertEquals(
+        2,
+        $round_2->state()->offers
+            ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
+            ->first()
+            ->netOffer()
+    );
+
+    $this->assertEquals(
+        1,
+        $round_2->state()->offers
+            ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === TreasuryChicken::class)
+            ->first()
+            ->netOffer()
+    );
+});
+
+it('adds to your offer if you only make one offer per round with Focused Foal', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [FocusedFoal::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), FocusedFoal::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertTrue($this->john->state()->perks->contains(FocusedFoal::class));
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [GamblinGoat::class, TreasuryChicken::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $round_2 = $this->game->currentRound();
+
+    $this->john->submitOffer($round_2, GamblinGoat::class, 1);
+
+    AuctionEnded::fire(round_id: $round_2->id);
+
+    $this->assertEquals(
+        6,
+        $round_2->state()->offers
+            ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
+            ->first()
+            ->netOffer()
+    );
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 3,
+        round_id: $this->game->state()->round_ids[2],
+        bureaucrats: [GamblinGoat::class, TreasuryChicken::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $round_3 = $this->game->currentRound();
+
+    $this->john->submitOffer($round_3, GamblinGoat::class, 1);
+    $this->john->submitOffer($round_3, TreasuryChicken::class, 1);
+
+    AuctionEnded::fire(round_id: $round_3->id);
+
+    $this->assertEquals(
+        1,
+        $round_3->state()->offers
+            ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
+            ->first()
+            ->netOffer()
+    );
+
+    $this->assertEquals(
+        1,
+        $round_3->state()->offers
+            ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === TreasuryChicken::class)
+            ->first()
+            ->netOffer()
+    );
+});
+
+it('steals a Perk with the Bearhug Brown Bear', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [BailoutBunny::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertTrue($this->john->state()->perks->contains(BailoutBunny::class));
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [BearhugBrownBear::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $round_2 = $this->game->currentRound();
+
+    $this->john->submitOffer($round_2, BearhugBrownBear::class, 1, ['player' => $this->daniel->id]);
+    $this->daniel->submitOffer($round_2, BearhugBrownBear::class, 1, ['player' => $this->john->id]);
+
+    AuctionEnded::fire(round_id: $round_2->id);
+
+    $this->assertFalse($this->john->state()->perks->contains(BailoutBunny::class));
+    $this->assertTrue($this->daniel->state()->perks->contains(BailoutBunny::class));
+
+    // john lost 5 money for attempting a bearhug on daniel
+    $this->assertEquals(3, $this->john->state()->availableMoney());
+});
+
+it('compensates you when you have no offers accepted with Rejected Reindeer', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [RejectedReindeer::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), RejectedReindeer::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertTrue($this->john->state()->perks->contains(RejectedReindeer::class));
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [GamblinGoat::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $round_2 = $this->game->currentRound();
+
+    $this->john->submitOffer($round_2, GamblinGoat::class, 1);
+    $this->daniel->submitOffer($round_2, GamblinGoat::class, 2);
+
+    AuctionEnded::fire(round_id: $round_2->id);
+
+    $this->assertEquals(13, $this->john->state()->availableMoney());
+});
+
+it('gives you 1 token for every opponent who offered on auctions you lost for Fee Collecting Ferret', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [FeeCollectingFerret::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), FeeCollectingFerret::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertTrue($this->john->state()->perks->contains(FeeCollectingFerret::class));
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [GamblinGoat::class, TreasuryChicken::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $round_2 = $this->game->currentRound();
+
+    $this->john->submitOffer($round_2, GamblinGoat::class, 1);
+    $this->john->submitOffer($round_2, TreasuryChicken::class, 1);
+    $this->daniel->submitOffer($round_2, GamblinGoat::class, 2);
+    $this->daniel->submitOffer($round_2, TreasuryChicken::class, 2);
+    $this->jacob->submitOffer($round_2, TreasuryChicken::class, 1);
+
+    AuctionEnded::fire(round_id: $round_2->id);
+
+    $this->assertEquals(12, $this->john->state()->availableMoney());
 });

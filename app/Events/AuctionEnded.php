@@ -21,13 +21,12 @@ class AuctionEnded extends Event
 
         // apply all player perks that affect auctions
         $round->game()->playerStates()
-            ->each(fn ($p) => 
-                $p->perks
-                    ->filter(fn ($perk) => $perk::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_auction_ended'])
-                    ->each(fn ($perk) => $perk::handlePerkInFutureRound(
-                        PlayerState::load($p->id),
-                        RoundState::load($this->round_id)
-                    ))
+            ->each(fn ($p) => $p->perks
+                ->filter(fn ($perk) => $perk::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_auction_ended'])
+                ->each(fn ($perk) => $perk::handlePerkInFutureRound(
+                    PlayerState::load($p->id),
+                    RoundState::load($this->round_id)
+                ))
             );
 
         // apply any action from the previous round that affects this auction
@@ -45,7 +44,6 @@ class AuctionEnded extends Event
                 ->each(fn ($offer) => ActionAwardedToPlayer::fire(
                     player_id: $player_id,
                     round_id: $this->round_id,
-                    activity_feed_description: $offer->bureaucrat::activityFeedDescription($this->state(RoundState::class), $offer),
                     offer: $offer
                 )
                 )
