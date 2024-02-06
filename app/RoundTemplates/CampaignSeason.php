@@ -17,7 +17,7 @@ class CampaignSeason extends RoundTemplate
     public static function handleOnRoundEnd(RoundState $round_state)
     {
         $round_state->game()->players
-            ->filter(fn ($p) => $round_state->offers->where('player_id', $p)->count() < 2)
+            ->filter(fn ($p) => $round_state->offers()->where('player_id', $p)->count() < 2)
             ->each(fn ($p) => PlayerReceivedMoney::fire(
                 player_id: $p,
                 round_id: $round_state->id,

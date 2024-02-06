@@ -2,13 +2,13 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerMoneyFrozen;
 use App\Events\PlayerMoneyUnfrozen;
 use App\Models\Player;
 use App\Models\Round;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -51,7 +51,7 @@ class FrozenFrog extends Bureaucrat
         ];
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerMoneyFrozen::fire(
             player_id: (int) $offer->data['player'],
@@ -63,11 +63,11 @@ class FrozenFrog extends Bureaucrat
         ActionEffectAppliedToFutureRound::fire(
             player_id: $player->id,
             round_id: $round->game()->nextRound()->id,
-            offer: $offer,
+            offer_id: $offer->id,
         );
     }
 
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
     {
         PlayerMoneyUnfrozen::fire(
             player_id: (int) $original_offer->data['player'],
@@ -77,7 +77,7 @@ class FrozenFrog extends Bureaucrat
         );
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return 'You had the highest bid for the Minority Leader Mink. Next round, you will receive 10 money if you make no offers.';
     }

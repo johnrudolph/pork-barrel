@@ -3,10 +3,10 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerPutMoneyInTreasury;
 use App\Events\PlayerReceivedMoney;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -24,7 +24,7 @@ class TreasuryChicken extends Bureaucrat
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerPutMoneyInTreasury::fire(
             player_id: $player->id,
@@ -35,11 +35,11 @@ class TreasuryChicken extends Bureaucrat
         ActionEffectAppliedToFutureRound::fire(
             player_id: $player->id,
             round_id: $round->game()->round_ids->last(),
-            offer: $offer,
+            offer_id: $offer->id,
         );
     }
 
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
     {
         PlayerReceivedMoney::fire(
             player_id: $player->id,
@@ -50,7 +50,7 @@ class TreasuryChicken extends Bureaucrat
         );
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return 'You had the highest bid for the Treasury Chicken. Your money is now tied up in a treasury bond, and you will get it back with 25% interest at the end of the game.';
     }

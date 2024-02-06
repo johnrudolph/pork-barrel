@@ -2,10 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
 use App\Events\BureaucratWasBlocked;
 use App\Models\Player;
 use App\Models\Round;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -40,7 +40,7 @@ class ObstructionOx extends Bureaucrat
         ];
     }
 
-    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferState $offer)
     {
         $b = $offer->data['bureaucrat'];
 

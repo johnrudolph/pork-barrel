@@ -46,12 +46,12 @@ class CampaignFinanceReform extends RoundTemplate
 
     public static function handleOnAuctionEnd(RoundState $round_state)
     {
-        $round_state->offers
+        $round_state->offers()
             ->filter(fn ($o) => $o->netOffer() > 3 && ! $o->awarded)
             ->each(fn ($o) => ActionAwardedToPlayer::fire(
                 player_id: $o->player_id,
                 round_id: $o->round_id,
-                offer: $o
+                offer_id: $o->id
             ));
     }
 }

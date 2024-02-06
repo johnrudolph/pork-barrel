@@ -18,7 +18,7 @@ class RoundState extends State
 
     public Collection $blocked_bureaucrats;
 
-    public Collection $offers;
+    public Collection $offer_ids;
 
     public Collection $offers_from_previous_rounds_that_resolve_this_round;
 
@@ -34,9 +34,14 @@ class RoundState extends State
         return GameState::load($this->game_id);
     }
 
+    public function offers()
+    {
+        return $this->offer_ids->map(fn ($id) => OfferState::load($id));
+    }
+
     public function actionsWonBy(int $player_id)
     {
-        return $this->offers->filter(fn ($o) => $o->awarded && $o->player_id === $player_id
+        return $this->offers()->filter(fn ($o) => $o->awarded && $o->player_id === $player_id
         );
     }
 }

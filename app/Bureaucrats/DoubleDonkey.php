@@ -3,10 +3,10 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -31,16 +31,16 @@ class DoubleDonkey extends Bureaucrat
             : 1;
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         ActionEffectAppliedToFutureRound::fire(
             player_id: $player->id,
             round_id: $round->game()->nextRound()->id,
-            offer: $offer,
+            offer_id: $offer->id,
         );
     }
 
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
     {
         $money_earned = $player->money_history
             ->filter(fn ($entry) => $entry->type !== MoneyLogEntry::TYPE_INCOME

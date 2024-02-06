@@ -26,7 +26,7 @@ class RoundSeeded extends Event
     {
         $state->round_number = $this->round_number;
         $state->game_id = $this->game_id;
-        $state->offers = collect();
+        $state->offer_ids = collect();
         $state->bureaucrats = collect();
         $state->blocked_bureaucrats = collect();
         $state->round_template = 'tbd';

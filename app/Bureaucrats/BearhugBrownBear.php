@@ -3,13 +3,13 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\DTOs\OfferDTO;
 use App\Events\PlayerGainedPerk;
 use App\Events\PlayerLostPerk;
 use App\Events\PlayerSpentMoney;
 use App\Models\Headline;
 use App\Models\Player;
 use App\Models\Round;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -41,7 +41,7 @@ class BearhugBrownBear extends Bureaucrat
         ];
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         $target = PlayerState::load($offer->data['player']);
 
@@ -79,7 +79,7 @@ class BearhugBrownBear extends Bureaucrat
         ]);
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         $hug_was_successful = PlayerState::load($offer->player_id)->perks->count() > 0;
 

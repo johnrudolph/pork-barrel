@@ -3,12 +3,12 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\DTOs\OfferDTO;
 use App\Events\PlayerReceivedMoney;
 use App\Models\Headline;
 use App\Models\Player;
 use App\Models\Round;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -59,7 +59,7 @@ class MuckrakingMule extends Bureaucrat
         ];
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         if ($offer->data['industry'] === PlayerState::load($offer->data['player'])->industry) {
             $acusee = Player::find($offer->data['player']);

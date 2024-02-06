@@ -2,10 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
 use App\Models\Player;
 use App\Models\Round;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -38,7 +38,7 @@ class Bureaucrat
         return collect([
             BailoutBunny::class,
             BearhugBrownBear::class,
-            // BrinksmanshipBronco::class,
+            BrinksmanshipBronco::class,
             CopyCat::class,
             CronyCrocodile::class,
             DoubleDonkey::class,
@@ -81,12 +81,12 @@ class Bureaucrat
         return 1;
     }
 
-    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferState $offer)
     {
         // only use this if it will modify offers before they are resolved end of round
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         // this is the standard handler for most bureaucrats, and applies to each winner
     }
@@ -96,7 +96,7 @@ class Bureaucrat
         // this can handle effects that don't just apply to the winners
     }
 
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
     {
         // this gets called when the effect happens in a future round, and needs to be paired with static::HOOK_TO_APPLY_IN_FUTURE_ROUND
     }
@@ -106,7 +106,7 @@ class Bureaucrat
         // this gets called every round for players who have the perk
     }
 
-    public static function handleOnGameEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnGameEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         // this only gets called when the game ends
     }
@@ -116,7 +116,7 @@ class Bureaucrat
         // this is used to show options and rules for livewire components
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return 'You had the highest offer for '.static::NAME;
     }

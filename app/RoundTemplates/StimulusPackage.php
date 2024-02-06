@@ -64,7 +64,7 @@ class StimulusPackage extends RoundTemplate
     {
         $round_state->game()->playerStates()
             ->each(function ($player) use ($round_state) {
-                $money_offered = $round_state->offers
+                $money_offered = $round_state->offers()
                     ->filter(fn ($o) => $o->player_id === $player->id)
                     ->sum(fn ($o) => $o->netOffer());
 

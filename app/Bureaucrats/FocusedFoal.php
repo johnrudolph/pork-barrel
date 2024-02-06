@@ -2,10 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
 use App\Events\OfferAmountModified;
 use App\Events\PlayerGainedPerk;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -30,7 +30,7 @@ class FocusedFoal extends Bureaucrat
             : 0;
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerGainedPerk::fire(
             player_id: $player->id,
@@ -41,7 +41,7 @@ class FocusedFoal extends Bureaucrat
 
     public static function handlePerkInFutureRound(PlayerState $player, RoundState $round)
     {
-        $player_offers = $round->offers
+        $player_offers = $round->offers()
             ->filter(fn ($o) => $o->player_id === $player->id);
 
         if ($player_offers->count() > 1) {
@@ -51,12 +51,12 @@ class FocusedFoal extends Bureaucrat
         OfferAmountModified::fire(
             player_id: $player->id,
             round_id: $round->id,
-            offer: $player_offers->first(),
+            offer_id: $player_offers->first()->id,
             amount_modified: 5,
         );
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return 'You had the highest bid for the Tied Hog. You will now win every tied auction for the rest of the game.';
     }
