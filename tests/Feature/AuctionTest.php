@@ -75,7 +75,7 @@ it('records offers made to the state', function () {
 
     $this->assertEquals(
         1,
-        collect($round->state()->offers)
+        collect($round->state()->offers())
             ->filter(fn ($o) => $o->player_id === $this->john->id
                 && $o->bureaucrat === $round->state()->bureaucrats[0]
                 && $o->amount_offered === 1

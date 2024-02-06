@@ -2,10 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
 use App\Events\OfferAmountModified;
 use App\Events\PlayerGainedPerk;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -30,7 +30,7 @@ class FrugalFruitFly extends Bureaucrat
             : 0;
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerGainedPerk::fire(
             player_id: $player->id,
@@ -42,7 +42,7 @@ class FrugalFruitFly extends Bureaucrat
     public static function handlePerkInFutureRound(PlayerState $player, RoundState $round)
     {
         $round->bureaucrats->each(function ($b) use ($player, $round) {
-            $all_offers_for_b = $round->offers
+            $all_offers_for_b = $round->offers()
                 ->filter(fn ($o) => $o->bureaucrat === $b);
 
             $top_offer_amount = $all_offers_for_b
@@ -74,7 +74,7 @@ class FrugalFruitFly extends Bureaucrat
                 OfferAmountModified::fire(
                     player_id: $player->id,
                     round_id: $round->id,
-                    offer: $player_offer,
+                    offer_id: $player_offer->id,
                     amount_modified: 1 - $top_offer_amount,
                 );
 
@@ -88,13 +88,13 @@ class FrugalFruitFly extends Bureaucrat
             OfferAmountModified::fire(
                 player_id: $player->id,
                 round_id: $round->id,
-                offer: $player_offer,
+                offer_id: $player_offer->id,
                 amount_modified: 1 - $top_offer_amount + $second_highest_offer_amount,
             );
         });
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return 'You had the highest bid for the Tied Hog. You will now win every tied auction for the rest of the game.';
     }

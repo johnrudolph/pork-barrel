@@ -2,10 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
 use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\OfferAmountModified;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -30,28 +30,28 @@ class MajorityLeaderMare extends Bureaucrat
             : 1;
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         ActionEffectAppliedToFutureRound::fire(
             player_id: $player->id,
             round_id: $round->game()->nextRound()->id,
-            offer: $offer,
+            offer_id: $offer->id,
         );
     }
 
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferDTO $original_offer)
+    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
     {
-        $round->offers
+        $round->offers()
             ->filter(fn ($o) => $o->player_id === $original_offer->player_id)
             ->each(fn ($o) => OfferAmountModified::fire(
                 player_id: $o->player_id,
                 round_id: $round->id,
-                offer: $o,
+                offer_id: $o->id,
                 amount_modified: 1,
             ));
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return 'You had the highest bid for the Majority Leader Mare. Next round, 1 money will be added to each of your offers.';
     }

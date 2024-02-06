@@ -2,10 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
 use App\Events\PlayerIncomeChanged;
 use App\Models\Player;
 use App\Models\Round;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -37,7 +37,7 @@ class TaxTurkey extends Bureaucrat
         ];
     }
 
-    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerIncomeChanged::fire(
             player_id: (int) $offer->data['player'],

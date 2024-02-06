@@ -3,9 +3,9 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\DTOs\OfferDTO;
 use App\Events\PlayerReceivedMoney;
 use App\Events\PlayerSpentMoney;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -19,14 +19,18 @@ class BrinksmanshipBronco extends Bureaucrat
 
     const DIALOG = "Who's afraid of a game of chicken? Not me. Because I'm a horse.";
 
-    const EFFECT = 'If you have the highest offer, you will keep all the offers made to this Bureaucrat. If multiple players offer the highest offer, they will split the earnings, rounded down.';
+    const EFFECT = 'If you have the highest offer, you will keep all the lower offers made to this Bureaucrat. If multiple players offer the highest offer, they will split the earnings, rounded down.';
 
-    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferState $offer)
     {
-        $offers_for_bronco = $round->offers
+        $offers_for_bronco = $round->offers()
             ->filter(fn ($o) => $o->bureaucrat === static::class);
 
+        $top_offer = $offers_for_bronco
+            ->max(fn ($o) => $o->netOffer());
+
         $sum_offered = $offers_for_bronco
+            ->reject(fn ($o) => $o->netOffer() === $top_offer)
             ->sum(fn ($o) => $o->netOffer());
 
         $number_of_winners = $offers_for_bronco
@@ -44,7 +48,7 @@ class BrinksmanshipBronco extends Bureaucrat
 
     public static function handleGlobalEffectOnRoundEnd(RoundState $round)
     {
-        $offers_for_bronco = $round->offers
+        $offers_for_bronco = $round->offers()
             ->filter(fn ($o) => $o->bureaucrat === static::class);
 
         $winning_offer = $offers_for_bronco

@@ -18,7 +18,7 @@ class AlwaysABridesmaid extends RoundTemplate
     {
         $round_state->game()->players
             ->each(function ($p) use ($round_state) {
-                $failed_offers = $round_state->offers
+                $failed_offers = $round_state->offers()
                     ->filter(fn ($o) => $o->player_id === $p && ! $o->awarded)
                     ->count();
 

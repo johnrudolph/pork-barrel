@@ -16,7 +16,7 @@ class Astroturfing extends RoundTemplate
 
     public static function handleOnAuctionEnd(RoundState $round_state)
     {
-        $round_state->offers
+        $round_state->offers()
             ->filter(fn ($o) => $o->netOffer() < 4)
             ->each(fn ($o) => PlayerReceivedMoney::fire(
                 player_id: $o->player_id,

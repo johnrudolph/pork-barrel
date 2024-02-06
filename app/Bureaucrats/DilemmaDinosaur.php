@@ -23,7 +23,7 @@ class DilemmaDinosaur extends Bureaucrat
 
     public static function handleGlobalEffectOnRoundEnd(RoundState $round)
     {
-        $offers_for_dino = $round->offers
+        $offers_for_dino = $round->offers()
             ->filter(fn ($o) => $o->bureaucrat === static::class);
 
         if ($offers_for_dino->count() === 0) {

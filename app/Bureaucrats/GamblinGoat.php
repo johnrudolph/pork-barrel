@@ -3,8 +3,8 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\DTOs\OfferDTO;
 use App\Events\PlayerReceivedMoney;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -20,7 +20,7 @@ class GamblinGoat extends Bureaucrat
 
     const EFFECT = 'Get a random return of 1-10 money.';
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerReceivedMoney::fire(
             player_id: $player->id,
@@ -31,7 +31,7 @@ class GamblinGoat extends Bureaucrat
         );
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return "You had the highest bid for the Gamblin' Goat. Let's see how it pays off...";
     }

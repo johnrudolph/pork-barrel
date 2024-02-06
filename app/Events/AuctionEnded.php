@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Bureaucrats\Bureaucrat;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -31,38 +32,39 @@ class AuctionEnded extends Event
 
         // apply any action from the previous round that affects this auction
         $round->offers_from_previous_rounds_that_resolve_this_round
-            ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_auction_ended'])
-            ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
-                PlayerState::load($o->player_id),
+            ->filter(fn ($o) => OfferState::load($o)->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_auction_ended'])
+            ->each(fn ($o) => OfferState::load($o)->bureaucrat::handleInFutureRound(
+                PlayerState::load(OfferState::load($o)->player_id),
                 RoundState::load($this->round_id),
-                $o,
+                OfferState::load($o),
             ));
 
         // award actions to players
         collect($round->game()->players)
-            ->each(fn ($player_id) => $this->actionsWonBy($player_id, $round)
-                ->each(fn ($offer) => ActionAwardedToPlayer::fire(
-                    player_id: $player_id,
-                    round_id: $this->round_id,
-                    offer: $offer
-                )
-                )
+            ->each(fn ($player_id) => $this->offersWonBy($player_id, $round)
+                ->each(function ($offer) use ($player_id) {
+                    ActionAwardedToPlayer::fire(
+                        player_id: $player_id,
+                        round_id: $this->round_id,
+                        offer_id: $offer->id
+                    );
+                })
             );
 
         RoundEnded::fire(round_id: $this->round_id);
     }
 
-    public function actionsWonBy($player_id, $round)
+    public function offersWonBy($player_id, $round)
     {
-        return collect($round->offers)
+        return collect($round->offers())
             ->filter(fn ($o) => $o->player_id === $player_id)
             ->filter(function ($offer) use ($round) {
-                $top_offer = collect($round->offers)
+                $top_offer = collect($round->offers())
                     ->filter(fn ($o) => $o->bureaucrat === $offer->bureaucrat)
-                    ->max(fn ($o) => $o->amount_offered + $o->amount_modified);
+                    ->max(fn ($o) => $o->netOffer());
 
-                return $offer->amount_offered + $offer->amount_modified >= $top_offer
-                    && $offer->amount_offered + $offer->amount_modified > 0;
+                return $offer->netOffer() >= $top_offer
+                    && $offer->netOffer() > 0;
             });
     }
 }

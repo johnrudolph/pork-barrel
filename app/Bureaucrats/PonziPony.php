@@ -20,7 +20,7 @@ class PonziPony extends Bureaucrat
 
     public static function handleGlobalEffectOnRoundEnd(RoundState $round)
     {
-        $offers_for_pony = $round->offers
+        $offers_for_pony = $round->offers()
             ->filter(fn ($o) => $o->bureaucrat === static::class);
 
         $top_offer = $offers_for_pony

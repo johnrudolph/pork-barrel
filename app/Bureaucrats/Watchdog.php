@@ -3,11 +3,11 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\DTOs\OfferDTO;
 use App\Events\PlayerSpentMoney;
 use App\Models\Headline;
 use App\Models\Player;
 use App\Models\Round;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -48,10 +48,10 @@ class Watchdog extends Bureaucrat
         ];
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         if (
-            $round->offers->filter(fn ($o) => $o->awarded === true
+            $round->offers()->filter(fn ($o) => $o->awarded === true
                 && $o->bureaucrat === $offer->bureaucrat
                 && $o->player_id === $offer->player_id
             )
@@ -75,7 +75,7 @@ class Watchdog extends Bureaucrat
         }
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         $guess_was_correct = $state->actionsWonBy($offer->data['player'])->contains($offer->data['bureaucrat']);
 

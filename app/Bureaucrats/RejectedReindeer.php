@@ -3,10 +3,10 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\DTOs\OfferDTO;
 use App\Events\PlayerGainedPerk;
 use App\Events\PlayerReceivedMoney;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -31,7 +31,7 @@ class RejectedReindeer extends Bureaucrat
             : 0;
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerGainedPerk::fire(
             player_id: $player->id,
@@ -42,7 +42,7 @@ class RejectedReindeer extends Bureaucrat
 
     public static function handlePerkInFutureRound(PlayerState $player, RoundState $round)
     {
-        $offers_awarded_to_player = $round->offers
+        $offers_awarded_to_player = $round->offers()
             ->filter(fn ($o) => $o->player_id === $player->id
                 && $o->awarded
             );
@@ -58,7 +58,7 @@ class RejectedReindeer extends Bureaucrat
         }
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return 'You had the highest bid for the Tied Hog. You will now win every tied auction for the rest of the game.';
     }

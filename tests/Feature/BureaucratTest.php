@@ -35,6 +35,7 @@ use App\Models\Game;
 use App\Models\Player;
 use App\Models\User;
 use App\RoundTemplates\RoundTemplate;
+use App\States\OfferState;
 use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
@@ -122,7 +123,7 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
 
     $this->assertTrue(
-        $this->game->currentRound()->state()->offers
+        $this->game->currentRound()->state()->offers()
             ->filter(fn ($o) => $o->bureaucrat === BailoutBunny::class)
             ->first()
             ->is_blocked === true
@@ -223,21 +224,21 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
 
     $this->assertEquals(
         1,
-        $this->game->currentRound()->state()->offers
+        $this->game->currentRound()->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
             ->first()
             ->amount_modified
     );
 
     $this->assertTrue(
-        $this->game->currentRound()->state()->offers
+        $this->game->currentRound()->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
             ->first()
             ->awarded
     );
 
     $this->assertTrue(
-        $this->game->currentRound()->state()->offers
+        $this->game->currentRound()->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->daniel->id && $o->bureaucrat === GamblinGoat::class)
             ->first()
             ->awarded
@@ -245,7 +246,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
 
     $this->assertEquals(
         1,
-        $this->game->currentRound()->state()->offers
+        $this->game->currentRound()->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === BailoutBunny::class)
             ->first()
             ->amount_modified
@@ -253,8 +254,9 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
 
     $this->assertTrue($this->john->state()->perks->contains(BailoutBunny::class));
 
-    $this->assertTrue($this->game->currentRound()->state()->
-        offers_from_previous_rounds_that_resolve_this_round->first()->bureaucrat === MajorityLeaderMare::class
+    $this->assertTrue(OfferState::load($this->game->currentRound()->state()->
+        offers_from_previous_rounds_that_resolve_this_round->first())
+            ->bureaucrat === MajorityLeaderMare::class
     );
 
     $this->assertTrue($this->game->currentRound()->next()->state()->
@@ -287,8 +289,8 @@ it('gives you 10 money if you make no offers after getting the minority leader m
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
 
-    $this->assertTrue($this->game->currentRound()->state()->
-        offers_from_previous_rounds_that_resolve_this_round->first()->bureaucrat === MinorityLeaderMink::class
+    $this->assertTrue(OfferState::load($this->game->currentRound()->state()->
+        offers_from_previous_rounds_that_resolve_this_round->first())->bureaucrat === MinorityLeaderMink::class
     );
 
     $this->assertTrue($this->game->currentRound()->next()->state()->
@@ -336,8 +338,8 @@ it('allocates offers to winners for the Brinksmanship Bronco', function () {
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
 
     $this->assertEquals(1, $this->john->state()->availableMoney());
-    $this->assertEquals(7, $this->daniel->state()->availableMoney());
-    $this->assertEquals(7, $this->jacob->state()->availableMoney());
+    $this->assertEquals(2, $this->daniel->state()->availableMoney());
+    $this->assertEquals(2, $this->jacob->state()->availableMoney());
 });
 
 it('doubles the offer for all losers of Ponzi Pony', function () {
@@ -615,7 +617,7 @@ it('breaks ties with the Tied Hog', function () {
 
     $this->assertEquals(
         0,
-        $round_2->state()->offers
+        $round_2->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->daniel->id && $o->bureaucrat === GamblinGoat::class)
             ->first()
             ->netOffer()
@@ -725,7 +727,7 @@ it('only spends what is necessary with the Frugal Fruit Fly', function () {
 
     $this->assertEquals(
         2,
-        $round_2->state()->offers
+        $round_2->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
             ->first()
             ->netOffer()
@@ -733,7 +735,7 @@ it('only spends what is necessary with the Frugal Fruit Fly', function () {
 
     $this->assertEquals(
         1,
-        $round_2->state()->offers
+        $round_2->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === TreasuryChicken::class)
             ->first()
             ->netOffer()
@@ -771,7 +773,7 @@ it('adds to your offer if you only make one offer per round with Focused Foal', 
 
     $this->assertEquals(
         6,
-        $round_2->state()->offers
+        $round_2->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
             ->first()
             ->netOffer()
@@ -794,7 +796,7 @@ it('adds to your offer if you only make one offer per round with Focused Foal', 
 
     $this->assertEquals(
         1,
-        $round_3->state()->offers
+        $round_3->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
             ->first()
             ->netOffer()
@@ -802,7 +804,7 @@ it('adds to your offer if you only make one offer per round with Focused Foal', 
 
     $this->assertEquals(
         1,
-        $round_3->state()->offers
+        $round_3->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === TreasuryChicken::class)
             ->first()
             ->netOffer()

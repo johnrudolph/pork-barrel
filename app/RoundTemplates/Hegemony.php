@@ -16,11 +16,11 @@ class Hegemony extends RoundTemplate
 
     public static function handleOnRoundEnd(RoundState $round_state)
     {
-        $max_offer = $round_state->offers->max(fn ($o) => $o->netOffer());
+        $max_offer = $round_state->offers()->max(fn ($o) => $o->netOffer());
 
         $round_state->game()->players->each(function ($p) use ($round_state, $max_offer) {
             if (
-                $round_state->offers
+                $round_state->offers()
                     ->filter(fn ($o) => $o->player_id === $p && $o->netOffer() === $max_offer)
                     ->count() > 0
             ) {

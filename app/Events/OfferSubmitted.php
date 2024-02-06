@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Bureaucrats\Bureaucrat;
 use App\DTOs\OfferDTO;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -11,6 +12,9 @@ use Thunk\Verbs\Event;
 
 class OfferSubmitted extends Event
 {
+    #[StateId(OfferState::class)]
+    public ?int $offer_id = null;
+
     #[StateId(PlayerState::class)]
     public int $player_id;
 
@@ -37,7 +41,7 @@ class OfferSubmitted extends Event
         );
 
         $this->assert(
-            assertion: $state->offers->filter(fn ($o) => $o->bureaucrat === $this->offer->bureaucrat
+            assertion: $state->offers()->filter(fn ($o) => $o->bureaucrat === $this->offer->bureaucrat
                     && $o->player_id === $this->player_id
             )->count() === 0,
             message: 'Player already submitted offer for '.$this->offer->bureaucrat::NAME.'.'
@@ -46,7 +50,16 @@ class OfferSubmitted extends Event
 
     public function applyToRoundState(RoundState $state)
     {
-        $state->offers->push($this->offer);
+        $state->offer_ids->push($this->offer_id);
+    }
+
+    public function applyToOfferState(OfferState $state)
+    {
+        $state->player_id = $this->player_id;
+        $state->round_id = $this->round_id;
+        $state->bureaucrat = $this->offer->bureaucrat;
+        $state->amount_offered = $this->offer->amount_offered;
+        $state->data = $this->offer->data;
     }
 
     public function applyToPlayerState(PlayerState $state)
@@ -59,11 +72,11 @@ class OfferSubmitted extends Event
         $round = $this->state(RoundState::class);
 
         $round->offers_from_previous_rounds_that_resolve_this_round
-            ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_offer_submitted'])
-            ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
+            ->filter(fn ($o) => OfferState::load($o)->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_offer_submitted'])
+            ->each(fn ($o) => OfferState::load($o)->bureaucrat::handleInFutureRound(
                 PlayerState::load($o->player_id),
                 RoundState::load($this->round_id),
-                $o
+                OfferState::load($o)
             ));
     }
 }

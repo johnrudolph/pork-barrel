@@ -22,13 +22,11 @@ class BureaucratWasBlocked extends Event
     {
         $state->blocked_bureaucrats->push($this->bureaucrat);
 
-        $state->offers = $state->offers->transform(function ($o) {
-            if ($o->bureaucrat === $this->bureaucrat) {
-                $o->is_blocked = true;
-            }
-
-            return $o;
-        });
+        $state->offers()->filter(fn ($o) => $o->bureaucrat === $this->bureaucrat)
+            ->each(fn ($o) => OfferWasBlocked::fire(
+                offer_id: $o->id,
+                round_id: $this->round_id,
+            ));
     }
 
     public function handle()

@@ -2,10 +2,10 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
 use App\Events\OfferAmountModified;
 use App\Events\PlayerGainedPerk;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -30,7 +30,7 @@ class TiedHog extends Bureaucrat
             : 0;
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerGainedPerk::fire(
             player_id: $player->id,
@@ -42,7 +42,7 @@ class TiedHog extends Bureaucrat
     public static function handlePerkInFutureRound(PlayerState $player, RoundState $round)
     {
         $round->bureaucrats->each(function ($b) use ($player, $round) {
-            $all_offers_for_b = $round->offers
+            $all_offers_for_b = $round->offers()
                 ->filter(fn ($o) => $o->bureaucrat === $b);
 
             $top_offer_amount = $all_offers_for_b
@@ -63,14 +63,14 @@ class TiedHog extends Bureaucrat
                     ->each(fn ($o) => OfferAmountModified::fire(
                         player_id: $o->player_id,
                         round_id: $round->id,
-                        offer: $o,
+                        offer_id: $o->id,
                         amount_modified: -1,
                     ));
             }
         });
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return 'You had the highest bid for the Tied Hog. You will now win every tied auction for the rest of the game.';
     }

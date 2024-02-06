@@ -3,11 +3,11 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\DTOs\OfferDTO;
 use App\Events\PlayerGainedPerk;
 use App\Events\PlayerReceivedMoney;
 use App\Models\Headline;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -32,7 +32,7 @@ class BailoutBunny extends Bureaucrat
             : 0;
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerGainedPerk::fire(
             player_id: $player->id,
@@ -61,7 +61,7 @@ class BailoutBunny extends Bureaucrat
         }
     }
 
-    public static function activityFeedDescription(RoundState $state, OfferDTO $offer)
+    public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
         return 'You had the highest bid for the Bailout Bunny. Every time you reach 0 money, you will receive 10 money.';
     }

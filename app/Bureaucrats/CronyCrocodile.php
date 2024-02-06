@@ -2,8 +2,8 @@
 
 namespace App\Bureaucrats;
 
-use App\DTOs\OfferDTO;
 use App\Events\PlayerIncomeChanged;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 
@@ -19,7 +19,7 @@ class CronyCrocodile extends Bureaucrat
 
     const EFFECT = 'Permanently increase your income by 1.';
 
-    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferDTO $offer)
+    public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferState $offer)
     {
         PlayerIncomeChanged::fire(
             player_id: $player->id,

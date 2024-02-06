@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Bureaucrats\Bureaucrat;
 use App\Models\Round;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -38,21 +39,21 @@ class RoundEnded extends Event
             );
 
         $state->offers_from_previous_rounds_that_resolve_this_round
-            ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_ended'])
-            ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
-                PlayerState::load($o->player_id),
+            ->filter(fn ($o) => OfferState::load($o)->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_ended'])
+            ->each(fn ($o) => OfferState::load($o)->bureaucrat::handleInFutureRound(
+                PlayerState::load(OfferState::load($o)->player_id),
                 RoundState::load($this->round_id),
-                $o,
+                OfferState::load($o)
             ));
 
-        $state->offers
+        $state->offers()
             ->filter(fn ($o) => $o->awarded === true
                 && ! $o->is_blocked
             )
             ->each(fn ($offer) => ActionAppliedAtEndOfRound::fire(
                 round_id: $state->id,
                 player_id: $offer->player_id,
-                offer: $offer,
+                offer_id: $offer->id,
             ));
 
         $state->bureaucrats

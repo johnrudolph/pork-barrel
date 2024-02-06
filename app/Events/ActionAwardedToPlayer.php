@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\DTOs\OfferDTO;
+use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -16,18 +16,12 @@ class ActionAwardedToPlayer extends Event
     #[StateId(RoundState::class)]
     public int $round_id;
 
-    public OfferDTO $offer;
+    #[StateId(OfferState::class)]
+    public $offer_id;
 
-    public function applyToRound(RoundState $state)
+    public function applyToOffer(OfferState $state)
     {
-        $state->offers = $state->offers
-            ->transform(function ($o) {
-                if ($o->player_id === $this->player_id && $o->bureaucrat === $this->offer->bureaucrat) {
-                    $o->awarded = true;
-                }
-
-                return $o;
-            });
+        $state->awarded = true;
     }
 
     public function applyToPlayer(PlayerState $state)
@@ -35,12 +29,17 @@ class ActionAwardedToPlayer extends Event
         //
     }
 
+    public function applyToRound(RoundState $state)
+    {
+        //
+    }
+
     public function handle()
     {
-        $this->offer->bureaucrat::handleOnAwarded(
+        $this->state(OfferState::class)->bureaucrat::handleOnAwarded(
             $this->state(PlayerState::class),
             $this->state(RoundState::class),
-            $this->offer,
+            $this->state(OfferState::class),
         );
     }
 }
