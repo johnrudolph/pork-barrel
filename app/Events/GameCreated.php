@@ -12,7 +12,7 @@ use Thunk\Verbs\Event;
 class GameCreated extends Event
 {
     #[StateId(GameState::class)]
-    public int $game_id;
+    public ?int $game_id = null;
 
     public $user_id;
 

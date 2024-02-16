@@ -18,7 +18,7 @@ class PlayerJoinedGame extends Event
     public int $game_id;
 
     #[StateId(PlayerState::class)]
-    public int $player_id;
+    public ?int $player_id = null;
 
     public string $name;
 
@@ -51,6 +51,6 @@ class PlayerJoinedGame extends Event
         $user->current_game_id = $this->game_id;
         $user->save();
 
-        // GameUpdated::dispatch($this->game_id);
+        GameUpdated::dispatch($this->game_id);
     }
 }

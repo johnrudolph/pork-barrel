@@ -24,6 +24,6 @@ class PickYourPerks extends RoundTemplate
     {
         $pool_of_random_bureaucrats = collect(Bureaucrat::perks());
 
-        return $constructor->selectBureaucratsFromSubset($pool_of_random_bureaucrats, 5);
+        return $constructor->selectBureaucratsFromSubset($pool_of_random_bureaucrats, 4);
     }
 }

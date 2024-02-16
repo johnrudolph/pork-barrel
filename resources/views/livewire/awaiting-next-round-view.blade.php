@@ -1,4 +1,4 @@
-<div>
+<div wire:poll>
     <div class="my-4 max-w-7xl mx-auto sm:px-6 lg:px-8 overflow-hidden flex flex-row justify-between">
         @if($this->round->status === 'complete')
             <button 
@@ -37,7 +37,7 @@
                                             <tr>
                                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ $o['bureaucrat']::NAME }}</td>
                                                 <td>
-                                                    @if($this->round->status === 'auction')
+                                                    @if($this->round->state()->status === 'auction')
                                                         <p>?</p>
                                                     @elseif( ! $o['bureaucrat']::HAS_WINNER)
                                                         <p class="text-teal">N/A</p>
@@ -63,5 +63,9 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="mb-8">
+        <livewire:in-game-nav :game="$this->game" :player="$this->player"/>
     </div>
 </div>

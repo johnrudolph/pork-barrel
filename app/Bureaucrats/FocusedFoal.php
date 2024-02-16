@@ -44,7 +44,7 @@ class FocusedFoal extends Bureaucrat
         $player_offers = $round->offers()
             ->filter(fn ($o) => $o->player_id === $player->id);
 
-        if ($player_offers->count() > 1) {
+        if ($player_offers->count() !== 1) {
             return;
         }
 

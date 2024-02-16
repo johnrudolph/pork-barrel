@@ -27,16 +27,9 @@ use App\Bureaucrats\TiedHog;
 use App\Bureaucrats\TreasuryChicken;
 use App\Bureaucrats\Watchdog;
 use App\Events\AuctionEnded;
-use App\Events\GameCreated;
-use App\Events\GameStarted;
-use App\Events\PlayerJoinedGame;
 use App\Events\RoundStarted;
-use App\Models\Game;
-use App\Models\Player;
-use App\Models\User;
 use App\RoundTemplates\RoundTemplate;
 use App\States\OfferState;
-use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Thunk\Verbs\Facades\Verbs;
 
@@ -46,37 +39,7 @@ uses(DatabaseMigrations::class);
 beforeEach(function () {
     Verbs::commitImmediately();
 
-    $this->user_1 = User::factory()->create();
-    $this->user_2 = User::factory()->create();
-    $this->user_3 = User::factory()->create();
-
-    $event = GameCreated::fire(
-        user_id: $this->user_1->id,
-        game_id: Snowflake::make()->id(),
-    );
-
-    PlayerJoinedGame::fire(
-        game_id: $event->game_id,
-        user_id: $this->user_2->id,
-        player_id: Snowflake::make()->id(),
-        name: $this->user_2->name,
-    );
-
-    PlayerJoinedGame::fire(
-        game_id: $event->game_id,
-        user_id: $this->user_3->id,
-        player_id: Snowflake::make()->id(),
-        name: $this->user_3->name,
-    );
-
-    $this->game = Game::find($event->game_id);
-    GameStarted::fire(game_id: $this->game->id);
-
-    $this->game = Game::find($event->game_id);
-
-    $this->john = Player::firstWhere('user_id', $this->user_1->id);
-    $this->daniel = Player::firstWhere('user_id', $this->user_2->id);
-    $this->jacob = Player::firstWhere('user_id', $this->user_3->id);
+    $this->bootGame();
 });
 
 it('gives player random amount of money for winning Gamblin Goat', function () {

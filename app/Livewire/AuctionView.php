@@ -2,46 +2,86 @@
 
 namespace App\Livewire;
 
-use App\DTOs\OfferDTO;
-use App\Events\AuctionEnded;
-use App\Events\PlayerAwaitingResults;
 use App\Models\Game;
-use App\Models\Player;
 use App\Models\Round;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
+use App\DTOs\OfferDTO;
 use Livewire\Component;
+use Livewire\Attributes\On;
+use App\Events\AuctionEnded;
+use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Auth;
+use App\Events\PlayerAwaitingResults;
 
 class AuctionView extends Component
 {
     public Game $game;
 
+    public Round $round;
+
     public $offers;
 
     public int $money;
-
-    public Player $player;
 
     protected $listeners = [
         'echo:games.{game.id},GameUpdated' => '$refresh',
         'echo:players.{player.id},PlayerUpdated' => '$refresh',
     ];
 
+    #[On('echo:games.{game.id},GameUpdated')]
+    public function gameUpdated()
+    {
+        //
+    }
+
+    #[On('echo:players.{player.id},PlayerUpdated')]
+    public function playerUpdated()
+    {
+        //
+    }
+
     #[Computed]
-    public function round()
+    public function user()
     {
-        return $this->game->currentRound();
+        return Auth::user();
     }
 
-    public function mount(Player $player)
+    #[Computed]
+    public function player()
     {
-        $this->initializeProperties($player, $this->game->currentRound());
+        return $this->game->players->firstWhere('user_id', $this->user->id);
     }
 
-    public function initializeProperties(Player $player, Round $round)
-    {
-        $this->player = Auth::user()->currentPlayer();
+    public $game_status;
+    public $round_status;
+    public $player_status;
+    public $round_template;
 
+    public function mount(Game $game, Round $round)
+    {
+        if($game->currentRound()->id !== $round->id) {
+            return redirect()->route('games.auction', [
+                'game' => $game, 
+                'round' => $game->currentRound(),
+            ]);
+        }
+
+        if ($round->state()->status !== 'auction') {
+            return redirect()->route('games.waiting', [
+                'game' => $game, 
+                'round' => $game->currentRound(),
+            ]);
+        }
+
+
+        // @todo if player has already submitted this round, redirect to correct page.
+        // also should probably validate on submit offer to make sure they can
+        $this->game = $game;
+        $this->round = $round;
+        $this->initializeProperties($game, $round);
+    }
+
+    public function initializeProperties(Game $game, Round $round)
+    {
         $this->money = $this->player->state()->availableMoney();
 
         foreach ($this->round->state()->bureaucrats as $b) {
@@ -51,6 +91,11 @@ class AuctionView extends Component
                 bureaucrat: $b,
             );
         }
+
+        $this->round_template = $this->round->state()->round_template;
+        $this->game_status = $this->game->state()->status;
+        $this->round_status = $this->round->state()->status;
+        $this->player_status = $this->player->state()->status;
     }
 
     public function increment($bureacrat_slug)
@@ -116,6 +161,11 @@ class AuctionView extends Component
         ) {
             AuctionEnded::fire(round_id: $this->round->id);
         }
+
+        return redirect()->route('games.waiting', [
+            'game' => $this->game, 
+            'round' => $this->round,
+        ]);
     }
 
     public function render()

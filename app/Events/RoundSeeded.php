@@ -20,6 +20,10 @@ class RoundSeeded extends Event
     public function applyToGame(GameState $state)
     {
         $state->round_ids->push($this->round_id);
+
+        if ($state->current_round_id === 0) {
+            $state->current_round_id = $this->round_id;
+        }
     }
 
     public function applyToRound(RoundState $state)
