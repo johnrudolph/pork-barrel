@@ -12,6 +12,8 @@ class PlayerReadiedUp extends Event
     #[StateId(PlayerState::class)]
     public int $player_id;
 
+    public int $round_id;
+
     public int $game_id;
 
     // @todo important to validate here so they don't jump ahead two rounds.

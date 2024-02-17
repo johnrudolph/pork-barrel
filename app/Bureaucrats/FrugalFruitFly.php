@@ -25,7 +25,7 @@ class FrugalFruitFly extends Bureaucrat
 
     public static function suitability(RoundConstructor $constructor): int
     {
-        return $constructor->stageOfGame() === 'early' || $constructor->stageOfGame() === 'first-round'
+        return $constructor->stageOfGame() === 'first-round'
             ? 2
             : 0;
     }

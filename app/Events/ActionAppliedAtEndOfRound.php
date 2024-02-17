@@ -27,6 +27,8 @@ class ActionAppliedAtEndOfRound extends Event
     {
         $offer = $this->state(OfferState::class);
 
+        dump($offer->bureaucrat);
+
         $this->state(OfferState::class)->bureaucrat::handleOnRoundEnd(
             PlayerState::load($this->player_id),
             RoundState::load($this->round_id),
