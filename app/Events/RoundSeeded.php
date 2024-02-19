@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Round;
+use App\RoundTemplates\RoundTemplate;
 use App\States\GameState;
 use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
@@ -33,7 +34,7 @@ class RoundSeeded extends Event
         $state->offer_ids = collect();
         $state->bureaucrats = collect();
         $state->blocked_bureaucrats = collect();
-        $state->round_template = 'tbd';
+        $state->round_template = RoundTemplate::class;
         $state->offers_from_previous_rounds_that_resolve_this_round = collect();
     }
 

@@ -11,6 +11,8 @@ class PlayerAwaitingResults extends Event
     #[StateId(PlayerState::class)]
     public int $player_id;
 
+    public int $round_id;
+
     public function applyToPlayerState(PlayerState $state)
     {
         $state->status = 'waiting';

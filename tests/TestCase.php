@@ -63,8 +63,6 @@ abstract class TestCase extends BaseTestCase
     
         $this->game = Game::find($event->game_id);
         GameStarted::fire(game_id: $this->game->id);
-
-        $this->game->rounds->first()->start();
     
         $this->john = Player::firstWhere('user_id', $user_1->id);
     }

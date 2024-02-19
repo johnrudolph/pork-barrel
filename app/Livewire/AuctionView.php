@@ -6,6 +6,7 @@ use App\Models\Game;
 use App\Models\Round;
 use App\DTOs\OfferDTO;
 use Livewire\Component;
+use App\States\RoundState;
 use Livewire\Attributes\On;
 use App\Events\AuctionEnded;
 use Livewire\Attributes\Computed;
@@ -71,7 +72,6 @@ class AuctionView extends Component
                 'round' => $game->currentRound(),
             ]);
         }
-
 
         // @todo if player has already submitted this round, redirect to correct page.
         // also should probably validate on submit offer to make sure they can
@@ -149,14 +149,19 @@ class AuctionView extends Component
                 ->filter(fn ($o) => $o->amount_offered > 0)
                 ->each(fn ($o) => $o->submit());
         } catch (\Throwable $th) {
-            //
+            dd($th->getMessage());
         }
 
-        PlayerAwaitingResults::fire(player_id: $this->player->id);
+        PlayerAwaitingResults::fire(
+            player_id: $this->player->id,
+            round_id: $this->round->id,
+        );
 
         if (
             $this->game->state()->playerStates()
-                ->filter(fn ($p) => $p->status === 'waiting')
+                ->filter(fn ($p) => $p->status === 'waiting'
+                    && $p->current_round_id === $this->round->id
+                )
                 ->count() === $this->game->players->count()
         ) {
             AuctionEnded::fire(round_id: $this->round->id);

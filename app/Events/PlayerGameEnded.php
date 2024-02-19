@@ -23,7 +23,7 @@ class PlayerGameEnded extends Event
     {
         PlayerUpdated::dispatch($this->player_id);
 
-        Player::find($this->player_id)->update([
+        Player::find($this->player_id)->user->update([
             'current_game_id' => null,
         ]);
     }

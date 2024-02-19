@@ -105,6 +105,7 @@ it('blocks an action from resolving if was blocked by the Ox', function () {
 });
 
 it('gives you a bailout if you ever reach 0 money after an auction', function () {
+    dd($this->john->state()->money_history);
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,

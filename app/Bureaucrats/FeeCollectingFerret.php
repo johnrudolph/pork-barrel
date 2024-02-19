@@ -50,6 +50,10 @@ class FeeCollectingFerret extends Bureaucrat
                 ->filter(fn ($o) => $o->player_id === $player->id)
                 ->first();
 
+            if (! $player_offer) {
+                return;
+            }
+
             $player_won = $player_offer->awarded;
 
             if ($player_won || $player_offer === null) {

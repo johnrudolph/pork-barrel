@@ -36,7 +36,7 @@ class RoundStarted extends Event
     public function applyToGameState(GameState $state)
     {
         $state->current_round_id = $this->round_id;
-        $state->current_round_number += 1;
+        $state->current_round_number = $this->state(RoundState::class)->round_number;
     }
 
     public function handle()

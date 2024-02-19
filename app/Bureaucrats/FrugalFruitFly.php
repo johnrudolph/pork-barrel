@@ -93,9 +93,4 @@ class FrugalFruitFly extends Bureaucrat
             );
         });
     }
-
-    public static function activityFeedDescription(RoundState $state, OfferState $offer)
-    {
-        return 'You had the highest bid for the Tied Hog. You will now win every tied auction for the rest of the game.';
-    }
 }

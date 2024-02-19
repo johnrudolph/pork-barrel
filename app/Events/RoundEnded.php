@@ -7,6 +7,7 @@ use App\Models\Round;
 use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
+use Illuminate\Support\Facades\Log;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
@@ -22,11 +23,29 @@ class RoundEnded extends Event
 
     public function handle()
     {
+        Log::info('Round ended', ['round_id' => $this->round_id]);
         $round = Round::find($this->round_id);
         $round->status = 'complete';
         $round->save();
 
         $state = $this->state(RoundState::class);
+
+        // ApplyPerks::fire(round_id: $this->round_id, hook: Bureaucrat::HOOKS['on_round_ended']);
+
+        // ApplyBureaucratEffectsFromPreviousRounds::fire(
+        //     round_id: $this->round_id,
+        //     hook: Bureaucrat::HOOKS['on_round_ended']
+        // );
+
+        // MarkoffersAsAwarded::fire(round_id: $this->round_id);
+
+        // ApplyGlobalEffectsOfBureaucrats::fire(round_id: $this->round_id, hook: Bureaucrat::HOOKS['on_round_ended']);
+
+
+
+
+
+
 
         // apply all player perks for end of round
         $state->game()->playerStates()
