@@ -2,7 +2,6 @@
 
 use App\Livewire\RulesPage;
 use App\Livewire\AuctionView;
-use App\Livewire\PreGameView;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\AwaitingNextRoundView;
 use App\Http\Controllers\ProfileController;
