@@ -1,11 +1,11 @@
 <?php
 
-use App\Livewire\RulesPage;
-use App\Livewire\AuctionView;
-use Illuminate\Support\Facades\Route;
-use App\Livewire\AwaitingNextRoundView;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\AuctionView;
+use App\Livewire\AwaitingNextRoundView;
 use App\Livewire\PreGameLobby;
+use App\Livewire\RulesPage;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------

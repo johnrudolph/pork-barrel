@@ -4,8 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Game;
 use App\Models\Player;
-use Livewire\Component;
 use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class InGameNav extends Component
 {
@@ -30,7 +30,7 @@ class InGameNav extends Component
             'money' => $p->state()->availableMoney(),
         ])->sortByDesc('money');
     }
-    
+
     #[Computed]
     public function perks()
     {
@@ -38,7 +38,9 @@ class InGameNav extends Component
     }
 
     public Game $game;
+
     public Player $player;
+
     public string $round_template;
 
     public function mount(Game $game, Player $player)

@@ -79,7 +79,7 @@ class Watchdog extends Bureaucrat
     {
         $guess_was_correct = $state->offers()->filter(fn ($o) => $o->awarded === true
             && $o->bureaucrat === $offer->bureaucrat
-            && $o->player_id === $offer->data['player_id']
+            && $o->player_id === (int) $offer->data['player']
         )->count() > 0;
 
         $acused_industry = PlayerState::load($offer->data['player'])->industry;

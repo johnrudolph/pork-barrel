@@ -29,10 +29,10 @@ class PreGameLobby extends Component
 
         if ($this->game->state()->status === 'in-progress') {
             return redirect()->route('games.auction', [
-                'game' => $this->game, 
-                'round' => $this->game->currentRound()
+                'game' => $this->game,
+                'round' => $this->game->currentRound(),
             ]);
-        };
+        }
 
         $this->initializeProperties();
 
@@ -54,8 +54,8 @@ class PreGameLobby extends Component
         }
 
         return redirect()->route('games.auction', [
-            'game' => $this->game, 
-            'round' => $this->game->currentRound()
+            'game' => $this->game,
+            'round' => $this->game->currentRound(),
         ]);
     }
 

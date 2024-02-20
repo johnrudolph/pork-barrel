@@ -2,14 +2,14 @@
 
 namespace App\Livewire;
 
-use App\Models\Game;
-use Livewire\Component;
-use Glhd\Bits\Snowflake;
 use App\Events\GameCreated;
-use Thunk\Verbs\Facades\Verbs;
 use App\Events\PlayerJoinedGame;
-use Livewire\Attributes\Computed;
+use App\Models\Game;
+use Glhd\Bits\Snowflake;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
+use Thunk\Verbs\Facades\Verbs;
 
 class InitializeGame extends Component
 {
@@ -30,7 +30,7 @@ class InitializeGame extends Component
         Verbs::commit();
 
         return redirect()->route('games.pre-game', [
-            'game' => Game::find($game_id)
+            'game' => Game::find($game_id),
         ]);
     }
 

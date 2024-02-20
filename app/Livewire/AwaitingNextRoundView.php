@@ -2,14 +2,14 @@
 
 namespace App\Livewire;
 
-use App\Models\Game;
-use App\Models\Round;
-use App\Models\Player;
-use Livewire\Component;
-use Livewire\Attributes\On;
 use App\Events\PlayerReadiedUp;
-use Livewire\Attributes\Computed;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\Round;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class AwaitingNextRoundView extends Component
 {
@@ -61,7 +61,7 @@ class AwaitingNextRoundView extends Component
     public function readyUp()
     {
         PlayerReadiedUp::fire(
-            player_id: $this->player->id, 
+            player_id: $this->player->id,
             game_id: $this->game->id,
             round_id: $this->round->id
         );

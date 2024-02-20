@@ -2,16 +2,15 @@
 
 namespace App\Livewire;
 
+use App\DTOs\OfferDTO;
+use App\Events\AuctionEnded;
+use App\Events\PlayerAwaitingResults;
 use App\Models\Game;
 use App\Models\Round;
-use App\DTOs\OfferDTO;
-use Livewire\Component;
-use App\States\RoundState;
-use Livewire\Attributes\On;
-use App\Events\AuctionEnded;
-use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
-use App\Events\PlayerAwaitingResults;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class AuctionView extends Component
 {
@@ -53,22 +52,25 @@ class AuctionView extends Component
     }
 
     public $game_status;
+
     public $round_status;
+
     public $player_status;
+
     public $round_template;
 
     public function mount(Game $game, Round $round)
     {
-        if($game->currentRound()->id !== $round->id) {
+        if ($game->currentRound()->id !== $round->id) {
             return redirect()->route('games.auction', [
-                'game' => $game, 
+                'game' => $game,
                 'round' => $game->currentRound(),
             ]);
         }
 
         if ($round->state()->status !== 'auction') {
             return redirect()->route('games.waiting', [
-                'game' => $game, 
+                'game' => $game,
                 'round' => $game->currentRound(),
             ]);
         }
@@ -168,7 +170,7 @@ class AuctionView extends Component
         }
 
         return redirect()->route('games.waiting', [
-            'game' => $this->game, 
+            'game' => $this->game,
             'round' => $this->round,
         ]);
     }

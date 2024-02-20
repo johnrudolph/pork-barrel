@@ -1,10 +1,9 @@
 <?php
 
 use App\Livewire\AuctionView;
-use Livewire\Livewire;
-use App\Livewire\GameView;
-use Thunk\Verbs\Facades\Verbs;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Livewire\Livewire;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
@@ -21,6 +20,5 @@ it('correctly renders the game view', function () {
         ->assertSet('game_status', 'in-progress')
         ->assertSet('round_status', 'auction')
         ->assertSet('player_status', 'auction')
-        ->assertStatus(200)
-        ;
+        ->assertStatus(200);
 });

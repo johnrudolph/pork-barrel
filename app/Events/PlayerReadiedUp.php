@@ -2,11 +2,11 @@
 
 namespace App\Events;
 
-use Thunk\Verbs\Event;
 use App\States\GameState;
-use App\States\RoundState;
 use App\States\PlayerState;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
+use Thunk\Verbs\Event;
 
 class PlayerReadiedUp extends Event
 {

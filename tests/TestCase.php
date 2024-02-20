@@ -2,21 +2,19 @@
 
 namespace Tests;
 
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Player;
-use Glhd\Bits\Snowflake;
-use App\States\GameState;
+use App\Bureaucrats\Bureaucrat;
+use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
-use App\States\PlayerState;
-use App\Events\AuctionEnded;
-use App\Events\RoundStarted;
-use Thunk\Verbs\Facades\Verbs;
-use App\Bureaucrats\Bureaucrat;
 use App\Events\PlayerJoinedGame;
+use App\Events\RoundStarted;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\User;
 use App\RoundTemplates\RoundTemplate;
+use Glhd\Bits\Snowflake;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Thunk\Verbs\Facades\Verbs;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -37,14 +35,14 @@ abstract class TestCase extends BaseTestCase
         $user_1 = User::factory()->create();
         $user_2 = User::factory()->create();
         $user_3 = User::factory()->create();
-    
+
         $event = GameCreated::fire(
             user_id: $user_1->id,
             game_id: Snowflake::make()->id(),
         );
 
         $this->game = Game::find($event->game_id);
-    
+
         $daniel_id = PlayerJoinedGame::fire(
             game_id: $event->game_id,
             user_id: $user_2->id,
@@ -52,7 +50,7 @@ abstract class TestCase extends BaseTestCase
         )->player_id;
 
         $this->daniel = Player::find($daniel_id);
-    
+
         $jacob_id = PlayerJoinedGame::fire(
             game_id: $event->game_id,
             user_id: $user_3->id,
@@ -60,10 +58,10 @@ abstract class TestCase extends BaseTestCase
         )->player_id;
 
         $this->jacob = Player::find($jacob_id);
-    
+
         $this->game = Game::find($event->game_id);
         GameStarted::fire(game_id: $this->game->id);
-    
+
         $this->john = Player::firstWhere('user_id', $user_1->id);
     }
 
