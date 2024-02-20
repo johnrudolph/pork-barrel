@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Livewire\GameView;
+use App\Livewire\AuctionView;
+use App\Livewire\AwaitingNextRoundView;
+use App\Livewire\PreGameLobby;
 use App\Livewire\RulesPage;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +32,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('games/{game}', GameView::class)->name('games.show');
+
+    Route::get('games/{game}/pre-game', PreGameLobby::class)->name('games.pre-game');
+    Route::get('games/{game}/rounds/{round}/auction', AuctionView::class)->name('games.auction');
+    Route::get('games/{game}/rounds/{round}/waiting', AwaitingNextRoundView::class)->name('games.waiting');
 });
 
 require __DIR__.'/auth.php';

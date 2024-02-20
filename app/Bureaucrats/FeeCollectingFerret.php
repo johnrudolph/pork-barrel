@@ -26,7 +26,7 @@ class FeeCollectingFerret extends Bureaucrat
 
     public static function suitability(RoundConstructor $constructor): int
     {
-        return $constructor->stageOfGame() === 'early' || $constructor->stageOfGame() === 'first-round'
+        return $constructor->stageOfGame() === 'first-round'
             ? 2
             : 0;
     }
@@ -49,6 +49,10 @@ class FeeCollectingFerret extends Bureaucrat
             $player_offer = $all_offers_for_b
                 ->filter(fn ($o) => $o->player_id === $player->id)
                 ->first();
+
+            if (! $player_offer) {
+                return;
+            }
 
             $player_won = $player_offer->awarded;
 

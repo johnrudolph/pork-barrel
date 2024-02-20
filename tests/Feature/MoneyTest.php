@@ -1,6 +1,7 @@
 <?php
 
 use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\Bureaucrat;
 use App\Bureaucrats\GamblinGoat;
 use App\Events\AuctionEnded;
 use App\Events\GameCreated;
@@ -57,7 +58,14 @@ it('gives players 5 money to start each round', function () {
     $this->assertEquals(5, $this->john->state()->availableMoney());
 
     AuctionEnded::fire(round_id: $this->game->currentRound()->id);
-    $this->game->currentRound()->next()->start();
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [Bureaucrat::class],
+        round_template: RoundTemplate::class,
+    );
 
     $this->assertEquals(10, $this->john->state()->availableMoney());
 

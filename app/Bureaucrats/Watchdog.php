@@ -77,7 +77,10 @@ class Watchdog extends Bureaucrat
 
     public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
-        $guess_was_correct = $state->actionsWonBy($offer->data['player'])->contains($offer->data['bureaucrat']);
+        $guess_was_correct = $state->offers()->filter(fn ($o) => $o->awarded === true
+            && $o->bureaucrat === $offer->bureaucrat
+            && $o->player_id === (int) $offer->data['player']
+        )->count() > 0;
 
         $acused_industry = PlayerState::load($offer->data['player'])->industry;
 

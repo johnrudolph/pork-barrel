@@ -34,6 +34,11 @@ class RoundState extends State
         return GameState::load($this->game_id);
     }
 
+    public function next(): RoundState
+    {
+        return $this->game()->rounds()->first(fn ($r) => $r->round_number === $this->round_number + 1);
+    }
+
     public function offers()
     {
         return $this->offer_ids->map(fn ($id) => OfferState::load($id));

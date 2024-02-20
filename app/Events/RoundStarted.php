@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Bureaucrats\Bureaucrat;
 use App\DTOs\MoneyLogEntry;
+use App\Models\Round;
 use App\States\GameState;
 use App\States\OfferState;
 use App\States\PlayerState;
@@ -34,7 +35,7 @@ class RoundStarted extends Event
     public function applyToGameState(GameState $state)
     {
         $state->current_round_id = $this->round_id;
-        $state->current_round_number += 1;
+        $state->current_round_number = $this->state(RoundState::class)->round_number;
     }
 
     public function handle()
@@ -58,5 +59,6 @@ class RoundStarted extends Event
         )
         );
 
+        Round::find($this->round_id)->update(['status' => 'auction']);
     }
 }

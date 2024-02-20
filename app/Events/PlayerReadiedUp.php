@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\States\GameState;
 use App\States\PlayerState;
+use App\States\RoundState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
@@ -12,22 +13,34 @@ class PlayerReadiedUp extends Event
     #[StateId(PlayerState::class)]
     public int $player_id;
 
+    #[StateId(RoundState::class)]
+    public int $round_id;
+
+    #[StateId(GameState::class)]
     public int $game_id;
 
-    // @todo important to validate here so they don't jump ahead two rounds.
-
-    public function applyToPlayerState(PlayerState $state)
+    public function applyToPlayer(PlayerState $state)
     {
         $state->status = 'auction';
-        $state->current_round_id = $state->game()->round_ids[$state->current_round_number];
-        $state->current_round_number += 1;
+        $state->current_round_id = $this->state(RoundState::class)->next()->id;
+    }
+
+    public function applyToRound(RoundState $state)
+    {
+        //
+    }
+
+    public function applyToGame(GameState $state)
+    {
+        //
     }
 
     public function handle()
     {
-        $game = GameState::load($this->game_id);
+        $game = $this->state(GameState::class);
+        $next_round = $this->state(RoundState::class)->next();
 
-        if ($game->currentRound()->status === 'complete') {
+        if ($next_round->status === 'upcoming') {
             $game->nextRound()->roundModel()->start();
         }
     }

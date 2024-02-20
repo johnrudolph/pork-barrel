@@ -5,9 +5,10 @@ namespace App\Livewire;
 use App\Events\PlayerReadiedUp;
 use App\Models\Game;
 use App\Models\Player;
-use App\States\RoundState;
+use App\Models\Round;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AwaitingNextRoundView extends Component
@@ -18,21 +19,29 @@ class AwaitingNextRoundView extends Component
 
     public Player $player;
 
+    public Round $round;
+
     protected $listeners = [
         'echo:games.{game.id},GameUpdated' => '$refresh',
         'echo:players.{player.id},PlayerUpdated' => '$refresh',
     ];
 
-    #[Computed]
-    public function round()
+    #[On('echo:games.{game.id},GameUpdated')]
+    public function gameUpdated()
     {
-        return RoundState::load($this->player->state()->current_round_id);
+        //
+    }
+
+    #[On('echo:players.{player.id},PlayerUpdated')]
+    public function playerUpdated()
+    {
+        //
     }
 
     #[Computed]
     public function offersMade()
     {
-        return $this->round->offers
+        return $this->round->state()->offers()
             ->filter(fn ($o) => $o->player_id === $this->player->id)
             ->map(fn ($o) => [
                 'bureaucrat' => $o->bureaucrat,
@@ -42,16 +51,25 @@ class AwaitingNextRoundView extends Component
             ]);
     }
 
-    public function mount()
+    public function mount(Game $game, Round $round)
     {
         $this->player = Auth::user()->currentPlayer();
+        $this->game = $game;
+        $this->round = $round;
     }
 
     public function readyUp()
     {
-        PlayerReadiedUp::fire(player_id: $this->player->id, game_id: $this->game->id);
+        PlayerReadiedUp::fire(
+            player_id: $this->player->id,
+            game_id: $this->game->id,
+            round_id: $this->round->id
+        );
 
-        return redirect()->route('games.show', ['game' => $this->game->id]);
+        return redirect()->route('games.auction', [
+            'game' => $this->game,
+            'round' => $this->round->next(),
+        ]);
     }
 
     public function render()

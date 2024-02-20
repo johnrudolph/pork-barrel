@@ -10,7 +10,6 @@ use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
 use App\Bureaucrats\MuckrakingMule;
 use App\Bureaucrats\SubsidySloth;
-use App\Bureaucrats\TaxTurkey;
 use App\Bureaucrats\TreasuryChicken;
 use App\Bureaucrats\Watchdog;
 use App\DTOs\MoneyLogEntry;
@@ -39,7 +38,6 @@ class StimulusPackage extends RoundTemplate
             MinorityLeaderMink::class,
             MuckrakingMule::class,
             SubsidySloth::class,
-            TaxTurkey::class,
             TreasuryChicken::class,
             Watchdog::class,
         ]);

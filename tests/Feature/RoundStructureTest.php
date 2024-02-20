@@ -72,7 +72,10 @@ it('sets the appropriate statuses and current_round_ids as rounds proceed', func
     $this->assertTrue($this->john->state()->status === 'auction');
 
     $this->john->submitOffer($this->game->currentRound(), GamblinGoat::class, 1);
-    PlayerAwaitingResults::fire(player_id: $this->john->id);
+    PlayerAwaitingResults::fire(
+        player_id: $this->john->id,
+        round_id: $round_1_id,
+    );
 
     $this->assertTrue($this->game->currentRound()->state()->status === 'auction');
     $this->assertTrue($this->john->state()->current_round_id === $round_1_id);
@@ -85,7 +88,12 @@ it('sets the appropriate statuses and current_round_ids as rounds proceed', func
     $this->assertTrue($this->game->state()->currentRound()->id === $round_1_id);
     $this->assertTrue($this->john->state()->current_round_id === $round_1_id);
     $this->assertTrue($this->john->state()->status === 'waiting');
-    PlayerReadiedUp::fire(player_id: $this->daniel->id, game_id: $this->game->id);
+
+    PlayerReadiedUp::fire(
+        player_id: $this->daniel->id,
+        game_id: $this->game->id,
+        round_id: $round_1_id,
+    );
 
     $this->assertEquals($this->game->state()->currentRound()->id, $round_2_id);
     $this->assertEquals($this->game->state()->currentRound()->status, 'auction');

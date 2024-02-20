@@ -7,6 +7,7 @@ use App\Models\Round;
 use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
+use Illuminate\Support\Facades\Log;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
 
@@ -22,6 +23,7 @@ class RoundEnded extends Event
 
     public function handle()
     {
+        Log::info('Round ended', ['round_id' => $this->round_id]);
         $round = Round::find($this->round_id);
         $round->status = 'complete';
         $round->save();

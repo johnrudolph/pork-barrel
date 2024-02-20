@@ -66,7 +66,7 @@ class BearhugBrownBear extends Bureaucrat
         );
 
         PlayerLostPerk::fire(
-            player_id: $offer->data['player'],
+            player_id: (int) $offer->data['player'],
             round_id: $round->id,
             perk: $perk,
         );

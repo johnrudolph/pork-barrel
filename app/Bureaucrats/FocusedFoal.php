@@ -25,7 +25,7 @@ class FocusedFoal extends Bureaucrat
 
     public static function suitability(RoundConstructor $constructor): int
     {
-        return $constructor->stageOfGame() === 'early' || $constructor->stageOfGame() === 'first-round'
+        return $constructor->stageOfGame() === 'first-round'
             ? 2
             : 0;
     }
@@ -44,7 +44,7 @@ class FocusedFoal extends Bureaucrat
         $player_offers = $round->offers()
             ->filter(fn ($o) => $o->player_id === $player->id);
 
-        if ($player_offers->count() > 1) {
+        if ($player_offers->count() !== 1) {
             return;
         }
 

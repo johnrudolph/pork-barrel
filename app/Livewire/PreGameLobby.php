@@ -23,6 +23,28 @@ class PreGameLobby extends Component
         //
     }
 
+    public function mount(Game $game)
+    {
+        $this->game = $game;
+
+        if ($this->game->state()->status === 'in-progress') {
+            return redirect()->route('games.auction', [
+                'game' => $this->game,
+                'round' => $this->game->currentRound(),
+            ]);
+        }
+
+        $this->initializeProperties();
+
+    }
+
+    public $game_status;
+
+    public function initializeProperties()
+    {
+        $this->game_status = $this->game->state()->status;
+    }
+
     public function startGame()
     {
         try {
@@ -30,6 +52,11 @@ class PreGameLobby extends Component
         } catch (\Throwable $th) {
             //
         }
+
+        return redirect()->route('games.auction', [
+            'game' => $this->game,
+            'round' => $this->game->currentRound(),
+        ]);
     }
 
     public function render()

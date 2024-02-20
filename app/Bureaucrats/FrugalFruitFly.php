@@ -25,7 +25,7 @@ class FrugalFruitFly extends Bureaucrat
 
     public static function suitability(RoundConstructor $constructor): int
     {
-        return $constructor->stageOfGame() === 'early' || $constructor->stageOfGame() === 'first-round'
+        return $constructor->stageOfGame() === 'first-round'
             ? 2
             : 0;
     }
@@ -92,10 +92,5 @@ class FrugalFruitFly extends Bureaucrat
                 amount_modified: 1 - $top_offer_amount + $second_highest_offer_amount,
             );
         });
-    }
-
-    public static function activityFeedDescription(RoundState $state, OfferState $offer)
-    {
-        return 'You had the highest bid for the Tied Hog. You will now win every tied auction for the rest of the game.';
     }
 }
