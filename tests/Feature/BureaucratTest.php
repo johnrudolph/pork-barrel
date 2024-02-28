@@ -285,7 +285,7 @@ it('gives you a 25% return on your savings if you win the Treasury Chicken', fun
     );
 });
 
-it('allocates offers to winners for the Brinksmanship Bronco', function () {
+it('allocates losing offers to winners for the Brinksmanship Bronco', function () {
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -303,6 +303,20 @@ it('allocates offers to winners for the Brinksmanship Bronco', function () {
     $this->assertEquals(1, $this->john->state()->availableMoney());
     $this->assertEquals(2, $this->daniel->state()->availableMoney());
     $this->assertEquals(2, $this->jacob->state()->availableMoney());
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [BrinksmanshipBronco::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), BrinksmanshipBronco::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(15, $this->john->state()->availableMoney());
 });
 
 it('doubles the offer for all losers of Ponzi Pony', function () {

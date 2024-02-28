@@ -37,13 +37,21 @@ class BrinksmanshipBronco extends Bureaucrat
             ->filter(fn ($o) => $o->netOffer() === $offer->netOffer())
             ->count();
 
-        PlayerReceivedMoney::fire(
-            player_id: $player->id,
-            round_id: $round->id,
-            amount: intval($sum_offered / $number_of_winners),
-            activity_feed_description: 'You received the all the offers for Brinksmanship Bronco.',
-            type: MoneyLogEntry::TYPE_AWARD,
-        );
+        return $offers_for_bronco->count() === 1
+            ? PlayerReceivedMoney::fire(
+                player_id: $player->id,
+                round_id: $round->id,
+                amount: 10,
+                activity_feed_description: 'You were the only player to offer for Brinksmanship Bronco.',
+                type: MoneyLogEntry::TYPE_AWARD,
+            )
+            : PlayerReceivedMoney::fire(
+                player_id: $player->id,
+                round_id: $round->id,
+                amount: intval($sum_offered / $number_of_winners),
+                activity_feed_description: 'You received the all the offers for Brinksmanship Bronco.',
+                type: MoneyLogEntry::TYPE_AWARD,
+            );
     }
 
     public static function handleGlobalEffectOnRoundEnd(RoundState $round)
