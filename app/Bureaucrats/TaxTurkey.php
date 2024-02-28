@@ -2,12 +2,13 @@
 
 namespace App\Bureaucrats;
 
-use App\Events\PlayerIncomeChanged;
-use App\Models\Player;
 use App\Models\Round;
+use App\Models\Player;
 use App\States\OfferState;
-use App\States\PlayerState;
 use App\States\RoundState;
+use App\States\PlayerState;
+use App\Events\PlayerIncomeChanged;
+use App\RoundConstructor\RoundConstructor;
 
 class TaxTurkey extends Bureaucrat
 {
@@ -20,6 +21,15 @@ class TaxTurkey extends Bureaucrat
     const DIALOG = 'There are only two things certain in life: death and taxes.';
 
     const EFFECT = 'Choose another industry to increase their taxes. Their income will permanently decrease by 1.';
+
+    public static function suitability(RoundConstructor $constructor): int
+    {
+        if ($constructor->stageOfGame() === 'late') {
+            return 0;
+        }
+
+        return 1;
+    }
 
     public static function options(Round $round, Player $player)
     {

@@ -2,10 +2,11 @@
 
 namespace App\Bureaucrats;
 
-use App\Events\PlayerIncomeChanged;
 use App\States\OfferState;
-use App\States\PlayerState;
 use App\States\RoundState;
+use App\States\PlayerState;
+use App\Events\PlayerIncomeChanged;
+use App\RoundConstructor\RoundConstructor;
 
 class CronyCrocodile extends Bureaucrat
 {
@@ -18,6 +19,15 @@ class CronyCrocodile extends Bureaucrat
     const DIALOG = "I am not a crook. I'm just a crocodile.";
 
     const EFFECT = 'Permanently increase your income by 1.';
+
+    public static function suitability(RoundConstructor $constructor): int
+    {
+        if ($constructor->stageOfGame() === 'late') {
+            return 0;
+        }
+
+        return 1;
+    }
 
     public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferState $offer)
     {

@@ -29,6 +29,7 @@ class PlayerMoneyUnfrozen extends Event
             amount: $this->amount,
             description: $this->activity_feed_description,
             type: MoneyLogEntry::TYPE_UNFREEZE,
+            balance: $state->availableMoney() + $this->amount,
         ));
     }
 }
