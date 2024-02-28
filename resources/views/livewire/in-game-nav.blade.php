@@ -61,27 +61,6 @@
             </div>
         </div>
 
-        <!-- round template -->
-        <div x-disclosure class="rounded-lg bg-white shadow">
-            <button
-                x-disclosure:button
-                class="flex w-full items-center justify-between px-6 py-3 text-md font-bold"
-            >
-                <span>Round Template: {{ $this->round_template::HEADLINE }}</span>
-    
-                <span x-show="$disclosure.isOpen" x-cloak aria-hidden="true" class="ml-4">&minus;</span>
-                <span x-show="! $disclosure.isOpen" aria-hidden="true" class="ml-4">&plus;</span>
-            </button>
-    
-            <div x-disclosure:panel x-collapse>
-                <div class="px-6 pb-4">
-                    <p class="mt-2 text-sm">{{ $this->round_template::EFFECT }}</p>
-                    <p class="mt-2 italic text-xs">{{ $this->round_template::FLAVOR_TEXT }}</p>
-                </div>
-            </div>
-        </div>
-
-
         <!-- scoreboard -->
         <div x-disclosure class="rounded-lg bg-white shadow">
             <button
