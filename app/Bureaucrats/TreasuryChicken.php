@@ -45,7 +45,7 @@ class TreasuryChicken extends Bureaucrat
             player_id: $player->id,
             round_id: $round->id,
             amount: intval($player->money_in_treasury * 1.25),
-            activity_feed_description: 'Received 50% return on money saved in treasury',
+            activity_feed_description: 'Received 25% return on money saved in treasury',
             type: MoneyLogEntry::TYPE_AWARD,
         );
     }
