@@ -16,6 +16,7 @@ class MoneyLogEntry extends LivewireDTO implements SerializedByVerbs
         public string $description,
         public int $amount,
         public string $type,
+        public int $balance,
     ) {
     }
 

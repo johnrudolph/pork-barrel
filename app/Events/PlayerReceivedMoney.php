@@ -29,6 +29,7 @@ class PlayerReceivedMoney extends Event
             type: $this->type,
             amount: $this->amount,
             description: $this->activity_feed_description,
+            balance: $state->availableMoney() + $this->amount,
         ));
     }
 }

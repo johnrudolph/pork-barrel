@@ -33,6 +33,7 @@ class PlayerSpentMoney extends Event
             amount: -$amount_zeroed,
             description: $this->activity_feed_description,
             type: $this->type,
+            balance: $state->availableMoney() - $amount_zeroed,
         ));
     }
 
