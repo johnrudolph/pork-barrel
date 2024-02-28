@@ -25,6 +25,15 @@ class CampaignFinanceReform extends RoundTemplate
 
     const FLAVOR_TEXT = 'A grand new experiment in democracy levels the playing field for all.';
 
+    public static function suitability(RoundConstructor $constructor): int
+    {
+        if ($constructor->stageOfGame() === 'late') {
+            return 2;
+        }
+
+        return 1;
+    }
+
     public static function randomlySelectedOtherBureaucrats(RoundConstructor $constructor)
     {
         $pool_of_random_bureaucrats = collect([

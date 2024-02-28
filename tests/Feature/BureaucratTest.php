@@ -279,7 +279,7 @@ it('gives you a 25% return on your savings if you win the Treasury Chicken', fun
     $this->assertEquals(
         5,
         $this->john->state()->money_history
-            ->filter(fn ($entry) => $entry->description === 'Received 50% return on money saved in treasury')
+            ->filter(fn ($entry) => $entry->description === 'Received 25% return on money saved in treasury')
             ->first()
             ->amount
     );
