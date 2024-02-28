@@ -76,9 +76,4 @@ class FrozenFrog extends Bureaucrat
             activity_feed_description: 'Your assets have been unfrozen. You now have access to all of your money.',
         );
     }
-
-    public static function activityFeedDescription(RoundState $state, OfferState $offer)
-    {
-        return 'You had the highest bid for the Minority Leader Mink. Next round, you will receive 10 money if you make no offers.';
-    }
 }
