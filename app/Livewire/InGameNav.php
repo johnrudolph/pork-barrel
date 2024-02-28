@@ -9,19 +9,11 @@ use Livewire\Component;
 
 class InGameNav extends Component
 {
-    #[Computed]
     public function moneyHistory()
     {
         return $this->player->state()->money_history;
     }
 
-    #[Computed]
-    public function headlines()
-    {
-        return $this->game->headlines;
-    }
-
-    #[Computed]
     public function scores()
     {
         return $this->game->players->map(fn ($p) => [
@@ -31,7 +23,6 @@ class InGameNav extends Component
         ])->sortByDesc('money');
     }
 
-    #[Computed]
     public function perks()
     {
         return $this->player->state()->perks;
