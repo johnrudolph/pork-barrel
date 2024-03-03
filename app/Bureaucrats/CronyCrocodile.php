@@ -2,11 +2,11 @@
 
 namespace App\Bureaucrats;
 
-use App\States\OfferState;
-use App\States\RoundState;
-use App\States\PlayerState;
 use App\Events\PlayerIncomeChanged;
 use App\RoundConstructor\RoundConstructor;
+use App\States\OfferState;
+use App\States\PlayerState;
+use App\States\RoundState;
 
 class CronyCrocodile extends Bureaucrat
 {

@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\Game;
 use App\Models\Player;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class InGameNav extends Component

@@ -8,6 +8,7 @@ use App\RoundConstructor\RoundConstructor;
 use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
+use Illuminate\Support\Facades\Log;
 
 class FocusedFoal extends Bureaucrat
 {
@@ -21,7 +22,7 @@ class FocusedFoal extends Bureaucrat
 
     const DIALOG = 'Multitasking is a myth.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_awaiting_results';
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -41,6 +42,11 @@ class FocusedFoal extends Bureaucrat
 
     public static function handlePerkInFutureRound(PlayerState $player, RoundState $round)
     {
+        Log::info('Focused Foal perk being applied', [
+            'player_id' => $player->id,
+            'round_id' => $round->id,
+        ]);
+
         $player_offers = $round->offers()
             ->filter(fn ($o) => $o->player_id === $player->id);
 
@@ -53,11 +59,8 @@ class FocusedFoal extends Bureaucrat
             round_id: $round->id,
             offer_id: $player_offers->first()->id,
             amount_modified: 5,
+            modifier_description: '+5 from Focused Foal perk',
+            is_charged_to_player: false,
         );
-    }
-
-    public static function activityFeedDescription(RoundState $state, OfferState $offer)
-    {
-        return 'You had the highest bid for the Tied Hog. You will now win every tied auction for the rest of the game.';
     }
 }

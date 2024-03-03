@@ -1,7 +1,7 @@
 <div>
     <div class="py-4 text-purple">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-2">
+            <div class="mb-4">
                 <x-round-template :round_template="$this->round->state()->round_template" />
             </div>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border">

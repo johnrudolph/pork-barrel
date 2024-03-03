@@ -18,7 +18,6 @@ class OfferDTO extends LivewireDTO implements SerializedByVerbs
         public int $round_id,
         public string $bureaucrat,
         public int $amount_offered = 0,
-        public int $amount_modified = 0,
         public bool $awarded = false,
         public bool $is_blocked = false,
         public ?array $options = null,
@@ -32,11 +31,6 @@ class OfferDTO extends LivewireDTO implements SerializedByVerbs
 
         $this->rules ??= collect($this->options)->mapWithKeys(fn ($option, $option_name) => [$option_name => $option['rules']]
         )->toArray();
-    }
-
-    public function netOffer()
-    {
-        return $this->amount_offered + $this->amount_modified;
     }
 
     public function validate()

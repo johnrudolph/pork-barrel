@@ -2,7 +2,6 @@
 
 namespace App\States;
 
-use Illuminate\Support\Collection;
 use Thunk\Verbs\State;
 
 class OfferState extends State
@@ -15,10 +14,7 @@ class OfferState extends State
 
     public int $amount_offered = 0;
 
-    // @todo this would be nice to have
-    // public Collection $amount_modifications = [];
-
-    public int $amount_modified = 0;
+    public array $amount_modifications = [];
 
     public bool $awarded = false;
 
@@ -26,11 +22,21 @@ class OfferState extends State
 
     public ?array $data = null;
 
+    public function player()
+    {
+        return PlayerState::load($this->player_id);
+    }
+
     public function netOffer()
     {
-        return $this->amount_offered + $this->amount_modified;
+        return $this->amount_offered + collect($this->amount_modifications)
+            ->sum('amount');
+    }
 
-        // @todo then you could do something like this:
-        // return $this->amount_offered + $this->amount_modifications->sum('amount');
+    public function amountToChargePlayer()
+    {
+        return $this->amount_offered + collect($this->amount_modifications)
+            ->filter(fn ($m) => $m['charged_to_player'])
+            ->sum('amount');
     }
 }

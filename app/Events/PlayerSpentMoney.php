@@ -37,7 +37,7 @@ class PlayerSpentMoney extends Event
         ));
     }
 
-    public function handle()
+    public function fired()
     {
         $this->state(PlayerState::class)->perks
             ->filter(fn ($perk) => $perk::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_spent_money'])

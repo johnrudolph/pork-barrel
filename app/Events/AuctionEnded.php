@@ -14,7 +14,7 @@ class AuctionEnded extends Event
     #[StateId(RoundState::class)]
     public int $round_id;
 
-    public function handle()
+    public function fired()
     {
         $round = $this->state(RoundState::class);
 

@@ -14,7 +14,7 @@ class RoundTemplateAppliedAtBeginningOfRound extends Event
     ) {
     }
 
-    public function handle()
+    public function fired()
     {
         $this->round_template::handleOnRoundStart(RoundState::load($this->round_id));
     }
