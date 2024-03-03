@@ -1,5 +1,8 @@
 <div wire:poll>
-    <div class="my-4 max-w-7xl mx-auto sm:px-6 lg:px-8 overflow-hidden flex flex-row justify-between">
+    <div>
+        <livewire:in-game-nav :game="$this->game" :player="$this->player"/>
+    </div>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 overflow-hidden flex flex-row justify-between">
         @if($this->round->status === 'complete')
             <button 
                 wire:click="readyUp"
@@ -17,7 +20,7 @@
             <div class="bg-white px-6 py-6 sm:px-6 lg:px-8">
                 <div class="px-4 sm:px-6 lg:px-8">
                     @foreach($this->round->state()->bureaucrats as $b)
-                        <div class="border rounded-xl border-gray-500 bg-gray-100 p-4 mb-4">
+                        <div class="border rounded-xl border-gray-500 bg-gray-100 py-4 mb-4">
                             <div class="sm:flex sm:items-center">
                                 <div>
                                     <h1 class="text-base font-semibold leading-6 text-gray-900">{{ $b::NAME }}</h1>
