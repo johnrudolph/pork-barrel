@@ -67,7 +67,7 @@ class OfferSubmitted extends Event
         //
     }
 
-    public function handle()
+    public function fired()
     {
         $round = $this->state(RoundState::class);
 

@@ -34,7 +34,7 @@ class ActionAwardedToPlayer extends Event
         //
     }
 
-    public function handle()
+    public function fired()
     {
         $this->state(OfferState::class)->bureaucrat::handleOnAwarded(
             $this->state(PlayerState::class),

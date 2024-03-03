@@ -29,7 +29,7 @@ class TreasuryChicken extends Bureaucrat
         PlayerPutMoneyInTreasury::fire(
             player_id: $player->id,
             round_id: $round->id,
-            amount: $offer->amount_offered + $offer->amount_modified,
+            amount: $offer->netOffer(),
         );
 
         ActionEffectAppliedToFutureRound::fire(

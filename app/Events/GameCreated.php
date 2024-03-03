@@ -23,13 +23,8 @@ class GameCreated extends Event
         $state->round_ids = collect();
     }
 
-    public function handle()
+    public function fired()
     {
-        Game::create([
-            'id' => $this->game_id,
-            'code' => rand(10000, 99999),
-        ]);
-
         collect(range(1, 8))->each(fn ($i) => RoundSeeded::fire(
             game_id: $this->game_id,
             round_number: $i,
@@ -43,5 +38,13 @@ class GameCreated extends Event
             user_id: $this->user_id,
             name: User::find($this->user_id)->name,
         );
+    }
+
+    public function handle()
+    {
+        Game::create([
+            'id' => $this->game_id,
+            'code' => rand(10000, 99999),
+        ]);
     }
 }

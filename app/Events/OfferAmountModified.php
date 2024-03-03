@@ -22,9 +22,17 @@ class OfferAmountModified extends Event
 
     public int $amount_modified;
 
+    public string $modifier_description;
+
+    public bool $is_charged_to_player;
+
     public function applyToOffer(OfferState $state)
     {
-        $state->amount_modified = $this->amount_modified;
+        $state->amount_modifications[] = [
+            'amount' => $this->amount_modified,
+            'description' => $this->modifier_description,
+            'charged_to_player' => $this->is_charged_to_player,
+        ];
     }
 
     public function applyToRoundState(RoundState $state)
@@ -37,7 +45,7 @@ class OfferAmountModified extends Event
         //
     }
 
-    public function handle()
+    public function fired()
     {
         $round = $this->state(RoundState::class);
 

@@ -62,6 +62,10 @@ class FrugalFruitFly extends Bureaucrat
                 return;
             }
 
+            if ($player_offer->netOffer() === 1) {
+                return;
+            }
+
             $top_offer_is_tied = $offers_with_top_offer->count() > 1;
 
             if ($top_offer_is_tied) {
@@ -71,11 +75,15 @@ class FrugalFruitFly extends Bureaucrat
             $there_are_multiple_offers = $all_offers_for_b->count() > 1;
 
             if (! $there_are_multiple_offers) {
+                $amount_modified = 1 - $top_offer_amount;
+
                 OfferAmountModified::fire(
                     player_id: $player->id,
                     round_id: $round->id,
                     offer_id: $player_offer->id,
-                    amount_modified: 1 - $top_offer_amount,
+                    amount_modified: $amount_modified,
+                    modifier_description: $amount_modified.' from Frugal Fruit Fly perk',
+                    is_charged_to_player: true,
                 );
 
                 return;
@@ -85,11 +93,15 @@ class FrugalFruitFly extends Bureaucrat
                 ->reject(fn ($o) => $o->player_id === $player->id)
                 ->max(fn ($o) => $o->netOffer());
 
+            $amount_modified = 1 - $top_offer_amount + $second_highest_offer_amount;
+
             OfferAmountModified::fire(
                 player_id: $player->id,
                 round_id: $round->id,
                 offer_id: $player_offer->id,
-                amount_modified: 1 - $top_offer_amount + $second_highest_offer_amount,
+                amount_modified: $amount_modified,
+                modifier_description: $amount_modified.' from Frugal Fruit Fly perk',
+                is_charged_to_player: true,
             );
         });
     }

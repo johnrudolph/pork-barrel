@@ -23,7 +23,7 @@ class ActionAppliedAtEndOfRound extends Event
         //
     }
 
-    public function handle()
+    public function fired()
     {
         $offer = $this->state(OfferState::class);
 
@@ -40,7 +40,7 @@ class ActionAppliedAtEndOfRound extends Event
                 RoundState::load($this->round_id),
                 $offer,
             ),
-            amount: $offer->amount_offered,
+            amount: $offer->amountToChargePlayer(),
             type: MoneyLogEntry::TYPE_WIN_AUCTION,
         );
     }

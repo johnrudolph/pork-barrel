@@ -21,7 +21,7 @@ class MajorityLeaderMare extends Bureaucrat
 
     const EFFECT = 'After you submit your offers next round, 1 money will be added to each.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_awaiting_results';
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -48,6 +48,8 @@ class MajorityLeaderMare extends Bureaucrat
                 round_id: $round->id,
                 offer_id: $o->id,
                 amount_modified: 1,
+                modifier_description: '+1 from Majority Leader Mare',
+                is_charged_to_player: false,
             ));
     }
 

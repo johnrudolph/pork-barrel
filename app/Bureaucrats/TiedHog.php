@@ -65,6 +65,8 @@ class TiedHog extends Bureaucrat
                         round_id: $round->id,
                         offer_id: $o->id,
                         amount_modified: -1,
+                        modifier_description: "-1 from another player's Tied Hog perk",
+                        is_charged_to_player: true,
                     ));
             }
         });

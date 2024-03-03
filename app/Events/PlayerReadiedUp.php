@@ -35,7 +35,7 @@ class PlayerReadiedUp extends Event
         //
     }
 
-    public function handle()
+    public function fired()
     {
         $game = $this->state(GameState::class);
         $next_round = $this->state(RoundState::class)->next();

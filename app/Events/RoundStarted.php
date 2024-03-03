@@ -38,7 +38,7 @@ class RoundStarted extends Event
         $state->current_round_number = $this->state(RoundState::class)->round_number;
     }
 
-    public function handle()
+    public function fired()
     {
         $this->round_template::handleOnRoundStart($this->state(RoundState::class));
 
@@ -58,7 +58,10 @@ class RoundStarted extends Event
             type: MoneyLogEntry::TYPE_INCOME,
         )
         );
+    }
 
+    public function handle()
+    {
         Round::find($this->round_id)->update(['status' => 'auction']);
     }
 }

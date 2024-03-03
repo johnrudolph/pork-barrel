@@ -16,8 +16,11 @@
             <div x-disclosure:panel x-collapse>
                 <div class="px-6 pb-4">
                     @foreach(collect(range($this->game->state()->current_round_number, 1)) as $round_number)
-                        <p class="mb-8"> Round {{ $round_number }} </p>
-                        <ul role="list" class="">
+                        <div class="flex flex-row justify-between items-center mb-8">
+                            <p>Round {{ $round_number }} </p>
+                            <p class="text-sm text-gray-600">Running Balance</p>
+                        </div>
+                        <ul role="list">
                             @foreach($this->moneyHistory()->reverse()->filter(fn ($e) => $e->round_number === $round_number) as $entry)
                             <li>
                             <div class="relative pb-8">
@@ -33,7 +36,7 @@
                                         <p class="text-sm">{{ $entry->description }}</p>
                                         </div>
                                         <div class="whitespace-nowrap text-right text-sm flex flex-row">
-                                            <div class="">
+                                            <div>
                                                 <p>{{ $entry->balance }}</p>
                                             </div>
                                         </div>

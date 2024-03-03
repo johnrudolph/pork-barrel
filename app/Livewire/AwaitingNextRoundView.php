@@ -7,7 +7,6 @@ use App\Models\Game;
 use App\Models\Player;
 use App\Models\Round;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -20,6 +19,8 @@ class AwaitingNextRoundView extends Component
     public Player $player;
 
     public Round $round;
+
+    public $offers = [];
 
     protected $listeners = [
         'echo:games.{game.id},GameUpdated' => '$refresh',
@@ -38,24 +39,34 @@ class AwaitingNextRoundView extends Component
         //
     }
 
-    #[Computed]
-    public function offersMade()
-    {
-        return $this->round->state()->offers()
-            ->filter(fn ($o) => $o->player_id === $this->player->id)
-            ->map(fn ($o) => [
-                'bureaucrat' => $o->bureaucrat,
-                'offer' => $o->amount_offered + $o->amount_modified,
-                'awarded' => $o->awarded,
-                'is_blocked' => $o->is_blocked,
-            ]);
-    }
-
     public function mount(Game $game, Round $round)
     {
         $this->player = Auth::user()->currentPlayer();
         $this->game = $game;
         $this->round = $round;
+
+        $this->initializeProperties();
+        // dd($this->round->state()->offers()->toArray());
+    }
+
+    public function initializeProperties()
+    {
+        $this->offers = $this->round->state()->offers()
+            ->map(function ($o) {
+                $modification_description = collect($o->amount_modifications)->count() > 0
+                    ? 'Original offer: '.$o->amount_offered.' ('.collect($o->amount_modifications)->map(fn ($m) => $m['description'])->join(', ').')'
+                    : null;
+
+                return [
+                    'bureaucrat' => $o->bureaucrat,
+                    'industry' => $o->player()->industry,
+                    'player_id' => $o->player_id,
+                    'offer' => $o->netOffer(),
+                    'awarded' => $o->awarded,
+                    'is_blocked' => $o->is_blocked,
+                    'modifications' => $modification_description,
+                ];
+            })->sortByDesc('offer');
     }
 
     public function readyUp()
