@@ -1,4 +1,7 @@
 <div>
+    <div>
+        <livewire:in-game-nav :game="$this->game" :player="$this->player"/>
+    </div>
     <div class="py-4 text-purple">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-4">
@@ -100,9 +103,5 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="mb-8">
-        <livewire:in-game-nav :game="$this->game" :player="$this->player"/>
     </div>
 </div>
