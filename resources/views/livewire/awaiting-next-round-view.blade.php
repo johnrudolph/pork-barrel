@@ -12,15 +12,15 @@
             </button>
         @endif
     </div>
-    <div class="py-4 text-purple max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 text-purple max-w-7xl mx-auto lg:px-8">
         <div class="mb-4">
             <x-round-template :round_template="$this->round->state()->round_template" />
         </div>
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border">
-            <div class="bg-white px-6 py-6 sm:px-6 lg:px-8">
-                <div class="px-4 sm:px-6 lg:px-8">
+            <div class="bg-white py-6 lg:px-8">
+                <div>
                     @foreach($this->round->state()->bureaucrats as $b)
-                        <div class="border rounded-xl border-gray-500 bg-gray-100 py-4 mb-4">
+                        <div class="border rounded-xl border-gray-500 bg-gray-100 py-4 px-4 mb-4">
                             <div class="sm:flex sm:items-center">
                                 <div>
                                     <h1 class="text-base font-semibold leading-6 text-gray-900">{{ $b::NAME }}</h1>
@@ -29,7 +29,7 @@
                             </div>
                             @if($this->offers->filter(fn($o) => $o['bureaucrat'] === $b)->count() > 0)
                             <div class="flow-root">
-                                <div class="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                                         <table class="min-w-full">
                                             <thead class="border-b border-gray-800">
@@ -72,9 +72,5 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="mb-8">
-        <livewire:in-game-nav :game="$this->game" :player="$this->player"/>
     </div>
 </div>
