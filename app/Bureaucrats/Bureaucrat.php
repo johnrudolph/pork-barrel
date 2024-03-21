@@ -50,7 +50,7 @@ class Bureaucrat
             FrugalFruitFly::class,
             GamblinGoat::class,
             IndexIbex::class,
-            MajorityLeaderMare::class,
+            // MajorityLeaderMare::class,
             MinorityLeaderMink::class,
             MuckrakingMule::class,
             ObstructionOx::class,

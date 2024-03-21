@@ -1,22 +1,26 @@
-<div class="mt-4">
-    <div x-data="{ open_money_log: false, open_scoreboard: false, open_headlines: false, open_perks: false }" class="mx-auto max-w-3xl w-full space-y-3">
+<div>
+<div class="bg-teal">
+    <div 
+        x-data="{ open_money_log: false, open_scoreboard: false, open_headlines: false, open_perks: false }" 
+        class="mx-auto max-w-3xl w-full space-y-3"
+    >
 
-        <div class="flex flex-row justify-center space-x-4">
+        <div class="flex flex-row justify-center space-x-4 text-sm py-2.5 text-white font-bold">
             <span x-on:click="open_money_log = true">
-                <button type="button" class="bg-white px-5 py-2.5 rounded-md">
-                    Money History
+                <button type="button">
+                    Money Log
                 </button>
             </span>
 
             <span x-on:click="open_scoreboard = true">
-                <button type="button" class="bg-white px-5 py-2.5 rounded-md">
+                <button type="button">
                     Scoreboard
                 </button>
             </span>
 
-            @if($this->game->headlines()->count() > 0)
+            @if($this->headlines()->count() > 0)
             <span x-on:click="open_headlines = true">
-                <button type="button" class="bg-white px-5 py-2.5 rounded-md">
+                <button type="button">
                     Headlines
                 </button>
             </span>
@@ -24,7 +28,7 @@
 
             @if($this->perks()->count() > 0)
             <span x-on:click="open_perks = true">
-                <button type="button" class="bg-white px-5 py-2.5 rounded-md">
+                <button type="button">
                     Perks
                 </button>
             </span>
@@ -236,28 +240,34 @@
                     <!-- Body -->
                     <div class="p-8">
                         <!-- Title -->
-                        <h2 x-dialog:title class="text-2xl font-bold mb-8">Scoreboard</h2>
+                        <h2 x-dialog:title class="text-2xl font-bold mb-8">Headlines</h2>
     
                         <!-- Content -->
-                        @if($this->game->headlines()->count() > 0)
-                            <div class="rounded-lg bg-white">                        
-                                <div>
-                                    <div class="px-6 pb-4">
-                                        <div class="overflow-hidden sm:rounded-lg">
-                                            <div class=" text-purple">
-                                                <div>
-                                                    @foreach($this->game->headlines() as $h)
-                                                        <p class="mt-4 font-bold">{{ $h->headline }}</p>
-                                                        <p class="mt-2 text-sm">{{ $h->description }}</p>
-                                                    @endforeach
-                                                    
-                                                </div>
-                                            </div>
+                        <div class="rounded-lg bg-white">                        
+                            <div>
+                                <div class="px-6 pb-4">
+                                    <div class="overflow-hidden sm:rounded-lg">
+                                        <div class=" text-purple">
+                                            @foreach($this->game->rounds as $r)
+                                                @if($r->headlines->count() > 0)
+                                                    <div class="mb-4 pb-4 border-b">
+                                                        <p class="text-black pb-2">
+                                                            Round {{ $r->round_number }}
+                                                        </p>
+                                                        <div>
+                                                            @foreach($r->headlines as $h)
+                                                                <p class="font-bold">{{ $h->headline }}</p>
+                                                                <p class="mt-2 text-sm">{{ $h->description }}</p>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -320,4 +330,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>

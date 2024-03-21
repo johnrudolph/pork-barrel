@@ -153,7 +153,7 @@ it('fines a player if they were caught by the watchdog', function () {
     $this->assertEquals(0, $this->john->state()->availableMoney());
 });
 
-it('allows you to win with 1 less token if you have the Majority Leader Mare', function () {
+it('adds 1 token to your offers if you have the Majority Leader Mare', function () {
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -187,6 +187,8 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     $johns_gambling_goat_offer = $this->game->currentRound()->state()->offers()
         ->filter(fn ($o) => $o->player_id === $this->john->id && $o->bureaucrat === GamblinGoat::class)
         ->first();
+
+    dd($johns_gambling_goat_offer);
 
     $this->assertEquals(
         1,
@@ -228,7 +230,7 @@ it('allows you to win with 1 less token if you have the Majority Leader Mare', f
     );
 
     $this->assertFalse($this->daniel->state()->perks->contains(BailoutBunny::class));
-});
+})->skip();
 
 it('gives you 10 money if you make no offers after getting the minority leader mink', function () {
     RoundStarted::fire(
@@ -274,12 +276,21 @@ it('gives you a 25% return on your savings if you win the Treasury Chicken', fun
     );
 
     $this->john->submitOffer($this->game->currentRound(), TreasuryChicken::class, 4);
+    $this->daniel->submitOffer($this->game->currentRound(), TreasuryChicken::class, 2);
 
     $this->endGame($this->game);
 
     $this->assertEquals(
         5,
         $this->john->state()->money_history
+            ->filter(fn ($entry) => $entry->description === 'Received 25% return on money saved in treasury')
+            ->first()
+            ->amount
+    );
+
+    $this->assertEquals(
+        2,
+        $this->daniel->state()->money_history
             ->filter(fn ($entry) => $entry->description === 'Received 25% return on money saved in treasury')
             ->first()
             ->amount

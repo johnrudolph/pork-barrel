@@ -9,6 +9,7 @@ use App\Events\PlayerSpentMoney;
 use App\Models\Headline;
 use App\Models\Player;
 use App\Models\Round;
+use App\RoundConstructor\RoundConstructor;
 use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
@@ -39,6 +40,13 @@ class BearhugBrownBear extends Bureaucrat
                 'rules' => 'required',
             ],
         ];
+    }
+
+    public static function suitability(RoundConstructor $constructor): int
+    {
+        return $constructor->stageOfGame() === 'final-round'
+            ? 0
+            : 1;
     }
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)

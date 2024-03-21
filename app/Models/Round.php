@@ -20,6 +20,11 @@ class Round extends Model
         return $this->belongsTo(Game::class);
     }
 
+    public function headlines()
+    {
+        return $this->hasMany(Headline::class);
+    }
+
     public function state()
     {
         return RoundState::load($this->id);

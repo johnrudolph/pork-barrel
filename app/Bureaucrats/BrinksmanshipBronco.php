@@ -19,7 +19,7 @@ class BrinksmanshipBronco extends Bureaucrat
 
     const DIALOG = "Who's afraid of a game of chicken? Not me. Because I'm a horse.";
 
-    const EFFECT = 'If you have the highest offer, you will keep all the lower offers made to this Bureaucrat. If multiple players offer the highest offer, they will split the earnings, rounded down.';
+    const EFFECT = 'If you are the only player who makes an offer, receive 10 money. If your offer beats other offers, keep all the lower offers made to this Bureaucrat. If you tie for the highest offer, split the earnings, rounded down.';
 
     public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferState $offer)
     {

@@ -20,23 +20,33 @@ class TreasuryChicken extends Bureaucrat
 
     const DIALOG = 'A penny saved is a penny earned.';
 
-    const EFFECT = 'The top offer will spend the money now, and at the end of the game will receive their money back with 25% interest (rounded down).';
+    const EFFECT = 'Invest your money in the treasury, then receive your money back with 25% interest (rounded down) at the end of the game. This works, even if you do not have the top offer.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
-    {
-        PlayerPutMoneyInTreasury::fire(
-            player_id: $player->id,
-            round_id: $round->id,
-            amount: $offer->netOffer(),
-        );
+    const HAS_WINNER = false;
 
-        ActionEffectAppliedToFutureRound::fire(
-            player_id: $player->id,
-            round_id: $round->game()->round_ids->last(),
-            offer_id: $offer->id,
-        );
+    public static function handleGlobalEffectOnRoundEnd(RoundState $round)
+    {
+        $round->offers()->filter(fn ($o) => $o->bureaucrat === static::class)
+            ->each(function ($o) use ($round) {
+                $player_already_has_money_in_treasury = PlayerState::load($o->player_id)
+                    ->money_in_treasury > 0;
+
+                if (! $player_already_has_money_in_treasury) {
+                    ActionEffectAppliedToFutureRound::fire(
+                        player_id: $o->player_id,
+                        round_id: $round->game()->round_ids->last(),
+                        offer_id: $o->id,
+                    );
+                }
+
+                PlayerPutMoneyInTreasury::fire(
+                    player_id: $o->player_id,
+                    round_id: $round->id,
+                    amount: $o->netOffer(),
+                );
+            });
     }
 
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
@@ -52,6 +62,6 @@ class TreasuryChicken extends Bureaucrat
 
     public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
-        return 'You had the highest bid for the Treasury Chicken. Your money is now tied up in a treasury bond, and you will get it back with 25% interest at the end of the game.';
+        return 'You invested money in the Treasury. Your money is now tied up in a treasury bond, and you will get it back with 25% interest at the end of the game.';
     }
 }

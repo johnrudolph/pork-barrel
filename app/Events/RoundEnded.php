@@ -75,7 +75,7 @@ class RoundEnded extends Event
         // apply template effects
         $state->round_template::handleOnRoundEnd($state);
 
-        if ($state->game()->currentRound()->round_number === 8) {
+        if ($state->round_number === 8) {
             GameEnded::fire(game_id: $state->game_id);
         }
 
