@@ -20,7 +20,7 @@ class TreasuryChicken extends Bureaucrat
 
     const DIALOG = 'A penny saved is a penny earned.';
 
-    const EFFECT = 'Invest your money in the treasury, receive their money back with 25% interest (rounded down) at the end of the game. This works, even if you do not have the top offer.';
+    const EFFECT = 'Invest your money in the treasury, then receive your money back with 25% interest (rounded down) at the end of the game. This works, even if you do not have the top offer.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
 
