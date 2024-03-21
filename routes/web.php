@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Livewire\AuctionView;
 use App\Livewire\AwaitingNextRoundView;
+use App\Livewire\GameOverView;
 use App\Livewire\PreGameLobby;
 use App\Livewire\RulesPage;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('games/{game}/pre-game', PreGameLobby::class)->name('games.pre-game');
     Route::get('games/{game}/rounds/{round}/auction', AuctionView::class)->name('games.auction');
     Route::get('games/{game}/rounds/{round}/waiting', AwaitingNextRoundView::class)->name('games.waiting');
+    Route::get('games/{game}/final_scores', GameOverView::class)->name('games.final_scores');
 });
 
 require __DIR__.'/auth.php';

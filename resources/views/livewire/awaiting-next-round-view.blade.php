@@ -2,25 +2,19 @@
     <div>
         <livewire:in-game-nav :game="$this->game" :player="$this->player"/>
     </div>
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 overflow-hidden flex flex-row justify-between">
-        @if($this->round->status === 'complete')
-            <button 
-                wire:click="readyUp"
-                class="rounded-md bg-teal mr-4 px-3.5 py-2.5 ml-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-                Start Next Round
-            </button>
-        @endif
-    </div>
-    <div class="py-4 text-purple max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+    <div class="py-4 text-purple max-w-3xl mb-16 mx-auto sm:px-6 lg:px-8">
+        <p class="mb-2 pl-4 sm:pl-0">
+            Round {{ $this->round->round_number }} of 8
+        </p>
         <div class="mb-4">
             <x-round-template :round_template="$this->round->state()->round_template" />
         </div>
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border">
-            <div class="bg-white px-6 py-6 sm:px-6 lg:px-8">
-                <div class="px-4 sm:px-6 lg:px-8">
+            <div class="bg-white px-2 py-6">
+                <div class="sm:px-4">
                     @foreach($this->round->state()->bureaucrats as $b)
-                        <div class="border rounded-xl border-gray-500 bg-gray-100 py-4 mb-4">
+                        <div class="border px-2 sm:px-6 rounded-xl border-gray-500 bg-gray-100 py-4 mb-4">
                             <div class="sm:flex sm:items-center">
                                 <div>
                                     <h1 class="text-base font-semibold leading-6 text-gray-900">{{ $b::NAME }}</h1>
@@ -29,7 +23,7 @@
                             </div>
                             @if($this->offers->filter(fn($o) => $o['bureaucrat'] === $b)->count() > 0)
                             <div class="flow-root">
-                                <div class="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                                         <table class="min-w-full">
                                             <thead class="border-b border-gray-800">
@@ -74,7 +68,30 @@
         </div>
     </div>
 
-    <div class="mb-8">
-        <livewire:in-game-nav :game="$this->game" :player="$this->player"/>
-    </div>
+    <nav class="bg-gray-900 text-white fixed bottom-0 left-0 w-full p-4">
+        <div class="flex flex-row max-w-full justify-between items-center">
+            <div>
+                Available: ${{ $this->player->state()->availableMoney() }}
+            </div>
+            @if($this->round->status === 'complete' && $this->round->game->state()->status !== 'complete')
+                <button 
+                    wire:click="readyUp"
+                    class="rounded-md bg-teal px-3.5 py-2.5 ml-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                    Start Next Round
+                </button>
+            @elseif($this->round->status === 'complete' && $this->round->round_number === 8)
+                <button 
+                    wire:click="seeFinalScores"
+                    class="rounded-md bg-teal px-3.5 py-2.5 ml-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                    See Final Scores
+                </button>
+            @else
+                <p class="text-xs">
+                    Waiting for other players to finish
+                </p>
+            @endif
+        </div>
+    </nav>
 </div>

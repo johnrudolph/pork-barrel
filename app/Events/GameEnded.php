@@ -21,10 +21,15 @@ class GameEnded extends Event
     {
         GameUpdated::dispatch($this->game_id);
 
-        Game::find($this->game_id)->players
+        $game = Game::find($this->game_id);
+
+        $game->players
             ->each(fn ($player) => PlayerGameEnded::fire(
                 game_id: $this->game_id,
                 player_id: $player->id,
             ));
+
+        // @todo migration for this
+        // $game->status = 'complete';
     }
 }

@@ -2,8 +2,11 @@
     <div>
         <livewire:in-game-nav :game="$this->game" :player="$this->player"/>
     </div>
-    <div class="py-4 text-purple">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-4 mb-16 text-purple">
+        <div class="max-w-3xl mb-16 mx-auto sm:px-6 lg:px-8">
+            <p class="mb-2 pl-4 sm:pl-0">
+                Round {{ $this->round->round_number }} of 8
+            </p>
             <div class="mb-4">
                 <x-round-template :round_template="$this->round->state()->round_template" />
             </div>
@@ -75,33 +78,32 @@
                                 </div>
                             </li>
                         @endforeach
-                        <div class="mt-4 flex flex-col">
-                            <p class="text-sm font-semibold leading-6 text-gray-900">
-                                Total Offers: {{ collect($offers)->sum('ammount_offered') }}
-                            </p>
-                            <p class="text-sm font-semibold leading-6 text-gray-900">
-                                Money available to offer: {{ $money - collect($offers)->sum('ammount_offered') }}
-                            </p>
-                        </div>
-
                         @if(session()->has('error'))
                             <div class="mt-4 flex flex-col">
-                                <p class="text-sm font-semibold leading-6 text-red-900">
+                                <p class="text-sm font-semibold leading-6 text-red">
                                     {{ session('error') }}
                                 </p>
                             </div>
                         @endif
-
-                        <button 
-                            type="button" 
-                            class="rounded-md bg-indigo-500 px-3.5 py-2.5 mt-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-                            wire:click="submit"
-                        >
-                            Submit
-                        </button>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
+    <nav class="bg-gray-900 text-white fixed bottom-0 left-0 w-full p-4">
+        <div class="flex flex-row max-w-full justify-between items-center">
+            <div>
+                <div>
+                    Available: ${{ $money }}
+                </div>
+            </div>
+            <button 
+                type="button" 
+                class="rounded-md bg-teal px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                wire:click="submit"
+            >
+                Submit
+            </button>
+        </div>
+    </nav>
 </div>

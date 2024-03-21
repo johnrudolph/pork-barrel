@@ -27,6 +27,11 @@ class InGameNav extends Component
         return $this->player->state()->perks;
     }
 
+    public function headlines()
+    {
+        return $this->game->headlines;
+    }
+
     public Game $game;
 
     public Player $player;

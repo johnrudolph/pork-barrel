@@ -46,7 +46,6 @@ class AwaitingNextRoundView extends Component
         $this->round = $round;
 
         $this->initializeProperties();
-        // dd($this->round->state()->offers()->toArray());
     }
 
     public function initializeProperties()
@@ -80,6 +79,13 @@ class AwaitingNextRoundView extends Component
         return redirect()->route('games.auction', [
             'game' => $this->game,
             'round' => $this->round->next(),
+        ]);
+    }
+
+    public function seeFinalScores()
+    {
+        return redirect()->route('games.final_scores', [
+            'game' => $this->game,
         ]);
     }
 
