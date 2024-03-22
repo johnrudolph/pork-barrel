@@ -14,6 +14,8 @@ use App\Bureaucrats\FrozenFrog;
 use App\Bureaucrats\FrugalFruitFly;
 use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\IndexIbex;
+use App\Bureaucrats\InterestInchworm;
+use App\Bureaucrats\LoyaltyLocust;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
 use App\Bureaucrats\MuckrakingMule;
@@ -230,7 +232,7 @@ it('adds 1 token to your offers if you have the Majority Leader Mare', function 
     );
 
     $this->assertFalse($this->daniel->state()->perks->contains(BailoutBunny::class));
-})->skip();
+});
 
 it('gives you 10 money if you make no offers after getting the minority leader mink', function () {
     RoundStarted::fire(
@@ -292,6 +294,54 @@ it('gives you a 25% return on your savings if you win the Treasury Chicken', fun
         2,
         $this->daniel->state()->money_history
             ->filter(fn ($entry) => $entry->description === 'Received 25% return on money saved in treasury')
+            ->first()
+            ->amount
+    );
+});
+
+it('changes the interest rate with Interest Inchworm', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [TreasuryChicken::class, InterestInchworm::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), TreasuryChicken::class, 5);
+    $this->jacob->submitOffer($this->game->currentRound(), InterestInchworm::class, 1, ['choice' => 'increase']);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [TreasuryChicken::class, InterestInchworm::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), TreasuryChicken::class, 5);
+    $this->jacob->submitOffer($this->game->currentRound(), InterestInchworm::class, 1, ['choice' => 'increase']);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 3,
+        round_id: $this->game->state()->round_ids[2],
+        bureaucrats: [TreasuryChicken::class, InterestInchworm::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->jacob->submitOffer($this->game->currentRound(), InterestInchworm::class, 1, ['choice' => 'decrease']);
+
+    $this->endGame($this->game);
+
+    $this->assertEquals(
+        13,
+        $this->john->state()->money_history
+            ->filter(fn ($entry) => $entry->description === 'Received 35% return on money saved in treasury')
             ->first()
             ->amount
     );
@@ -874,4 +924,50 @@ it('gives you 1 token for every opponent who offered on auctions you lost for Fe
     AuctionEnded::fire(round_id: $round_2->id);
 
     $this->assertEquals(12, $this->john->state()->availableMoney());
+});
+
+it('doubles your Locust earnings every time you win it', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [LoyaltyLocust::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(6, $this->john->state()->availableMoney());
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [LoyaltyLocust::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(14, $this->john->state()->availableMoney());
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 3,
+        round_id: $this->game->state()->round_ids[2],
+        bureaucrats: [LoyaltyLocust::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 1);
+    $this->jacob->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 1);
+
+    AuctionEnded::fire(round_id: $this->game->currentRound()->id);
+
+    $this->assertEquals(26, $this->john->state()->availableMoney());
+    $this->assertEquals(16, $this->jacob->state()->availableMoney());
 });

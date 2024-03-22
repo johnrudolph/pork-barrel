@@ -26,6 +26,11 @@ class TreasuryChicken extends Bureaucrat
 
     const HAS_WINNER = false;
 
+    public static function effectDescription(RoundState $round, PlayerState $player)
+    {
+        return 'Invest your money in the treasury, then receive your money back with interest at the end of the game. This works, even if you do not have the top offer. The interest rate starts at 25%, but can change throughout the game. The current interest rate is '.$round->game()->interest_rate.'%.';
+    }
+
     public static function handleGlobalEffectOnRoundEnd(RoundState $round)
     {
         $round->offers()->filter(fn ($o) => $o->bureaucrat === static::class)
@@ -51,11 +56,17 @@ class TreasuryChicken extends Bureaucrat
 
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
     {
+        $interest_rate = $round->game()->interest_rate;
+        
+        $multiplier = 1 + $interest_rate;
+
+        $text = $interest_rate * 100;
+
         PlayerReceivedMoney::fire(
             player_id: $player->id,
             round_id: $round->id,
-            amount: intval($player->money_in_treasury * 1.25),
-            activity_feed_description: 'Received 25% return on money saved in treasury',
+            amount: intval($player->money_in_treasury * $multiplier),
+            activity_feed_description: 'Received '.$text .'% return on money saved in treasury',
             type: MoneyLogEntry::TYPE_AWARD,
         );
     }

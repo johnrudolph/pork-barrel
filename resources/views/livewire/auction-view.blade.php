@@ -91,7 +91,7 @@
         </div>
     </div>
     <nav class="bg-gray-900 text-white fixed bottom-0 left-0 w-full p-4">
-        <div class="flex flex-row max-w-full justify-between items-center">
+        <div class="flex flex-row justify-between items-center">
             <div>
                 <div>
                     Available: ${{ $money }}

@@ -17,6 +17,8 @@ class GameState extends State
 
     public int $current_round_id = 0;
 
+    public float $interest_rate = 0.25;
+
     public function playerStates()
     {
         return $this->players->map(fn ($id) => PlayerState::load($id));
