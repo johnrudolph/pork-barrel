@@ -2,15 +2,15 @@
 
 namespace App\Bureaucrats;
 
-use App\Models\Round;
-use App\Models\Player;
-use App\Models\Headline;
-use App\States\RoundState;
 use App\Events\InterestRateChanged;
+use App\Models\Headline;
+use App\Models\Player;
+use App\Models\Round;
+use App\States\RoundState;
 
 class InterestInchworm extends Bureaucrat
 {
-    const NAME = "Interest Inchworm";
+    const NAME = 'Interest Inchworm';
 
     const SLUG = 'interest-inchworm';
 
@@ -45,18 +45,18 @@ class InterestInchworm extends Bureaucrat
             ->max(fn ($o) => $o->netOffer());
 
         $top_votes_for_increase = $offers_for_inchworm
-            ->filter(fn($o) => $o->netOffer() === $top_offer
+            ->filter(fn ($o) => $o->netOffer() === $top_offer
                 && $o->data['choice'] === 'increase'
             )
             ->count();
 
         $top_votes_for_decrease = $offers_for_inchworm
-            ->filter(fn($o) => $o->netOffer() === $top_offer
+            ->filter(fn ($o) => $o->netOffer() === $top_offer
                 && $o->data['choice'] === 'decrease'
             )
             ->count();
 
-        if($top_votes_for_increase === $top_votes_for_decrease) {
+        if ($top_votes_for_increase === $top_votes_for_decrease) {
             Headline::create([
                 'round_id' => $round->id,
                 'game_id' => $round->game()->id,
@@ -64,20 +64,22 @@ class InterestInchworm extends Bureaucrat
                 'description' => 'The powers that be are deadlocked over whether to increase or decrease interest rates. So they will do neither!',
             ]);
 
-            return; 
+            return;
         }
 
-        if($top_votes_for_increase > $top_votes_for_decrease) {
+        if ($top_votes_for_increase > $top_votes_for_decrease) {
             InterestRateChanged::fire(
                 game_id: $round->game_id,
                 round_id: $round->id,
                 amount: 0.1
             );
 
+            $new_rate = $round->game()->interest_rate * 100 + 10;
+
             Headline::create([
                 'round_id' => $round->id,
                 'game_id' => $round->game()->id,
-                'headline' => 'Interest Rates Increased',
+                'headline' => 'Interest Rates Increased to '.$new_rate.'%.',
                 'description' => 'In an effort to slow down inflation, the brilliant minds at the Federal Reserve have increased rates. Buy those bonds!',
             ]);
 
@@ -90,10 +92,12 @@ class InterestInchworm extends Bureaucrat
             amount: -0.1
         );
 
+        $new_rate = $round->game()->interest_rate * 100 - 10;
+
         Headline::create([
             'round_id' => $round->id,
             'game_id' => $round->game()->id,
-            'headline' => 'Interest Rates Decreased',
+            'headline' => 'Interest Rates Decreased to '.$new_rate.'%',
             'description' => 'Money is cheap, and we like it that way. Do not bother with bonds. Stimulate the economy and spend, spend, spend!',
         ]);
     }

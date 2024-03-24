@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->integer('code')->unique();
+            $table->string('template')->nullable();
             $table->timestamps();
         });
     }

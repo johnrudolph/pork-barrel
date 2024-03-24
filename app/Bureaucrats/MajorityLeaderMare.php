@@ -21,7 +21,7 @@ class MajorityLeaderMare extends Bureaucrat
 
     const EFFECT = 'After you submit your offers next round, 1 money will be added to each.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_awaiting_results';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_awaiting_results'];
 
     public static function suitability(RoundConstructor $constructor): int
     {

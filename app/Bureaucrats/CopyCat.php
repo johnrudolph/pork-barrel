@@ -3,7 +3,6 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
 use App\Models\Player;
 use App\Models\Round;
@@ -18,13 +17,11 @@ class CopyCat extends Bureaucrat
 
     const SLUG = 'copy-cat';
 
-    const SHORT_DESCRIPTION = 'Receive the same amount of earnings as another Industry.';
+    const SHORT_DESCRIPTION = 'Copy the earnings of another Industry.';
 
     const DIALOG = 'And they say mimetics is just about violence...';
 
-    const EFFECT = "Choose another Industry. At the start of the next round, you will receive that Industry's net earnings from this round (including their earnings and expenses, but not including their regular income).";
-
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_started';
+    const EFFECT = "Choose another Industry. After this round, you will receive money equal to that Industry's bureaucrat awards from this round.";
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -49,23 +46,15 @@ class CopyCat extends Bureaucrat
         ];
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
+    public static function handleEffectAfterEndOfRound(PlayerState $player, RoundState $round, OfferState $offer)
     {
-        ActionEffectAppliedToFutureRound::fire(
-            player_id: $player->id,
-            round_id: $round->game()->nextRound()->id,
-            offer_id: $offer->id,
-        );
-    }
-
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
-    {
-        $target = PlayerState::load($original_offer->data['player']);
+        $target = PlayerState::load($offer->data['player']);
 
         $money_earned = $target
             ->money_history
-            ->filter(fn ($entry) => $entry->type !== MoneyLogEntry::TYPE_INCOME
-                && $entry->round_number === $round->game()->current_round_number - 1)
+            ->filter(fn ($entry) => $entry->type === MoneyLogEntry::TYPE_AWARD
+                && $entry->round_number === $round->round_number
+            )
             ->sum(fn ($entry) => $entry->amount);
 
         PlayerReceivedMoney::fire(

@@ -20,12 +20,13 @@ class TreasuryChicken extends Bureaucrat
 
     const DIALOG = 'A penny saved is a penny earned.';
 
-    const EFFECT = 'Invest your money in the treasury, then receive your money back with 25% interest (rounded down) at the end of the game. This works, even if you do not have the top offer.';
+    const EFFECT = 'Invest your money in the treasury, then receive your money back with interest (rounded down) at the end of the game. The interest rate starts at 25%, but can change. This works, even if you do not have the top offer.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_round_ended'];
 
     const HAS_WINNER = false;
 
+    // @todo: implement this for all bureaucrats
     public static function effectDescription(RoundState $round, PlayerState $player)
     {
         return 'Invest your money in the treasury, then receive your money back with interest at the end of the game. This works, even if you do not have the top offer. The interest rate starts at 25%, but can change throughout the game. The current interest rate is '.$round->game()->interest_rate.'%.';
@@ -57,7 +58,7 @@ class TreasuryChicken extends Bureaucrat
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
     {
         $interest_rate = $round->game()->interest_rate;
-        
+
         $multiplier = 1 + $interest_rate;
 
         $text = $interest_rate * 100;
@@ -66,13 +67,13 @@ class TreasuryChicken extends Bureaucrat
             player_id: $player->id,
             round_id: $round->id,
             amount: intval($player->money_in_treasury * $multiplier),
-            activity_feed_description: 'Received '.$text .'% return on money saved in treasury',
+            activity_feed_description: 'Received '.$text.'% return on money saved in treasury',
             type: MoneyLogEntry::TYPE_AWARD,
         );
     }
 
     public static function activityFeedDescription(RoundState $state, OfferState $offer)
     {
-        return 'You invested money in the Treasury. Your money is now tied up in a treasury bond, and you will get it back with 25% interest at the end of the game.';
+        return 'You invested money in the Treasury. Your money is now tied up in a treasury bond, and you will get it back with interest at the end of the game.';
     }
 }

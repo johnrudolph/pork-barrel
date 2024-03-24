@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\GameTemplates\GameTemplate;
 use App\States\GameState;
 use Thunk\Verbs\Attributes\Autodiscovery\StateId;
 use Thunk\Verbs\Event;
@@ -19,6 +20,16 @@ class GameStarted extends Event
     public function applyToGame(GameState $state)
     {
         $state->status = 'in-progress';
+    }
+
+    public function fired()
+    {
+        if ($this->state(GameState::class)->template === 'tbd') {
+            GameTemplateSelected::fire(
+                game_id: $this->game_id,
+                template: GameTemplate::all()->random(),
+            );
+        }
     }
 
     public function handle()

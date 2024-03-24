@@ -23,7 +23,7 @@ class BailoutBunny extends Bureaucrat
 
     const EFFECT = 'If you ever reach 0 money in any future round, you will receive 10 money.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_spent_money';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_spent_money'];
 
     public static function suitability(RoundConstructor $constructor): int
     {

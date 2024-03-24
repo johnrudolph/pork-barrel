@@ -42,11 +42,12 @@ class RoundEnded extends Event
 
         // apply any action from the previous round that affects this round
         $state->offers_from_previous_rounds_that_resolve_this_round
-            ->filter(fn ($o) => OfferState::load($o)->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_ended'])
-            ->each(fn ($o) => OfferState::load($o)->bureaucrat::handleInFutureRound(
-                PlayerState::load(OfferState::load($o)->player_id),
+            ->map(fn ($o) => OfferState::load($o))
+            ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_ended'])
+            ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
+                PlayerState::load($o->player_id),
                 RoundState::load($this->round_id),
-                OfferState::load($o)
+                $o
             ));
 
         // apply actions awarded to players
@@ -74,6 +75,10 @@ class RoundEnded extends Event
 
         // apply template effects
         $state->round_template::handleOnRoundEnd($state);
+
+        // handle effects which only take place after everything else in the round was calculated
+        $state->offers()->filter(fn ($o) => $o->awarded)
+            ->each(fn ($o) => $o->bureaucrat::handleEffectAfterEndOfRound($o->player(), $o->round(), $o));
 
         if ($state->round_number === 8) {
             GameEnded::fire(game_id: $state->game_id);

@@ -3,7 +3,6 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
 use App\Models\Player;
 use App\Models\Round;
@@ -22,9 +21,7 @@ class ForecastFox extends Bureaucrat
 
     const DIALOG = 'We need help seeing where the economy is headed.';
 
-    const EFFECT = 'Select an industry. If that industry has the most money at the beginning of the next round (before everyone receives income), you will receive 7 money.';
-
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_started';
+    const EFFECT = 'Select an industry. If that industry has the most money after this round, you will receive 7 money.';
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -48,21 +45,12 @@ class ForecastFox extends Bureaucrat
         ];
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
-    {
-        ActionEffectAppliedToFutureRound::fire(
-            player_id: $player->id,
-            round_id: $round->game()->nextRound()->id,
-            offer_id: $offer->id,
-        );
-    }
-
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
+    public static function handleEffectAfterEndOfRound(PlayerState $player, RoundState $round, OfferState $offer)
     {
         $max_money = $round->game()->playerStates()
             ->max(fn ($p) => $p->availableMoney());
 
-        $guess = PlayerState::load($original_offer->data['player']);
+        $guess = PlayerState::load($offer->data['player']);
 
         if ($guess->availableMoney() === $max_money) {
             PlayerReceivedMoney::fire(

@@ -8,7 +8,6 @@ use App\RoundConstructor\RoundConstructor;
 use App\States\OfferState;
 use App\States\PlayerState;
 use App\States\RoundState;
-use Illuminate\Support\Facades\Log;
 
 class FocusedFoal extends Bureaucrat
 {
@@ -22,7 +21,7 @@ class FocusedFoal extends Bureaucrat
 
     const DIALOG = 'Multitasking is a myth.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_awaiting_results';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_awaiting_results'];
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -42,11 +41,6 @@ class FocusedFoal extends Bureaucrat
 
     public static function handlePerkInFutureRound(PlayerState $player, RoundState $round)
     {
-        Log::info('Focused Foal perk being applied', [
-            'player_id' => $player->id,
-            'round_id' => $round->id,
-        ]);
-
         $player_offers = $round->offers()
             ->filter(fn ($o) => $o->player_id === $player->id);
 

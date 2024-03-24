@@ -22,7 +22,7 @@ class RejectedReindeer extends Bureaucrat
 
     const DIALOG = "Sometimes you fit right in, and sometimes you've got a bright red nose.";
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_round_ended'];
 
     public static function suitability(RoundConstructor $constructor): int
     {

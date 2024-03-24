@@ -6,6 +6,7 @@ use App\Bureaucrats\Bureaucrat;
 use App\Events\AuctionEnded;
 use App\Events\GameCreated;
 use App\Events\GameStarted;
+use App\Events\PlayerAwaitingResults;
 use App\Events\PlayerJoinedGame;
 use App\Events\RoundStarted;
 use App\Models\Game;
@@ -63,6 +64,18 @@ abstract class TestCase extends BaseTestCase
         GameStarted::fire(game_id: $this->game->id);
 
         $this->john = Player::firstWhere('user_id', $user_1->id);
+    }
+
+    public function endCurrentRound()
+    {
+        $round = $this->game->currentRound();
+
+        $this->game->players->each(fn ($p) => PlayerAwaitingResults::fire(
+            player_id: $p->id,
+            round_id: $round->id,
+        ));
+
+        AuctionEnded::fire(round_id: $round->id);
     }
 
     public function endGame($game)

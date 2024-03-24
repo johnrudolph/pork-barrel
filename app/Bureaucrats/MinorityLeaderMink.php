@@ -22,7 +22,7 @@ class MinorityLeaderMink extends Bureaucrat
 
     const EFFECT = 'If you make no offers next round, you will earn 10 money.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_auction_ended'];
 
     public static function suitability(RoundConstructor $constructor): int
     {

@@ -22,7 +22,7 @@ class FeeCollectingFerret extends Bureaucrat
 
     const EFFECT = 'For the rest of the game, when one of your offers is rejected, receive 1 money for each offer made by an opponent for the same Bureaucrat.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_round_ended'];
 
     public static function suitability(RoundConstructor $constructor): int
     {

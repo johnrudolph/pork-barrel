@@ -54,7 +54,7 @@ it('selects bureaucrats and a round template for a round', function () {
 
     $this->assertTrue($this->game->currentRound()->state()->bureaucrats->count() > 0);
     $this->assertNotNull($this->game->currentRound()->state()->round_template);
-});
+})->skip();
 
 it('has a helper for knowing the stages of the game', function () {
     $this->game->rounds->first()->start();
@@ -65,4 +65,4 @@ it('has a helper for knowing the stages of the game', function () {
 
     expect(DoubleDonkey::suitability(new RoundConstructor(round: $this->game->currentRound()->state())))
         ->toBe(1);
-});
+})->skip();

@@ -21,7 +21,7 @@ class TiedHog extends Bureaucrat
 
     const DIALOG = 'Just tipping the scales for the good guys.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_auction_ended';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_auction_ended'];
 
     public static function suitability(RoundConstructor $constructor): int
     {

@@ -2,41 +2,44 @@
 
 namespace App\Models\GameTemplates;
 
-use App\Bureaucrats\TiedHog;
-use App\Bureaucrats\Watchdog;
-use App\Bureaucrats\IndexIbex;
-use App\Bureaucrats\PonziPony;
-use App\Bureaucrats\TaxTurkey;
-use App\Bureaucrats\FrozenFrog;
+use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\BearhugBrownBear;
+use App\Bureaucrats\ConsolationCow;
+use App\Bureaucrats\CronyCrocodile;
+use App\Bureaucrats\DoubleDonkey;
+use App\Bureaucrats\EqualityElk;
+use App\Bureaucrats\FeeCollectingFerret;
 use App\Bureaucrats\FocusedFoal;
 use App\Bureaucrats\ForecastFox;
-use App\Bureaucrats\GamblinGoat;
-use App\Bureaucrats\BailoutBunny;
-use App\Bureaucrats\DoubleDonkey;
-use App\Bureaucrats\LoyaltyLocust;
-use App\Bureaucrats\ObstructionOx;
-use App\RoundTemplates\TaxTheRich;
-use App\Bureaucrats\CronyCrocodile;
+use App\Bureaucrats\FrozenFrog;
 use App\Bureaucrats\FrugalFruitFly;
-use App\Bureaucrats\MuckrakingMule;
-use App\Bureaucrats\TreasuryChicken;
-use App\RoundTemplates\Astroturfing;
-use App\Bureaucrats\BearhugBrownBear;
-use App\Bureaucrats\RejectedReindeer;
-use App\RoundTemplates\CampaignSeason;
+use App\Bureaucrats\GamblinGoat;
+use App\Bureaucrats\IndexIbex;
+use App\Bureaucrats\InterestInchworm;
+use App\Bureaucrats\KickbackKingfisher;
+use App\Bureaucrats\LoyaltyLocust;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
-use App\RoundTemplates\LameDuckSession;
-use App\RoundTemplates\StimulusPackage;
-use App\Bureaucrats\FeeCollectingFerret;
-use App\Bureaucrats\InterestInchworm;
+use App\Bureaucrats\MuckrakingMule;
+use App\Bureaucrats\ObstructionOx;
+use App\Bureaucrats\PonziPony;
+use App\Bureaucrats\RejectedReindeer;
+use App\Bureaucrats\TaxTurkey;
+use App\Bureaucrats\TiedHog;
+use App\Bureaucrats\TreasuryChicken;
+use App\Bureaucrats\Watchdog;
 use App\RoundTemplates\AlwaysABridesmaid;
-use App\RoundTemplates\LegislativeFrenzy;
+use App\RoundTemplates\Astroturfing;
 use App\RoundTemplates\CampaignFinanceReform;
+use App\RoundTemplates\CampaignSeason;
+use App\RoundTemplates\LameDuckSession;
+use App\RoundTemplates\LegislativeFrenzy;
+use App\RoundTemplates\StimulusPackage;
+use App\RoundTemplates\TaxTheRich;
 
 class InterestRateMadness extends GameTemplate
 {
-    public function rounds()
+    public static function rounds()
     {
         return [
             1 => [
@@ -47,7 +50,7 @@ class InterestRateMadness extends GameTemplate
                     TiedHog::class,
                     FrugalFruitFly::class,
                     CronyCrocodile::class,
-                ]
+                ],
             ],
             2 => [
                 'round_template' => CampaignSeason::class,
@@ -55,16 +58,16 @@ class InterestRateMadness extends GameTemplate
                     FocusedFoal::class,
                     FeeCollectingFerret::class,
                     MinorityLeaderMink::class,
-                    SympatheticSeal::class,
+                    EqualityElk::class,
                     LoyaltyLocust::class,
-                ]
+                ],
             ],
             3 => [
                 'round_template' => LameDuckSession::class,
                 'bureaucrats' => [
                     ForecastFox::class,
                     TreasuryChicken::class,
-                ]
+                ],
             ],
             4 => [
                 'round_template' => StimulusPackage::class,
@@ -74,7 +77,7 @@ class InterestRateMadness extends GameTemplate
                     DoubleDonkey::class,
                     LoyaltyLocust::class,
                     TreasuryChicken::class,
-                ]
+                ],
             ],
             5 => [
                 'round_template' => Astroturfing::class,
@@ -84,7 +87,7 @@ class InterestRateMadness extends GameTemplate
                     MuckrakingMule::class,
                     FrozenFrog::class,
                     GamblinGoat::class,
-                ]
+                ],
             ],
             6 => [
                 'round_template' => TaxTheRich::class,
@@ -94,7 +97,7 @@ class InterestRateMadness extends GameTemplate
                     ObstructionOx::class,
                     LoyaltyLocust::class,
                     TreasuryChicken::class,
-                ]
+                ],
             ],
             7 => [
                 'round_template' => CampaignFinanceReform::class,
@@ -104,7 +107,7 @@ class InterestRateMadness extends GameTemplate
                     BearhugBrownBear::class,
                     ForecastFox::class,
                     LoyaltyLocust::class,
-                ]
+                ],
             ],
             8 => [
                 'round_template' => LegislativeFrenzy::class,
@@ -113,9 +116,9 @@ class InterestRateMadness extends GameTemplate
                     DoubleDonkey::class,
                     InterestInchworm::class,
                     LoyaltyLocust::class,
-                    PaybackPanda::class,
-                    KickbackCow::class,
-                ]
+                    ConsolationCow::class,
+                    KickbackKingfisher::class,
+                ],
             ],
         ];
     }

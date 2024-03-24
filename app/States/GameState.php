@@ -13,6 +13,8 @@ class GameState extends State
 
     public Collection $round_ids;
 
+    public string $template;
+
     public int $current_round_number = 0;
 
     public int $current_round_id = 0;
