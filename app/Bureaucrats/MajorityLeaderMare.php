@@ -19,9 +19,9 @@ class MajorityLeaderMare extends Bureaucrat
 
     const DIALOG = "You can't get anything done around here without a majority. Scratch my back today, and I'll give you an in with the rest of the council tomorrow.";
 
-    const EFFECT = 'After you submit your offers next round, 1 money will be added to each.';
+    const EFFECT = 'After you submit your offers next round, I will add 1 money to each.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_awaiting_results';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_awaiting_results'];
 
     public static function suitability(RoundConstructor $constructor): int
     {

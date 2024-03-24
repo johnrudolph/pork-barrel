@@ -22,7 +22,7 @@ class MuckrakingMule extends Bureaucrat
 
     const DIALOG = "It's time to expose the corporate lobbyists in this town. Help me expose a huge story.";
 
-    const EFFECT = 'Select a player and an industry. If that player works for that industry, there will be a headline exposing them, and you will earn 5 money.';
+    const EFFECT = 'Select a player and an industry. If that player works for that industry, there will be a headline exposing them, and I will give you 5 money.';
 
     public static function suitability(RoundConstructor $constructor): int
     {

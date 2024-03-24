@@ -22,14 +22,13 @@ class FrozenFrog extends Bureaucrat
 
     const DIALOG = "It's going to be a cold winter for whomever I investigate next round.";
 
-    const EFFECT = 'Choose an industry. Next round, half of their money will not be available.';
+    const EFFECT = 'Choose an industry. At the end of this round, I will freeze half of their money, and it will not be available next round.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_round_ended'];
 
     public static function suitability(RoundConstructor $constructor): int
     {
-        // @todo: test that this works. Not sure it does
-        if ($constructor->stageOfGame() === 'late') {
+        if ($constructor->stageOfGame() === 'final-round') {
             return 0;
         }
 

@@ -18,11 +18,11 @@ class RejectedReindeer extends Bureaucrat
 
     const SHORT_DESCRIPTION = 'If none of your offers are accepted, receive 4 money.';
 
-    const EFFECT = 'For the rest of the game, if none of your offers are accepted in a round, you will receive 4 money.';
+    const EFFECT = 'For the rest of the game, if none of your offers are accepted in a round, I will give you 4 money.';
 
     const DIALOG = "Sometimes you fit right in, and sometimes you've got a bright red nose.";
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_ended';
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_round_ended'];
 
     public static function suitability(RoundConstructor $constructor): int
     {

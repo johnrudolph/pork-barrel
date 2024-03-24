@@ -21,7 +21,7 @@ class Watchdog extends Bureaucrat
 
     const DIALOG = "Corruption is rampant around here. I'll sniff it out if it's the last thing I do.";
 
-    const EFFECT = 'Select a player and a bureaucrat. If that player had the highest offer for that bureaucrat, they will be fined 5 money.';
+    const EFFECT = 'Select a player and a bureaucrat. If that player had the highest offer for that bureaucrat, I will fine them 5 money.';
 
     public static function options(Round $round, Player $player)
     {

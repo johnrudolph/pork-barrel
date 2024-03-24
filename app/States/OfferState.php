@@ -27,6 +27,11 @@ class OfferState extends State
         return PlayerState::load($this->player_id);
     }
 
+    public function round()
+    {
+        return RoundState::load($this->round_id);
+    }
+
     public function netOffer()
     {
         return $this->amount_offered + collect($this->amount_modifications)

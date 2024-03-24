@@ -43,11 +43,12 @@ class RoundStarted extends Event
         $this->round_template::handleOnRoundStart($this->state(RoundState::class));
 
         $this->state(RoundState::class)->offers_from_previous_rounds_that_resolve_this_round
-            ->filter(fn ($o) => OfferState::load($o)->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_started'])
-            ->each(fn ($o) => OfferState::load($o)->bureaucrat::handleInFutureRound(
-                PlayerState::load(OfferState::load($o)->player_id),
+            ->map(fn ($o) => OfferState::load($o))
+            ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['on_round_started'])
+            ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
+                PlayerState::load($o->player_id),
                 RoundState::load($this->round_id),
-                OfferState::load($o),
+                $o,
             ));
 
         collect($this->state(RoundState::class)->game()->players)->each(fn ($player_id) => PlayerReceivedMoney::fire(

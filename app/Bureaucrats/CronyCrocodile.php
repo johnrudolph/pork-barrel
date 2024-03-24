@@ -18,7 +18,7 @@ class CronyCrocodile extends Bureaucrat
 
     const DIALOG = "I am not a crook. I'm just a crocodile.";
 
-    const EFFECT = 'Permanently increase your income by 1.';
+    const EFFECT = 'I will permanently increase your income by 1.';
 
     public static function suitability(RoundConstructor $constructor): int
     {

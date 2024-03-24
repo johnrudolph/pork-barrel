@@ -27,7 +27,6 @@ class Bureaucrat
 
     const HOOKS = [
         'on_round_started' => 'on_round_started',
-        'on_offer_submitted' => 'on_offer_submitted',
         'on_auction_ended' => 'on_auction_ended',
         'on_round_ended' => 'on_round_ended',
         'on_spent_money' => 'on_spent_money',
@@ -40,9 +39,11 @@ class Bureaucrat
             BailoutBunny::class,
             BearhugBrownBear::class,
             BrinksmanshipBronco::class,
+            ConsolationCow::class,
             CopyCat::class,
             CronyCrocodile::class,
             DoubleDonkey::class,
+            EqualityElk::class,
             FeeCollectingFerret::class,
             FocusedFoal::class,
             ForecastFox::class,
@@ -50,7 +51,10 @@ class Bureaucrat
             FrugalFruitFly::class,
             GamblinGoat::class,
             IndexIbex::class,
-            // MajorityLeaderMare::class,
+            InterestInchworm::class,
+            KickbackKingfisher::class,
+            LoyaltyLocust::class,
+            MajorityLeaderMare::class,
             MinorityLeaderMink::class,
             MuckrakingMule::class,
             ObstructionOx::class,
@@ -94,6 +98,11 @@ class Bureaucrat
     public static function handleGlobalEffectOnRoundEnd(RoundState $round)
     {
         // this can handle effects that don't just apply to the winners
+    }
+
+    public static function handleEffectAfterEndOfRound(PlayerState $player, RoundState $round, OfferState $offer)
+    {
+        // this handles effects like double donkey, which need to be calculated after rewards are given
     }
 
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)

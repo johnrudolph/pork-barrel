@@ -2,6 +2,7 @@
 
 namespace App\States;
 
+use App\Models\Player;
 use Illuminate\Support\Collection;
 use Thunk\Verbs\State;
 
@@ -32,6 +33,11 @@ class PlayerState extends State
     public Collection $money_history;
 
     public Collection $perks;
+
+    public function model(): Player
+    {
+        return Player::find($this->id);
+    }
 
     public function game(): GameState
     {

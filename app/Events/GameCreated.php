@@ -21,6 +21,7 @@ class GameCreated extends Event
         $state->status = 'awaiting-players';
         $state->players = collect();
         $state->round_ids = collect();
+        $state->template = 'tbd';
     }
 
     public function fired()

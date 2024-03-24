@@ -3,7 +3,6 @@
 namespace App\Bureaucrats;
 
 use App\DTOs\MoneyLogEntry;
-use App\Events\ActionEffectAppliedToFutureRound;
 use App\Events\PlayerReceivedMoney;
 use App\RoundConstructor\RoundConstructor;
 use App\States\OfferState;
@@ -20,9 +19,7 @@ class IndexIbex extends Bureaucrat
 
     const DIALOG = 'The market is a fickle beast. I will help you tame it.';
 
-    const EFFECT = "At the start of the next round, you will receive the average net earnings of all Industries from this round (including everyone's earnings and expenses, but not including their regular income).";
-
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = 'on_round_started';
+    const EFFECT = 'At the end of this round, I will give you the average net earnings of all Industries from this round (including awards, expenses, and income).';
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -31,26 +28,14 @@ class IndexIbex extends Bureaucrat
             : 1;
     }
 
-    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
-    {
-        ActionEffectAppliedToFutureRound::fire(
-            player_id: $player->id,
-            round_id: $round->game()->nextRound()->id,
-            offer_id: $offer->id,
-        );
-    }
-
-    public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
+    public static function handleEffectAfterEndOfRound(PlayerState $player, RoundState $round, OfferState $offer)
     {
         $number_of_players = $round->game()->players->count();
 
         $average_earnings = $round->game()->playerStates()
             ->reduce(function ($total, $player_state) use ($round) {
                 return $total + $player_state->money_history
-                    ->filter(fn ($entry) => $entry->type !== MoneyLogEntry::TYPE_INCOME
-                        && $entry->round_number === $round->game()->current_round_number - 1
-                        && $entry->amount > 0
-                    )
+                    ->filter(fn ($entry) => $entry->round_number === $round->round_number)
                     ->sum(fn ($entry) => $entry->amount);
             }) / $number_of_players;
 
