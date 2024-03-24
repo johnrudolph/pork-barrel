@@ -20,7 +20,7 @@ class FeeCollectingFerret extends Bureaucrat
 
     const DIALOG = 'A little something, you know, for the effort.';
 
-    const EFFECT = 'For the rest of the game, when one of your offers is rejected, receive 1 money for each offer made by an opponent for the same Bureaucrat.';
+    const EFFECT = 'For the rest of the game, when one of your offers is rejected, I will give you 1 money for each offer made by an opponent for the same Bureaucrat.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_round_ended'];
 

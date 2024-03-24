@@ -17,7 +17,7 @@ class EqualityElk extends Bureaucrat
 
     const SHORT_DESCRIPTION = 'Get +10 for your offers if you are in last place.';
 
-    const EFFECT = 'If you are in last place when making offers, 10 money will be added to each of your offers (does not apply to Treasury Chicken).';
+    const EFFECT = 'If you are in last place, I will add 10 money to each of your offers (does not apply to Treasury Chicken).';
 
     const DIALOG = 'Sometimes having the least is a real cool hand.';
 

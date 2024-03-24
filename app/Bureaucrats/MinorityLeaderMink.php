@@ -20,7 +20,7 @@ class MinorityLeaderMink extends Bureaucrat
 
     const DIALOG = "The Majority will never lose if you keep bribing them. Boycott them next round and I'll make it worth your while.";
 
-    const EFFECT = 'If you make no offers next round, you will earn 10 money.';
+    const EFFECT = 'If you make no offers next round, I will reward you with 10 money.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_auction_ended'];
 

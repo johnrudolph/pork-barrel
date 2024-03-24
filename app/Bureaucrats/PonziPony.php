@@ -16,7 +16,7 @@ class PonziPony extends Bureaucrat
 
     const DIALOG = "Trust me, this is a sure thing. Just don't offer me more than the others.";
 
-    const EFFECT = 'If you have the highest offer, you will lose your offer. Otherwise, you will pay nothing, and receive the amount you offered.';
+    const EFFECT = 'If you have the highest offer for me, you will lose your offer. Otherwise, you will pay me nothing, and I will give you the amount you offered.';
 
     public static function handleGlobalEffectOnRoundEnd(RoundState $round)
     {

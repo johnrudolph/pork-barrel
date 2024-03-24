@@ -18,7 +18,7 @@ class InterestInchworm extends Bureaucrat
 
     const DIALOG = "I'm really more of an economist than a politician. But who are we kidding?";
 
-    const EFFECT = 'Increase or decrease the interest rate for all players. The interest rate determines how much return everyone gets from money put into the Treasury.';
+    const EFFECT = 'I can increase or decrease the interest rate for all players. The interest rate determines how much return everyone gets from money put into the Treasury.';
 
     public static function options(Round $round, Player $player)
     {

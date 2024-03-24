@@ -22,7 +22,7 @@ class FrozenFrog extends Bureaucrat
 
     const DIALOG = "It's going to be a cold winter for whomever I investigate next round.";
 
-    const EFFECT = 'Choose an industry. At the end of this round, half of their money will be frozen, and will not be available for the next round.';
+    const EFFECT = 'Choose an industry. At the end of this round, I will freeze half of their money, and it will not be available next round.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_round_ended'];
 

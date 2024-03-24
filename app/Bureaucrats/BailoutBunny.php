@@ -21,7 +21,7 @@ class BailoutBunny extends Bureaucrat
 
     const DIALOG = 'Listen, no one needs a stronger safety net than the rich.';
 
-    const EFFECT = 'If you ever reach 0 money in any future round, you will receive 10 money.';
+    const EFFECT = 'If you ever reach 0 money in any future round, I will give you 10 money.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_spent_money'];
 

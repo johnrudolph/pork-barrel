@@ -21,7 +21,7 @@ class ForecastFox extends Bureaucrat
 
     const DIALOG = 'We need help seeing where the economy is headed.';
 
-    const EFFECT = 'Select an industry. If that industry has the most money after this round, you will receive 7 money.';
+    const EFFECT = 'Select an industry. If that industry has the most money after this round, I will reward you with 7 money.';
 
     public static function suitability(RoundConstructor $constructor): int
     {

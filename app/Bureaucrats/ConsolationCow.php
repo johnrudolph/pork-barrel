@@ -19,7 +19,7 @@ class ConsolationCow extends Bureaucrat
 
     const DIALOG = 'There, there. Just because you lost everything does not mean you should suffer.';
 
-    const EFFECT = 'Receive 1 money for each offer you made that was not awarded.';
+    const EFFECT = 'I will give you 1 money for each offer you made so far in this game that was not awarded.';
 
     public static function suitability(RoundConstructor $constructor): int
     {

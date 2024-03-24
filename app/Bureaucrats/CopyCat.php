@@ -21,7 +21,7 @@ class CopyCat extends Bureaucrat
 
     const DIALOG = 'And they say mimetics is just about violence...';
 
-    const EFFECT = "Choose another Industry. After this round, you will receive money equal to that Industry's bureaucrat awards from this round.";
+    const EFFECT = "Choose another Industry. After this round, I will give you money equal to that Industry's Bureaucrat awards from this round.";
 
     public static function suitability(RoundConstructor $constructor): int
     {

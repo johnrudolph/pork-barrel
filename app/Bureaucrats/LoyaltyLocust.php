@@ -18,7 +18,7 @@ class LoyaltyLocust extends Bureaucrat
 
     const DIALOG = 'I keep my friends close, and paradoxically, my friends even closer.';
 
-    const EFFECT = 'This will appear several times in this game. The first time you win me, receive 2 tokens. Each time you win me after that, double your previous earnings from the last time.';
+    const EFFECT = 'I will appear several times in this game. The first time you have the highest offer for me, receive 2 tokens. Each time you have the highest offer for me, double your earnings from the last time.';
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {

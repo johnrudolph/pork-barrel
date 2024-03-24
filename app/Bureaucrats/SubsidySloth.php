@@ -21,7 +21,7 @@ class SubsidySloth extends Bureaucrat
 
     const DIALOG = 'Sometimes you have to give a little to get a little.';
 
-    const EFFECT = 'Select an industry. If that industry has the least money at the end of this round (before everyone receives income), they will receive 7 money.';
+    const EFFECT = 'Select an industry. If that industry has the least money at the end of this round (before everyone receives income), I will give them 7 money.';
 
     public static function suitability(RoundConstructor $constructor): int
     {

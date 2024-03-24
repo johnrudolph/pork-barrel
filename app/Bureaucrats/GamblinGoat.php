@@ -18,7 +18,7 @@ class GamblinGoat extends Bureaucrat
 
     const DIALOG = "I've got a hair-brained scheme in the works. No promises, but I think it'll pay off big time.";
 
-    const EFFECT = 'Get a random return of 1-10 money.';
+    const EFFECT = 'I will give you a random return of 1-10 money.';
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {

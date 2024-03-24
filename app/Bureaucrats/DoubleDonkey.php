@@ -19,7 +19,7 @@ class DoubleDonkey extends Bureaucrat
 
     const DIALOG = 'We like to celebrate the winners in this town.';
 
-    const EFFECT = 'After this round, receive all of your bureaucrat awards from this round again.';
+    const EFFECT = 'After this round, I will double all of your bureaucrat awards from this round.';
 
     public static function suitability(RoundConstructor $constructor): int
     {

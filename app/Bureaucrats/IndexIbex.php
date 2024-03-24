@@ -19,7 +19,7 @@ class IndexIbex extends Bureaucrat
 
     const DIALOG = 'The market is a fickle beast. I will help you tame it.';
 
-    const EFFECT = 'At the end of this round, you will receive the average net earnings of all Industries from this round (including awards, expenses, and income).';
+    const EFFECT = 'At the end of this round, I will give you the average net earnings of all Industries from this round (including awards, expenses, and income).';
 
     public static function suitability(RoundConstructor $constructor): int
     {

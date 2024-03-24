@@ -24,7 +24,7 @@ class BearhugBrownBear extends Bureaucrat
 
     const DIALOG = "You see something you want, you go and take it. It's the Pork Barrel way.";
 
-    const EFFECT = 'Select a Industry. If they have Perks, you will steal one of them at random. If they do not have any Perks, you will be fined 5 money.';
+    const EFFECT = 'Select a Industry. If they have Perks, I will steal a random one from them and give it to you. If they do not have any Perks, you will be fined 5 money.';
 
     public static function options(Round $round, Player $player)
     {

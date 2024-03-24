@@ -19,7 +19,7 @@ class KickbackKingfisher extends Bureaucrat
 
     const DIALOG = "The rich get richer. I don't make the rules, don't blame me.";
 
-    const EFFECT = 'Receive 20% (rounded down) of the money you have earned from Bureaucrats so far in this game.';
+    const EFFECT = 'I will give you 20% (rounded down) of the money you have earned from Bureaucrats so far in this game.';
 
     public static function suitability(RoundConstructor $constructor): int
     {
