@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Events\GameEnded;
-use App\Events\GameStarted;
 use App\States\GameState;
+use App\Events\GameStarted;
+use Thunk\Verbs\Facades\Verbs;
 use Glhd\Bits\Database\HasSnowflakes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Game extends Model
 {
@@ -38,6 +39,8 @@ class Game extends Model
     public function start()
     {
         GameStarted::fire(game_id: $this->id);
+
+        Verbs::commit();
 
         $this->rounds->first()->start();
     }
