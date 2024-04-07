@@ -28,7 +28,7 @@
                                         <table class="min-w-full">
                                             <thead class="border-b border-gray-800">
                                                 <tr class="text-sm">
-                                                    <td>Industry</td>
+                                                    <td>Player</td>
                                                     <td>Modifications</td>
                                                     <td>Status</td>
                                                     <td>Amount</td>
@@ -37,7 +37,7 @@
                                             <tbody class="divide-y divide-gray-200">
                                                 @foreach($this->offers->filter(fn($o) => $o['bureaucrat'] === $b) as $o)
                                                     <tr>
-                                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ $o['industry'] }}</td>
+                                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ $o['player_name'] }}</td>
                                                         <td class="px-3 py-4 text-sm text-gray-500">{{ $o['modifications'] }}</td>
                                                         <td>
                                                             @if($this->round->state()->status === 'auction')

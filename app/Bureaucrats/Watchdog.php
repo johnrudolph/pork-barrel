@@ -32,17 +32,17 @@ class Watchdog extends Bureaucrat
                     ->reject(fn ($b) => $b === static::class)
                     ->mapWithKeys(fn ($b) => [$b => $b::NAME]),
                 'label' => 'Bureaucrat',
-                'placeholder' => 'Select a bureaucrat',
+                'placeholder' => 'Select a Bureaucrat',
                 'rules' => 'required',
             ],
             'player' => [
                 'type' => 'select',
                 'options' => $round->game->players
                     ->reject(fn ($p) => $p->id === $player->id)
-                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
+                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->name])
                     ->toArray(),
                 'label' => 'Bureaucrat',
-                'placeholder' => 'Select an industry',
+                'placeholder' => 'Select a Player',
                 'rules' => 'required',
             ],
         ];
@@ -64,13 +64,13 @@ class Watchdog extends Bureaucrat
                 type: MoneyLogEntry::TYPE_PENALIZE,
             );
 
-            $acused_industry = PlayerState::load((int) $offer->data['player'])->industry;
+            $acusee = PlayerState::load((int) $offer->data['player'])->name;
 
             Headline::create([
                 'round_id' => $round->id,
                 'game_id' => $round->game()->id,
-                'headline' => $acused_industry.' caught bribing officials!',
-                'description' => 'In a shocking discovery, the Watchdog has exposed the '.$acused_industry.' industry for bribing bureaucrat. They have been fined.',
+                'headline' => $acusee.' caught bribing officials!',
+                'description' => 'In a shocking discovery, the Watchdog has exposed '.$acusee.' for bribing bureaucrat. They have been fined.',
             ]);
         }
     }
@@ -82,12 +82,12 @@ class Watchdog extends Bureaucrat
             && $o->player_id === (int) $offer->data['player']
         )->count() > 0;
 
-        $acused_industry = PlayerState::load($offer->data['player'])->industry;
+        $acusee = PlayerState::load($offer->data['player'])->name;
 
         $acused_bureaucrat = $offer->data['bureaucrat']::NAME;
 
         return $guess_was_correct
-            ? 'You had the highest bid for the Watchdog. You correctly accused '.$acused_industry.' of bribing '.$acused_bureaucrat.'. They have been fined 5 money.'
-            : 'You had the highest bid for the Watchdog. You incorrectly accused '.$acused_industry.' of bribing '.$acused_bureaucrat.'.';
+            ? 'You had the highest bid for the Watchdog. You correctly accused '.$acusee.' of bribing '.$acused_bureaucrat.'. They have been fined 5 money.'
+            : 'You had the highest bid for the Watchdog. You incorrectly accused '.$acusee.' of bribing '.$acused_bureaucrat.'.';
     }
 }

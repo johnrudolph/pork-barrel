@@ -16,7 +16,7 @@ class InGameNav extends Component
     public function scores()
     {
         return $this->game->players->map(fn ($p) => [
-            'industry' => $p->state()->industry,
+            'player_name' => $p->state()->name,
             'player_id' => $p->id,
             'money' => $p->state()->availableMoney(),
         ])->sortByDesc('money');

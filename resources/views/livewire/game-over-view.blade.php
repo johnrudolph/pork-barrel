@@ -12,7 +12,7 @@
                                 <table class="min-w-full divide-y divide-gray-300">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Industry</th>
+                                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Player</th>
                                             <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Money</th>
                                         </tr>
                                     </thead>
@@ -20,7 +20,7 @@
                                         @foreach($this->scores() as $s)
                                             <tr>
                                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-bold text-gray-900 sm:pl-0">
-                                                    {{ $s['player_name'] }} ({{ $s['industry'] }})
+                                                    {{ $s['player_name'] }}
                                                 </td>
                                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $s['money'] }}</td>
                                             </tr>

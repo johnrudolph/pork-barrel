@@ -28,8 +28,6 @@ class PlayerState extends State
 
     public $current_round_number;
 
-    public $industry;
-
     public Collection $money_history;
 
     public Collection $perks;

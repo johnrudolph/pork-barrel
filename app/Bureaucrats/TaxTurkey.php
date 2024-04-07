@@ -16,11 +16,11 @@ class TaxTurkey extends Bureaucrat
 
     const SLUG = 'tax-turkey';
 
-    const SHORT_DESCRIPTION = 'Permanently reduce the income of another industry.';
+    const SHORT_DESCRIPTION = 'Permanently reduce the income of another Player.';
 
     const DIALOG = 'There are only two things certain in life: death and taxes.';
 
-    const EFFECT = 'Choose another industry to increase their taxes. Their income will permanently decrease by 1.';
+    const EFFECT = 'Choose another Player to increase their taxes. Their income will permanently decrease by 1.';
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -38,10 +38,10 @@ class TaxTurkey extends Bureaucrat
                 'type' => 'select',
                 'options' => $round->game->players
                     ->reject(fn ($p) => $p->id === $player->id)
-                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
+                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->name])
                     ->toArray(),
-                'label' => 'Industry',
-                'placeholder' => 'Select an industry',
+                'label' => 'Player',
+                'placeholder' => 'Select a Player',
                 'rules' => 'required',
             ],
         ];

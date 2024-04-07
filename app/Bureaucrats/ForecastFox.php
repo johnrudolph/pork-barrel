@@ -17,11 +17,11 @@ class ForecastFox extends Bureaucrat
 
     const SLUG = 'forecast-fox';
 
-    const SHORT_DESCRIPTION = "Guess which industry will have the most money, and get compensation if you're right.";
+    const SHORT_DESCRIPTION = "Guess which Player will have the most money, and get compensation if you're right.";
 
     const DIALOG = 'We need help seeing where the economy is headed.';
 
-    const EFFECT = 'Select an industry. If that industry has the most money after this round, I will reward you with 7 money.';
+    const EFFECT = 'Select an Player. If that Player has the most money after this round, I will reward you with 7 money.';
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -36,10 +36,10 @@ class ForecastFox extends Bureaucrat
             'player' => [
                 'type' => 'select',
                 'options' => $round->game->players
-                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
+                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->name])
                     ->toArray(),
-                'label' => 'Industry',
-                'placeholder' => 'Select an industry',
+                'label' => 'Player',
+                'placeholder' => 'Select a Player',
                 'rules' => 'required',
             ],
         ];
@@ -57,7 +57,7 @@ class ForecastFox extends Bureaucrat
                 player_id: $player->id,
                 round_id: $round->id,
                 amount: 7,
-                activity_feed_description: 'You correctly predicted that '.$guess->industry.' would have the most money.',
+                activity_feed_description: 'You correctly predicted that '.$guess->name.' would have the most money.',
                 type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
             );
         }

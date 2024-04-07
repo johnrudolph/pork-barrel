@@ -17,11 +17,11 @@ class CopyCat extends Bureaucrat
 
     const SLUG = 'copy-cat';
 
-    const SHORT_DESCRIPTION = 'Copy the earnings of another Industry.';
+    const SHORT_DESCRIPTION = 'Copy the earnings of another Player.';
 
     const DIALOG = 'And they say mimetics is just about violence...';
 
-    const EFFECT = "Choose another Industry. After this round, I will give you money equal to that Industry's Bureaucrat awards from this round.";
+    const EFFECT = "Choose another Player. After this round, I will give you money equal to that Player's Bureaucrat awards from this round.";
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -37,10 +37,10 @@ class CopyCat extends Bureaucrat
                 'type' => 'select',
                 'options' => $round->game->players
                     ->reject(fn ($p) => $p->id === $player->id)
-                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
+                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->name])
                     ->toArray(),
                 'label' => 'Bureaucrat',
-                'placeholder' => 'Select an industry',
+                'placeholder' => 'Select a Player',
                 'rules' => 'required',
             ],
         ];
@@ -61,7 +61,7 @@ class CopyCat extends Bureaucrat
             player_id: $player->id,
             round_id: $round->id,
             amount: $money_earned,
-            activity_feed_description: 'You collected the earnings from '.$target->industry,
+            activity_feed_description: 'You collected the earnings from '.$target->name,
             type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
         );
     }

@@ -17,11 +17,11 @@ class SubsidySloth extends Bureaucrat
 
     const SLUG = 'subsidy-sloth';
 
-    const SHORT_DESCRIPTION = "Guess which industry will have the least money, and give them money if you're right.";
+    const SHORT_DESCRIPTION = "Guess which Player will have the least money, and give them money if you're right.";
 
     const DIALOG = 'Sometimes you have to give a little to get a little.';
 
-    const EFFECT = 'Select an industry. If that industry has the least money at the end of this round (before everyone receives income), I will give them 7 money.';
+    const EFFECT = 'Select an Player. If that Player has the least money at the end of this round (before everyone receives income), I will give them 7 money.';
 
     public static function suitability(RoundConstructor $constructor): int
     {
@@ -36,10 +36,10 @@ class SubsidySloth extends Bureaucrat
             'player' => [
                 'type' => 'select',
                 'options' => $round->game->players
-                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
+                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->name])
                     ->toArray(),
-                'label' => 'Industry',
-                'placeholder' => 'Select an industry',
+                'label' => 'Player',
+                'placeholder' => 'Select a Player',
                 'rules' => 'required',
             ],
         ];

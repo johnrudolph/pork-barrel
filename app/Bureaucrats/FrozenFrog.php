@@ -18,11 +18,11 @@ class FrozenFrog extends Bureaucrat
 
     const SLUG = 'frozen-frog';
 
-    const SHORT_DESCRIPTION = 'Freeze half of the assets of one industry for one round.';
+    const SHORT_DESCRIPTION = 'Freeze half of the assets of one Player for one round.';
 
     const DIALOG = "It's going to be a cold winter for whomever I investigate next round.";
 
-    const EFFECT = 'Choose an industry. At the end of this round, I will freeze half of their money, and it will not be available next round.';
+    const EFFECT = 'Choose a Player. At the end of this round, I will freeze half of their money, and it will not be available next round.';
 
     const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_round_ended'];
 
@@ -41,10 +41,10 @@ class FrozenFrog extends Bureaucrat
             'player' => [
                 'type' => 'select',
                 'options' => $round->game->players
-                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
+                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->name])
                     ->toArray(),
-                'label' => 'Industry',
-                'placeholder' => 'Select an industry',
+                'label' => 'Player',
+                'placeholder' => 'Select a Player',
                 'rules' => 'required',
             ],
         ];

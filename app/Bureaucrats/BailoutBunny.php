@@ -55,8 +55,8 @@ class BailoutBunny extends Bureaucrat
             Headline::create([
                 'round_id' => $round->id,
                 'game_id' => $round->game()->id,
-                'headline' => $player->industry.' bailed out!',
-                'description' => 'After hitting rock bottom, the '.$player->industry." industry has received a bailout. In order to have a just society, it's important that the mega-rich cannot fail. This corporate welfare will help this industry pick themselves up by their own bootstraps, and then put that boot right back on your neck.",
+                'headline' => $player->name.' bailed out!',
+                'description' => 'After hitting rock bottom, '.$player->name." received a bailout. In order to have a just society, it's important that the mega-rich cannot fail. This corporate welfare will help them pick themselves up by their own bootstraps, and then put that boot right back on your neck.",
             ]);
         }
     }
