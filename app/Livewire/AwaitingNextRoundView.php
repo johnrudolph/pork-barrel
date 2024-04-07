@@ -58,7 +58,7 @@ class AwaitingNextRoundView extends Component
 
                 return [
                     'bureaucrat' => $o->bureaucrat,
-                    'industry' => $o->player()->industry,
+                    'player_name' => $o->player()->name,
                     'player_id' => $o->player_id,
                     'offer' => $o->netOffer(),
                     'awarded' => $o->awarded,

@@ -35,7 +35,6 @@ class GameOverView extends Component
     public function scores()
     {
         return $this->game->players->map(fn ($p) => [
-            'industry' => $p->state()->industry,
             'player_id' => $p->id,
             'player_name' => $p->user->name,
             'money' => $p->state()->availableMoney(),

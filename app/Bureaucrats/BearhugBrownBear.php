@@ -24,7 +24,7 @@ class BearhugBrownBear extends Bureaucrat
 
     const DIALOG = "You see something you want, you go and take it. It's the Pork Barrel way.";
 
-    const EFFECT = 'Select a Industry. If they have Perks, I will steal a random one from them and give it to you. If they do not have any Perks, you will be fined 5 money.';
+    const EFFECT = 'Select a Player. If they have Perks, I will steal a random one from them and give it to you. If they do not have any Perks, you will be fined 5 money.';
 
     public static function options(Round $round, Player $player)
     {
@@ -33,10 +33,10 @@ class BearhugBrownBear extends Bureaucrat
                 'type' => 'select',
                 'options' => $round->game->players
                     ->reject(fn ($p) => $p->id === $player->id)
-                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->industry])
+                    ->mapWithKeys(fn ($p) => [$p->id => $p->state()->name])
                     ->toArray(),
                 'label' => 'Bureaucrat',
-                'placeholder' => 'Select an industry',
+                'placeholder' => 'Select a Player',
                 'rules' => 'required',
             ],
         ];
@@ -58,7 +58,7 @@ class BearhugBrownBear extends Bureaucrat
                 player_id: $player->id,
                 round_id: $round->id,
                 amount: 5,
-                activity_feed_description: 'You attempted to give a bear hug to '.$target->industry.', but they had no Perks to steal.',
+                activity_feed_description: 'You attempted to give a bear hug to '.$target->name.', but they had no Perks to steal.',
                 type: MoneyLogEntry::TYPE_PENALIZE,
             );
 
@@ -83,7 +83,7 @@ class BearhugBrownBear extends Bureaucrat
             'round_id' => $round->id,
             'game_id' => $round->game()->id,
             'headline' => 'Brutal bear hug shocks markets',
-            'description' => $player->industry.' stole '.$perk::NAME.' from '.$target->industry.'.',
+            'description' => $player->name.' stole '.$perk::NAME.' from '.$target->name.'.',
         ]);
     }
 
@@ -94,7 +94,7 @@ class BearhugBrownBear extends Bureaucrat
         $target = PlayerState::load($offer->data['player']);
 
         return $hug_was_successful
-            ? 'You gave a bear hug to '.$target->industry.' and stole their Perk.'
-            : 'You attempted to give a bear hug to '.$target->industry.', but they had no Perks to steal.';
+            ? 'You gave a bear hug to '.$target->name.' and stole their Perk.'
+            : 'You attempted to give a bear hug to '.$target->name.', but they had no Perks to steal.';
     }
 }
