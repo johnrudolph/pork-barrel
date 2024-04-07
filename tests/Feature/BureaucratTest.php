@@ -1027,7 +1027,7 @@ it('rewards you for 20 percent of earnings with Kickback Kingfisher', function (
     $this->assertEquals(32, $this->john->state()->availableMoney());
 });
 
-it('is both sane and normal to have Elk and Fruit Fly', function () {
+it('regression test for interaction of Elk and Fruit Fly', function () {
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -1112,4 +1112,51 @@ it('is both sane and normal to have Elk and Fruit Fly', function () {
 
     $this->assertEquals(19, $this->john->state()->availableMoney());
     $this->assertEquals(1, $locust_offer->amountToChargePlayer());
+});
+
+it('regression test for interaction of Watchdog and Tied Hog', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [TiedHog::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), TiedHog::class, 1);
+
+    $this->endCurrentRound();
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [Watchdog::class, LoyaltyLocust::class],
+        round_template: RoundTemplate::class,
+    );
+
+    // since we tied, Daniel's offer is modified, and John should win outright
+    $this->john->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 2);
+    $this->daniel->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 2);
+
+    // Daniel guesses John wins
+    $this->daniel->submitOffer(
+        $this->game->currentRound(),
+        Watchdog::class,
+        1,
+        ['bureaucrat' => LoyaltyLocust::class, 'player' => $this->john->id]
+    );
+
+    // Jacob guesses Daniel wins
+    $this->jacob->submitOffer(
+        $this->game->currentRound(),
+        Watchdog::class,
+        1,
+        ['bureaucrat' => LoyaltyLocust::class, 'player' => $this->daniel->id]
+    );
+
+    $this->endCurrentRound();
+
+    $this->assertEquals(4, $this->john->state()->availableMoney());
+    $this->assertEquals(9, $this->daniel->state()->availableMoney());
 });

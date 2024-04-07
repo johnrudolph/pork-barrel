@@ -50,12 +50,17 @@ class Watchdog extends Bureaucrat
 
     public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
-        if (
-            $round->offers()->filter(fn ($o) => $o->awarded === true
-                && $o->bureaucrat === $offer->bureaucrat
-                && $o->player_id === $offer->player_id
-            )
-        ) {
+        $acusee_id = (int) $offer->data['player'];
+
+        $acused_bureaucrat = $offer->data['bureaucrat'];
+        
+        $acusee_won_bureaucrat = $round->offers()->filter(fn ($o) => 
+            $o->awarded === true
+            && $o->bureaucrat === $acused_bureaucrat
+            && $o->player_id === $acusee_id
+        )->count() > 0;
+        
+        if ($acusee_won_bureaucrat) {
             PlayerSpentMoney::fire(
                 player_id: (int) $offer->data['player'],
                 round_id: $round->id,
