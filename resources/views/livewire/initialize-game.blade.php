@@ -9,7 +9,8 @@
                         See how the sausage is made.
                     </h2>
                     <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-600">
-                        There's money to be made on Pork Barrel farms. <br/> Let's get to work.
+                        There's money to be made on Pork Barrel farms. <br/>
+                        <a href="{{ route('rules') }}" class="font-bold">Read the rules</a>
                     </p>
                     <div class="mt-10 flex items-center justify-center gap-x-6">
                         <button 
