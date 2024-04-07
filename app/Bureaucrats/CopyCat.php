@@ -52,7 +52,7 @@ class CopyCat extends Bureaucrat
 
         $money_earned = $target
             ->money_history
-            ->filter(fn ($entry) => $entry->type === MoneyLogEntry::TYPE_AWARD
+            ->filter(fn ($entry) => $entry->type === MoneyLogEntry::TYPE_BUREAUCRAT_REWARD
                 && $entry->round_number === $round->round_number
             )
             ->sum(fn ($entry) => $entry->amount);
@@ -62,7 +62,7 @@ class CopyCat extends Bureaucrat
             round_id: $round->id,
             amount: $money_earned,
             activity_feed_description: 'You collected the earnings from '.$target->industry,
-            type: MoneyLogEntry::TYPE_AWARD,
+            type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
         );
     }
 }

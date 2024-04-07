@@ -43,14 +43,14 @@ class BrinksmanshipBronco extends Bureaucrat
                 round_id: $round->id,
                 amount: 10,
                 activity_feed_description: 'You were the only player to offer for Brinksmanship Bronco.',
-                type: MoneyLogEntry::TYPE_AWARD,
+                type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
             )
             : PlayerReceivedMoney::fire(
                 player_id: $player->id,
                 round_id: $round->id,
                 amount: intval($sum_offered / $number_of_winners),
                 activity_feed_description: 'You received the all the offers for Brinksmanship Bronco.',
-                type: MoneyLogEntry::TYPE_AWARD,
+                type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
             );
     }
 

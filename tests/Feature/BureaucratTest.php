@@ -21,7 +21,6 @@ use App\Bureaucrats\KickbackKingfisher;
 use App\Bureaucrats\LoyaltyLocust;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
-use App\Bureaucrats\MuckrakingMule;
 use App\Bureaucrats\ObstructionOx;
 use App\Bureaucrats\PonziPony;
 use App\Bureaucrats\RejectedReindeer;
@@ -69,7 +68,7 @@ it('gives player random amount of money for winning Gamblin Goat', function () {
     $this->assertEquals(
         $amount_earned,
         $this->john->state()->money_history
-            ->filter(fn ($entry) => $entry->type === 'award')
+            ->filter(fn ($entry) => $entry->type === 'bureaucrat_reward')
             ->first()
             ->amount
     );
@@ -457,47 +456,6 @@ it('rewards players for correctly guessing who will be in first or last place', 
     $this->assertEquals(8, $this->john->state()->availableMoney());
     $this->assertEquals(10, $this->daniel->state()->availableMoney());
     $this->assertEquals(3, $this->jacob->state()->availableMoney());
-});
-
-it('rewards players for guessing which player belongs to an industry', function () {
-    RoundStarted::fire(
-        game_id: $this->game->id,
-        round_number: 1,
-        round_id: $this->game->state()->round_ids[0],
-        bureaucrats: [MuckrakingMule::class],
-        round_template: RoundTemplate::class,
-    );
-
-    $this->daniel->submitOffer(
-        $this->game->currentRound(),
-        MuckrakingMule::class,
-        1,
-        [
-            'player' => $this->john->id,
-            'industry' => $this->john->state()->industry,
-        ]
-    );
-
-    $this->jacob->submitOffer(
-        $this->game->currentRound(),
-        MuckrakingMule::class,
-        1,
-        [
-            'player' => $this->john->id,
-            'industry' => $this->daniel->state()->industry,
-        ]
-    );
-
-    $this->endCurrentRound();
-
-    $this->assertEquals(5, $this->john->state()->availableMoney());
-    $this->assertEquals(9, $this->daniel->state()->availableMoney());
-    $this->assertEquals(4, $this->jacob->state()->availableMoney());
-
-    $this->assertDatabaseHas('headlines', [
-        'headline' => 'Muckraking Mule Exposes Lobbyist',
-        'description' => "{$this->john->user->name} was exposed as a corporate lobbyist for {$this->john->state()->industry}.",
-    ]);
 });
 
 it('freezes half the moeny of a player with the Frozen Frog', function () {
@@ -1067,4 +1025,91 @@ it('rewards you for 20 percent of earnings with Kickback Kingfisher', function (
     $this->endCurrentRound();
 
     $this->assertEquals(32, $this->john->state()->availableMoney());
+});
+
+it('is both sane and normal to have Elk and Fruit Fly', function () {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [EqualityElk::class, FrugalFruitFly::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), EqualityElk::class, 1);
+    $this->john->submitOffer($this->game->currentRound(), FrugalFruitFly::class, 1);
+
+    $this->endCurrentRound();
+
+    // Fruit Fly has no effect because John only offered 1 and had no competitors
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [LoyaltyLocust::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 1);
+
+    $locust_offer = $this->game->currentRound()->state()->offers()
+        ->filter(fn ($o) => $o->bureaucrat === LoyaltyLocust::class)
+        ->first();
+
+    $this->endCurrentRound();
+
+    $this->assertEquals(9, $this->john->state()->availableMoney());
+    $this->assertEquals(11, $locust_offer->netOffer());
+    $this->assertEquals(1, $locust_offer->amountToChargePlayer());
+
+    // Fruit Fly modifies by only the amount overpaid, even though elk makes the netOffer huge
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 3,
+        round_id: $this->game->state()->round_ids[2],
+        bureaucrats: [LoyaltyLocust::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 14);
+    $this->daniel->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 10);
+
+    $locust_offer = $this->game->currentRound()->state()->offers()
+        ->filter(fn ($o) => $o->bureaucrat === LoyaltyLocust::class
+            && $o->player_id === $this->john->id
+        )
+        ->first();
+
+    $this->endCurrentRound();
+
+    $this->assertEquals(7, $this->john->state()->availableMoney());
+    $this->assertEquals(11, $locust_offer->amountToChargePlayer());
+
+    // Fruit Fly modifies nothing because the offer was not overpaid, despite the netOffer() being huge
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 4,
+        round_id: $this->game->state()->round_ids[3],
+        bureaucrats: [LoyaltyLocust::class],
+        round_template: RoundTemplate::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 5);
+
+    $locust_offer = $this->game->currentRound()->state()->offers()
+        ->filter(fn ($o) => $o->bureaucrat === LoyaltyLocust::class
+            && $o->player_id === $this->john->id
+        )
+        ->first();
+
+    $this->endCurrentRound();
+
+    // dd($this->daniel->state()->money_history->toArray());
+
+    $this->assertEquals(19, $this->john->state()->availableMoney());
+    $this->assertEquals(1, $locust_offer->amountToChargePlayer());
 });

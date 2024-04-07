@@ -49,7 +49,7 @@ class BailoutBunny extends Bureaucrat
                 round_id: $round->id,
                 amount: 10,
                 activity_feed_description: 'You received a bailout. No one needs a stronger safety net than you.',
-                type: MoneyLogEntry::TYPE_AWARD,
+                type: MoneyLogEntry::TYPE_PERK_REWARD,
             );
 
             Headline::create([

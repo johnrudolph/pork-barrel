@@ -53,7 +53,7 @@ class RejectedReindeer extends Bureaucrat
                 round_id: $round->id,
                 amount: 4,
                 activity_feed_description: 'None of your offers were accepted. You received 4 money.',
-                type: MoneyLogEntry::TYPE_AWARD,
+                type: MoneyLogEntry::TYPE_PERK_REWARD,
             );
         }
     }

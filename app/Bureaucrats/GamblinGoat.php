@@ -27,7 +27,7 @@ class GamblinGoat extends Bureaucrat
             round_id: $round->id,
             amount: rand(1, 10),
             activity_feed_description: "The Gamlin' Goat's scheme paid off!",
-            type: MoneyLogEntry::TYPE_AWARD,
+            type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
         );
     }
 

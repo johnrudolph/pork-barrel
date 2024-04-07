@@ -80,6 +80,16 @@ class RoundEnded extends Event
         $state->offers()->filter(fn ($o) => $o->awarded)
             ->each(fn ($o) => $o->bureaucrat::handleEffectAfterEndOfRound($o->player(), $o->round(), $o));
 
+        // apply all player perks after the round ends
+        $state->game()->playerStates()
+            ->each(fn ($p) => $p->perks
+                ->filter(fn ($perk) => $perk::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['after_round_ends'])
+                ->each(fn ($perk) => $perk::handlePerkInFutureRound(
+                    $p,
+                    RoundState::load($this->round_id)
+                ))
+            );
+
         if ($state->round_number === 8) {
             GameEnded::fire(game_id: $state->game_id);
         }

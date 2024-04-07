@@ -33,7 +33,9 @@ class KickbackKingfisher extends Bureaucrat
     public static function handleOnAwarded(PlayerState $player, RoundState $round, OfferState $offer)
     {
         $reward = $player->money_history
-            ->filter(fn ($entry) => $entry->type === MoneyLogEntry::TYPE_AWARD)
+            ->filter(fn ($entry) => $entry->type === MoneyLogEntry::TYPE_BUREAUCRAT_REWARD
+                || $entry->type === MoneyLogEntry::TYPE_PERK_REWARD
+            )
             ->sum(fn ($entry) => $entry->amount) * 0.2;
 
         PlayerReceivedMoney::fire(
@@ -41,7 +43,7 @@ class KickbackKingfisher extends Bureaucrat
             round_id: $round->id,
             amount: intval($reward),
             activity_feed_description: 'Kickbacks from the Kingfisher',
-            type: MoneyLogEntry::TYPE_AWARD,
+            type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
         );
     }
 }

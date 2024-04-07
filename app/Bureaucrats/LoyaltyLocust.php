@@ -44,7 +44,7 @@ class LoyaltyLocust extends Bureaucrat
             round_id: $round->id,
             amount: 2 ** $exponent,
             activity_feed_description: 'Loyalty Locust has rewarded you for the '.$text.' time.',
-            type: MoneyLogEntry::TYPE_AWARD,
+            type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
         );
     }
 }

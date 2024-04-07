@@ -23,7 +23,7 @@ class CampaignSeason extends RoundTemplate
                 round_id: $round_state->id,
                 activity_feed_description: 'Received campaign kickbacks',
                 amount: 5,
-                type: MoneyLogEntry::TYPE_AWARD,
+                type: MoneyLogEntry::TYPE_ROUND_MODIFIER_REWARD,
             )
             );
     }

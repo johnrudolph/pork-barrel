@@ -29,7 +29,7 @@ class Hegemony extends RoundTemplate
                     round_id: $round_state->id,
                     activity_feed_description: 'Received hegemony refund',
                     amount: (int) ceil($max_offer / 2),
-                    type: MoneyLogEntry::TYPE_AWARD,
+                    type: MoneyLogEntry::TYPE_ROUND_MODIFIER_REWARD,
                 );
             }
         });

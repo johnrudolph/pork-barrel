@@ -15,7 +15,7 @@ class DoubleDonkey extends Bureaucrat
 
     const SLUG = 'double-donkey';
 
-    const SHORT_DESCRIPTION = 'Double your earnings this round.';
+    const SHORT_DESCRIPTION = 'Double your bureaucrat awards this round.';
 
     const DIALOG = 'We like to celebrate the winners in this town.';
 
@@ -31,9 +31,10 @@ class DoubleDonkey extends Bureaucrat
     public static function handleEffectAfterEndOfRound(PlayerState $player, RoundState $round, OfferState $offer)
     {
         $money_earned = $player->money_history
-            ->filter(fn ($entry) => $entry->type === MoneyLogEntry::TYPE_AWARD
-                && $entry->round_number === $round->round_number
+            ->filter(fn ($entry) => $entry->type === MoneyLogEntry::TYPE_BUREAUCRAT_REWARD
+                || $entry->type === MoneyLogEntry::TYPE_PERK_REWARD
             )
+            ->filter(fn ($entry) => $entry->round_number === $round->round_number)
             ->sum(fn ($entry) => $entry->amount);
 
         PlayerReceivedMoney::fire(
@@ -41,7 +42,7 @@ class DoubleDonkey extends Bureaucrat
             round_id: $round->id,
             amount: $money_earned,
             activity_feed_description: 'You doubled your earnings from the previous round.',
-            type: MoneyLogEntry::TYPE_AWARD,
+            type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
         );
     }
 }
