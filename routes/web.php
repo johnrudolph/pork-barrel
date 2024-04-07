@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect('register');
+    return view('welcome');
 });
 
 Route::get('rules', RulesPage::class)->name('rules');
