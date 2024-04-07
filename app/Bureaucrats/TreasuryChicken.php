@@ -68,7 +68,7 @@ class TreasuryChicken extends Bureaucrat
             round_id: $round->id,
             amount: intval($player->money_in_treasury * $multiplier),
             activity_feed_description: 'Received '.$text.'% return on money saved in treasury',
-            type: MoneyLogEntry::TYPE_AWARD,
+            type: MoneyLogEntry::TYPE_TREASURY,
         );
     }
 

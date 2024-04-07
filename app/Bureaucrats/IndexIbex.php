@@ -44,7 +44,7 @@ class IndexIbex extends Bureaucrat
             round_id: $round->id,
             amount: (int) $average_earnings,
             activity_feed_description: 'You collected the average earnings from all industries.',
-            type: MoneyLogEntry::TYPE_AWARD,
+            type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
         );
     }
 }

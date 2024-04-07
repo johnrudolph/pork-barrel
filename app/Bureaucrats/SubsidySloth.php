@@ -58,7 +58,7 @@ class SubsidySloth extends Bureaucrat
                 round_id: $round->id,
                 amount: 7,
                 activity_feed_description: 'You received a subsidy from Subsidy Sloth.',
-                type: MoneyLogEntry::TYPE_AWARD,
+                type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
             );
         }
     }

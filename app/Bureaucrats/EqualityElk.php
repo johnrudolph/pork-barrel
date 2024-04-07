@@ -17,7 +17,7 @@ class EqualityElk extends Bureaucrat
 
     const SHORT_DESCRIPTION = 'Get +10 for your offers if you are in last place.';
 
-    const EFFECT = 'If you are in last place, I will add 10 money to each of your offers (does not apply to Treasury Chicken).';
+    const EFFECT = 'For the rest of the game, if you are alone in last place, I will add 10 money to each of your offers (does not apply to Treasury Chicken).';
 
     const DIALOG = 'Sometimes having the least is a real cool hand.';
 
@@ -41,10 +41,19 @@ class EqualityElk extends Bureaucrat
 
     public static function handlePerkInFutureRound(PlayerState $player, RoundState $round)
     {
-        $lowest_score = $round->game()->playerStates()
+        $player_states = $round->game()->playerStates();
+
+        $lowest_score = $player_states
             ->min(fn ($p) => $p->availableMoney());
 
-        if ($player->availableMoney() > $lowest_score) {
+        $there_is_a_tie_for_last_place = $player_states
+            ->filter(fn ($p) => $p->availableMoney() === $lowest_score)
+            ->count() > 1;
+
+        if (
+            $player->availableMoney() > $lowest_score
+            || $there_is_a_tie_for_last_place
+        ) {
             return;
         }
 

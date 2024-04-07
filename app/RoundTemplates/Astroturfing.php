@@ -23,7 +23,7 @@ class Astroturfing extends RoundTemplate
                 round_id: $o->round_id,
                 activity_feed_description: 'Received astroturfing refund',
                 amount: $o->netOffer(),
-                type: MoneyLogEntry::TYPE_AWARD,
+                type: MoneyLogEntry::TYPE_ROUND_MODIFIER_REWARD,
             ));
     }
 }

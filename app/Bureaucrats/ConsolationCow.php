@@ -46,7 +46,7 @@ class ConsolationCow extends Bureaucrat
             round_id: $round->id,
             amount: $consolation,
             activity_feed_description: 'Consolation funds from the Cow',
-            type: MoneyLogEntry::TYPE_AWARD,
+            type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
         );
     }
 }

@@ -20,7 +20,11 @@ class MoneyLogEntry extends LivewireDTO implements SerializedByVerbs
     ) {
     }
 
-    public const TYPE_AWARD = 'award';
+    public const TYPE_BUREAUCRAT_REWARD = 'bureaucrat_reward';
+
+    public const TYPE_PERK_REWARD = 'perk_reward';
+
+    public const TYPE_ROUND_MODIFIER_REWARD = 'round_modifier_reward';
 
     public const TYPE_FREEZE = 'freeze';
 

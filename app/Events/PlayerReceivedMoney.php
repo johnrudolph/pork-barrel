@@ -22,12 +22,16 @@ class PlayerReceivedMoney extends Event
 
     public function apply(PlayerState $state)
     {
+        $amount_zeroed = $this->amount < 0
+            ? min($this->amount, $state->availableMoney())
+            : $this->amount;
+
         $state->money_history->push(new MoneyLogEntry(
             player_id: $this->player_id,
             round_id: $this->round_id,
             round_number: $state->game()->round_ids->search($this->round_id) + 1,
             type: $this->type,
-            amount: $this->amount,
+            amount: $amount_zeroed,
             description: $this->activity_feed_description,
             balance: $state->availableMoney() + $this->amount,
         ));

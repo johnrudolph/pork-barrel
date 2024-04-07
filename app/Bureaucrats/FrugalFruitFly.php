@@ -17,7 +17,7 @@ class FrugalFruitFly extends Bureaucrat
 
     const SHORT_DESCRIPTION = 'Only spend what is necessary when you win an auction.';
 
-    const EFFECT = 'For the rest of the game, when you have the highest offer for a Bureaucrat, I will reduce your offer as low as possible so that you only win by 1 money (does not apply to Treasury Chicken).';
+    const EFFECT = 'At the end of each auction, if you overpaid for any bureaucrat that you won, I will modify your offer so that it is as low as possible while still beating your opponents (does not apply to Treasury Chicken).';
 
     const DIALOG = 'Wasteful spending is for the other party.';
 
@@ -56,6 +56,10 @@ class FrugalFruitFly extends Bureaucrat
                 $player_offer = $all_offers_for_b
                     ->filter(fn ($o) => $o->player_id === $player->id)->first();
 
+                if (! $player_offer) {
+                    return;
+                }
+
                 $player_has_top_offer = $offers_with_top_offer
                     ->filter(fn ($o) => $o->player_id === $player->id)
                     ->count() > 0;
@@ -68,41 +72,26 @@ class FrugalFruitFly extends Bureaucrat
                     return;
                 }
 
-                $top_offer_is_tied = $offers_with_top_offer->count() > 1;
-
-                if ($top_offer_is_tied) {
-                    return;
-                }
-
-                $there_are_multiple_offers = $all_offers_for_b->count() > 1;
-
-                if (! $there_are_multiple_offers) {
-                    $amount_modified = 1 - $top_offer_amount;
-
-                    OfferAmountModified::fire(
-                        player_id: $player->id,
-                        round_id: $round->id,
-                        offer_id: $player_offer->id,
-                        amount_modified: $amount_modified,
-                        modifier_description: $amount_modified.' from Frugal Fruit Fly perk',
-                        is_charged_to_player: true,
-                    );
-
-                    return;
-                }
+                $amount_to_pay = $player_offer->amountToChargePlayer();
 
                 $second_highest_offer_amount = $all_offers_for_b
                     ->reject(fn ($o) => $o->player_id === $player->id)
                     ->max(fn ($o) => $o->netOffer());
 
-                $amount_modified = 1 - $top_offer_amount + $second_highest_offer_amount;
+                $target_amount = $second_highest_offer_amount + 1;
+
+                if ($amount_to_pay <= $target_amount) {
+                    return;
+                }
+
+                $amount_to_reimburse = $target_amount - $amount_to_pay;
 
                 OfferAmountModified::fire(
                     player_id: $player->id,
                     round_id: $round->id,
                     offer_id: $player_offer->id,
-                    amount_modified: $amount_modified,
-                    modifier_description: $amount_modified.' from Frugal Fruit Fly perk',
+                    amount_modified: $amount_to_reimburse,
+                    modifier_description: 'Reduced by Frugal Fruit Fly',
                     is_charged_to_player: true,
                 );
             });

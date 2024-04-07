@@ -20,7 +20,6 @@ use App\Bureaucrats\KickbackKingfisher;
 use App\Bureaucrats\LoyaltyLocust;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
-use App\Bureaucrats\MuckrakingMule;
 use App\Bureaucrats\ObstructionOx;
 use App\Bureaucrats\PonziPony;
 use App\Bureaucrats\RejectedReindeer;
@@ -84,7 +83,6 @@ class InterestRateMadness extends GameTemplate
                 'bureaucrats' => [
                     BearhugBrownBear::class,
                     Watchdog::class,
-                    MuckrakingMule::class,
                     FrozenFrog::class,
                     GamblinGoat::class,
                 ],

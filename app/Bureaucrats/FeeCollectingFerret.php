@@ -68,7 +68,7 @@ class FeeCollectingFerret extends Bureaucrat
                 round_id: $round->id,
                 amount: $number_of_other_offers,
                 activity_feed_description: 'You received fees for rejected offers.',
-                type: MoneyLogEntry::TYPE_AWARD,
+                type: MoneyLogEntry::TYPE_PERK_REWARD,
             );
         });
     }

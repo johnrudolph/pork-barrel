@@ -48,7 +48,7 @@ class MinorityLeaderMink extends Bureaucrat
                 round_id: $round->id,
                 amount: 10,
                 activity_feed_description: "You made no offers. That'll show 'em",
-                type: MoneyLogEntry::TYPE_AWARD,
+                type: MoneyLogEntry::TYPE_BUREAUCRAT_REWARD,
             );
         }
     }

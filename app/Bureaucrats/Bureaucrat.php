@@ -27,10 +27,11 @@ class Bureaucrat
 
     const HOOKS = [
         'on_round_started' => 'on_round_started',
+        'on_awaiting_results' => 'on_awaiting_results',
         'on_auction_ended' => 'on_auction_ended',
         'on_round_ended' => 'on_round_ended',
         'on_spent_money' => 'on_spent_money',
-        'on_awaiting_results' => 'on_awaiting_results',
+        'after_round_ends' => 'after_round_ends',
     ];
 
     public static function all()
@@ -56,7 +57,6 @@ class Bureaucrat
             LoyaltyLocust::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
-            MuckrakingMule::class,
             ObstructionOx::class,
             PonziPony::class,
             RejectedReindeer::class,
