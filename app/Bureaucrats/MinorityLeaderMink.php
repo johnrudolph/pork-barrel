@@ -42,7 +42,7 @@ class MinorityLeaderMink extends Bureaucrat
 
     public static function handleInFutureRound(PlayerState $player, RoundState $round, OfferState $original_offer)
     {
-        if ($round->offers()->filter(fn ($o) => $o->player_id)->count() === 0) {
+        if ($round->offers()->filter(fn ($o) => $o->player_id === $original_offer->player_id)->count() === 0) {
             PlayerReceivedMoney::fire(
                 player_id: $player->id,
                 round_id: $round->id,

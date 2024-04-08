@@ -1,41 +1,44 @@
 <?php
 
-use App\Bureaucrats\BailoutBunny;
-use App\Bureaucrats\BearhugBrownBear;
-use App\Bureaucrats\BrinksmanshipBronco;
-use App\Bureaucrats\Bureaucrat;
-use App\Bureaucrats\ConsolationCow;
+use App\States\OfferState;
 use App\Bureaucrats\CopyCat;
-use App\Bureaucrats\CronyCrocodile;
-use App\Bureaucrats\DoubleDonkey;
+use App\Bureaucrats\TiedHog;
+use App\Events\AuctionEnded;
+use App\Events\RoundStarted;
+use App\Bureaucrats\Watchdog;
+use App\Bureaucrats\IndexIbex;
+use App\Bureaucrats\PonziPony;
+use App\Bureaucrats\TaxTurkey;
+use Thunk\Verbs\Facades\Verbs;
+use App\Bureaucrats\Bureaucrat;
+use App\Bureaucrats\FrozenFrog;
 use App\Bureaucrats\EqualityElk;
-use App\Bureaucrats\FeeCollectingFerret;
 use App\Bureaucrats\FocusedFoal;
 use App\Bureaucrats\ForecastFox;
-use App\Bureaucrats\FrozenFrog;
-use App\Bureaucrats\FrugalFruitFly;
 use App\Bureaucrats\GamblinGoat;
-use App\Bureaucrats\IndexIbex;
-use App\Bureaucrats\InterestInchworm;
-use App\Bureaucrats\KickbackKingfisher;
+use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\DoubleDonkey;
+use App\Bureaucrats\SubsidySloth;
 use App\Bureaucrats\LoyaltyLocust;
+use App\Bureaucrats\ObstructionOx;
+use App\Bureaucrats\ConsolationCow;
+use App\Bureaucrats\CronyCrocodile;
+use App\Bureaucrats\FrugalFruitFly;
+use App\Bureaucrats\TreasuryChicken;
+use App\Bureaucrats\BearhugBrownBear;
+use App\Bureaucrats\InterestInchworm;
+use App\Bureaucrats\RejectedReindeer;
+use App\Events\PlayerAwaitingResults;
+use App\RoundTemplates\RoundTemplate;
+use App\RoundTemplates\CampaignSeason;
+use App\Bureaucrats\KickbackKingfisher;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
-use App\Bureaucrats\ObstructionOx;
-use App\Bureaucrats\PonziPony;
-use App\Bureaucrats\RejectedReindeer;
-use App\Bureaucrats\SubsidySloth;
-use App\Bureaucrats\TaxTurkey;
-use App\Bureaucrats\TiedHog;
-use App\Bureaucrats\TreasuryChicken;
-use App\Bureaucrats\Watchdog;
-use App\Events\AuctionEnded;
-use App\Events\PlayerAwaitingResults;
-use App\Events\RoundStarted;
-use App\RoundTemplates\RoundTemplate;
-use App\States\OfferState;
+use App\RoundTemplates\LameDuckSession;
+use App\Bureaucrats\BrinksmanshipBronco;
+use App\Bureaucrats\FeeCollectingFerret;
+use App\RoundTemplates\AlwaysABridesmaid;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
@@ -1159,4 +1162,71 @@ it('regression test for interaction of Watchdog and Tied Hog', function () {
 
     $this->assertEquals(4, $this->john->state()->availableMoney());
     $this->assertEquals(9, $this->daniel->state()->availableMoney());
+});
+
+it('regression test for minority leader not working in specific game', function() {
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 1,
+        round_id: $this->game->state()->round_ids[0],
+        bureaucrats: [
+            BailoutBunny::class,
+            RejectedReindeer::class,
+            TiedHog::class,
+            FrugalFruitFly::class,
+            CronyCrocodile::class,
+        ],
+        round_template: AlwaysABridesmaid::class,
+    );
+
+    $this->daniel->submitOffer($this->game->currentRound(), BailoutBunny::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), RejectedReindeer::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), TiedHog::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), FrugalFruitFly::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), CronyCrocodile::class, 1);
+    $this->john->submitOffer($this->game->currentRound(), FrugalFruitFly::class, 2);
+    $this->john->submitOffer($this->game->currentRound(), CronyCrocodile::class, 3);
+
+    $this->endCurrentRound();
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 2,
+        round_id: $this->game->state()->round_ids[1],
+        bureaucrats: [
+            FocusedFoal::class,
+            FeeCollectingFerret::class,
+            MinorityLeaderMink::class,
+            EqualityElk::class,
+            LoyaltyLocust::class,
+        ],
+        round_template: CampaignSeason::class,
+    );
+
+
+    $this->daniel->submitOffer($this->game->currentRound(), FocusedFoal::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), FeeCollectingFerret::class, 2);
+    $this->daniel->submitOffer($this->game->currentRound(), MinorityLeaderMink::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), EqualityElk::class, 1);
+    $this->daniel->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 2);
+    $this->john->submitOffer($this->game->currentRound(), LoyaltyLocust::class, 6);
+
+    $this->endCurrentRound();
+
+    RoundStarted::fire(
+        game_id: $this->game->id,
+        round_number: 3,
+        round_id: $this->game->state()->round_ids[2],
+        bureaucrats: [
+            ForecastFox::class,
+            TreasuryChicken::class,
+        ],
+        round_template: LameDuckSession::class,
+    );
+
+    $this->john->submitOffer($this->game->currentRound(), ForecastFox::class, 7, ['player' => $this->john->id]);
+
+    $this->endCurrentRound();
+
+    $this->assertEquals($this->daniel->state()->availableMoney(), 25);
 });
