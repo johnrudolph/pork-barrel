@@ -7,6 +7,9 @@
                     <p class="mt-6">
                         Ready to see how the sausage is made? Pork Barrel is a fast-paced multiplayer auction game. You make money by bribing the corrupt bureaucrats at Pork Barrel farms. Outwit your opponents, bluff, and bribe your way to untold fortunes.
                     </p>
+                    <div class="my-8 mx-auto text-center">
+                        <a href="{{ route('rules') }}" class="underline">Read the rules</a>
+                    </div>
                 </div>
                 <div class="mt-8 flex flex-row justify-center items-center space-x-4">
                     <span class="text-md py-2 px-4 bg-teal rounded-md text-white">
@@ -15,7 +18,6 @@
                     <span class="text-md py-2 px-4 bg-purple rounded-md text-white">
                         <a href="{{ route('register') }}">Create Account</a>
                     </span>
-                    <a href="{{ route('rules') }}">Read the rules</a>
                 </div>
             </div>
         </x-app-layout>
