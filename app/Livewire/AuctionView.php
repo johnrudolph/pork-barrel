@@ -22,6 +22,10 @@ class AuctionView extends Component
 
     public int $money;
 
+    public int $money_in_treasury;
+
+    public int $treasury_percent;
+
     protected $listeners = [
         'echo:games.{game.id},GameUpdated' => '$refresh',
         'echo:players.{player.id},PlayerUpdated' => '$refresh',
@@ -85,6 +89,10 @@ class AuctionView extends Component
     public function initializeProperties(Game $game, Round $round)
     {
         $this->money = $this->player->state()->availableMoney();
+
+        $this->money_in_treasury = $this->player->state()->money_in_treasury;
+
+        $this->treasury_percent = $this->game->state()->interest_rate * 100;
 
         foreach ($this->round->state()->bureaucrats as $b) {
             $this->offers[$b::SLUG] = new OfferDTO(

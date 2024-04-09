@@ -8,7 +8,6 @@ use App\Bureaucrats\FrozenFrog;
 use App\Bureaucrats\GamblinGoat;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
-use App\Bureaucrats\MuckrakingMule;
 use App\Bureaucrats\SubsidySloth;
 use App\Bureaucrats\TaxTurkey;
 use App\Bureaucrats\TreasuryChicken;
@@ -21,7 +20,7 @@ class CampaignFinanceReform extends RoundTemplate
 {
     const HEADLINE = 'Campaign Finance Reform';
 
-    const EFFECT = 'You will receive the benefit of any bureaucrat who you offer 4 money to, even if you do not have the highest offer for them.';
+    const EFFECT = 'You will receive the benefit of any bureaucrat who you offer at least 4 money to, even if you do not have the highest offer for them.';
 
     const FLAVOR_TEXT = 'A grand new experiment in democracy levels the playing field for all.';
 
@@ -43,7 +42,6 @@ class CampaignFinanceReform extends RoundTemplate
             GamblinGoat::class,
             MajorityLeaderMare::class,
             MinorityLeaderMink::class,
-            MuckrakingMule::class,
             SubsidySloth::class,
             TaxTurkey::class,
             TreasuryChicken::class,

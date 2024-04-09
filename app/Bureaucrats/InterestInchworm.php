@@ -74,7 +74,7 @@ class InterestInchworm extends Bureaucrat
                 amount: 0.1
             );
 
-            $new_rate = $round->game()->interest_rate * 100 + 10;
+            $new_rate = $round->game()->interest_rate;
 
             Headline::create([
                 'round_id' => $round->id,
@@ -92,7 +92,7 @@ class InterestInchworm extends Bureaucrat
             amount: -0.1
         );
 
-        $new_rate = $round->game()->interest_rate * 100 - 10;
+        $new_rate = $round->game()->interest_rate;
 
         Headline::create([
             'round_id' => $round->id,

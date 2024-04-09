@@ -70,8 +70,15 @@
 
     <nav class="bg-gray-900 text-white fixed bottom-0 left-0 w-full p-4">
         <div class="flex flex-row max-w-full justify-between items-center">
-            <div>
-                Available: ${{ $this->player->state()->availableMoney() }}
+            <div class="flex flex-col text-sm">
+                <div>
+                    Available: ${{ $money }}
+                </div>
+                @if($money_in_treasury > 0)
+                <div>
+                    In Treasury: ${{ $money_in_treasury }} ({{ $treasury_percent }}%)
+                </div>
+                @endif
             </div>
             @if($this->round->status === 'complete' && $this->round->game->state()->status !== 'complete')
                 <button 
