@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Events\GameCreated;
 use App\Events\PlayerJoinedGame;
 use App\Models\Game;
+use App\Models\User;
 use Glhd\Bits\Snowflake;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
@@ -16,7 +17,7 @@ class InitializeGame extends Component
     public string $game_code;
 
     #[Computed]
-    public function user()
+    public function user(): User
     {
         return Auth::user();
     }
@@ -25,6 +26,21 @@ class InitializeGame extends Component
     {
         $game_id = GameCreated::fire(
             user_id: $this->user()->id
+
+        )->game_id;
+
+        Verbs::commit();
+
+        return redirect()->route('games.pre-game', [
+            'game' => Game::find($game_id),
+        ]);
+    }
+
+    public function createTransparentGame()
+    {
+        $game_id = GameCreated::fire(
+            user_id: $this->user()->id,
+            is_transparent: true
         )->game_id;
 
         Verbs::commit();

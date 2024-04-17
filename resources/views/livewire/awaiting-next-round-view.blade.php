@@ -13,56 +13,103 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border">
             <div class="bg-white px-2 py-6">
                 <div class="sm:px-4">
-                    @foreach($this->round->state()->bureaucrats as $b)
-                        <div class="border px-2 sm:px-6 rounded-xl border-gray-500 bg-gray-100 py-4 mb-4">
-                            <div class="sm:flex sm:items-center">
-                                <div>
-                                    <h1 class="text-base font-semibold leading-6 text-gray-900">{{ $b::NAME }}</h1>
-                                    <p class="mt-2 text-sm text-gray-700 ">{{ $b::EFFECT }}</p>
+                    @if($this->game->is_transparent)
+                        @foreach($this->round->state()->bureaucrats as $b)
+                            <div class="border px-2 sm:px-6 rounded-xl border-gray-500 bg-gray-100 py-4 mb-4">
+                                <div class="sm:flex sm:items-center">
+                                    <div>
+                                        <h1 class="text-base font-semibold leading-6 text-gray-900">{{ $b::NAME }}</h1>
+                                        <p class="mt-2 text-sm text-gray-700 ">{{ $b::EFFECT }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            @if($this->offers->filter(fn($o) => $o['bureaucrat'] === $b)->count() > 0)
-                            <div class="flow-root">
-                                <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                                        <table class="min-w-full">
-                                            <thead class="border-b border-gray-800">
-                                                <tr class="text-sm">
-                                                    <td>Player</td>
-                                                    <td>Modifications</td>
-                                                    <td>Status</td>
-                                                    <td>Amount</td>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-gray-200">
-                                                @foreach($this->offers->filter(fn($o) => $o['bureaucrat'] === $b) as $o)
-                                                    <tr>
-                                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ $o['player_name'] }}</td>
-                                                        <td class="px-3 py-4 text-sm text-gray-500">{{ $o['modifications'] }}</td>
-                                                        <td>
-                                                            @if($this->round->state()->status === 'auction')
-                                                                <p>?</p>
-                                                            @elseif( ! $o['bureaucrat']::HAS_WINNER)
-                                                                <p class="text-teal">N/A</p>
-                                                            @elseif ($o['is_blocked'])
-                                                                <p class="text-red">Blocked</p>
-                                                            @elseif($o['awarded'])
-                                                                <p class="text-teal">Won</p>
-                                                            @else
-                                                                <p class="text-red">Lost</p>
-                                                            @endif
-                                                        </td>
-                                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $o['offer'] }}</td>
+                                @if($this->offers->filter(fn($o) => $o['bureaucrat'] === $b)->count() > 0)
+                                <div class="flow-root">
+                                    <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                                            <table class="min-w-full">
+                                                <thead class="border-b border-gray-800">
+                                                    <tr class="text-sm">
+                                                        <td>Player</td>
+                                                        <td>Status</td>
+                                                        <td>Modifications</td>
+                                                        <td>Amount</td>
                                                     </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody class="divide-y divide-gray-200">
+                                                    @foreach($this->offers->filter(fn($o) => $o['bureaucrat'] === $b) as $o)
+                                                        <tr>
+                                                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ $o['player_name'] }}</td>
+                                                            <td>
+                                                                @if($this->round->state()->status === 'auction')
+                                                                    <p>?</p>
+                                                                @elseif( ! $o['bureaucrat']::HAS_WINNER)
+                                                                    <p class="text-teal">N/A</p>
+                                                                @elseif ($o['is_blocked'])
+                                                                    <p class="text-red">Blocked</p>
+                                                                @elseif($o['awarded'])
+                                                                    <p class="text-teal">Won</p>
+                                                                @else
+                                                                    <p class="text-red">Lost</p>
+                                                                @endif
+                                                            </td>
+                                                            <td class="px-3 py-4 text-sm text-gray-500">{{ $o['modifications'] }}</td>
+                                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $o['offer'] }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    @else
+                        @foreach($this->offers->filter(fn($o) => $o['player_id'] === $this->player->id) as $o)
+                            <div class="border px-2 sm:px-6 rounded-xl border-gray-500 bg-gray-100 py-4 mb-4">
+                                <div class="sm:flex sm:items-center">
+                                    <div>
+                                        <h1 class="text-base font-semibold leading-6 text-gray-900">{{ $o['bureaucrat']::NAME }}</h1>
+                                        <p class="mt-2 text-sm text-gray-700 ">{{ $o['bureaucrat']::EFFECT }}</p>
+                                    </div>
+                                </div>
+                                <div class="flow-root">
+                                    <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                                            <table class="min-w-full">
+                                                <thead class="border-b border-gray-800">
+                                                    <tr class="text-sm">
+                                                        <td>Status</td>
+                                                        <td>Modifications</td>
+                                                        <td>Amount</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-gray-200">
+                                                        <tr>
+                                                            <td>
+                                                                @if($this->round->state()->status === 'auction')
+                                                                    <p>?</p>
+                                                                @elseif( ! $o['bureaucrat']::HAS_WINNER)
+                                                                    <p class="text-teal">N/A</p>
+                                                                @elseif ($o['is_blocked'])
+                                                                    <p class="text-red">Blocked</p>
+                                                                @elseif($o['awarded'])
+                                                                    <p class="text-teal">Won</p>
+                                                                @else
+                                                                    <p class="text-red">Lost</p>
+                                                                @endif
+                                                            </td>
+                                                            <td class="px-3 py-4 text-sm text-gray-500">{{ $o['modifications'] }}</td>
+                                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $o['offer'] }}</td>
+                                                        </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            @endif
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </div>
