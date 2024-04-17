@@ -21,6 +21,8 @@ class GameState extends State
 
     public float $interest_rate = 0.25;
 
+    public bool $is_transparent = false;
+
     public function playerStates()
     {
         return $this->players->map(fn ($id) => PlayerState::load($id));

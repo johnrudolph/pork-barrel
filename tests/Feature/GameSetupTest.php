@@ -58,3 +58,26 @@ it('changes a players currentGame when they join a new game', function () {
 
     $this->assertEquals($game2->id, $user->fresh()->currentGame->id);
 });
+
+it('sets transparency to false by default', function () {
+    $user = User::factory()->create();
+
+    $event = GameCreated::fire(
+        user_id: $user->id,
+    );
+
+    $game = Game::find($event->game_id);
+
+    expect($game->is_transparent)->toBeFalse();
+    expect($game->state()->is_transparent)->toBeFalse();
+
+    $event = GameCreated::fire(
+        user_id: $user->id,
+        is_transparent: true,
+    );
+
+    $game = Game::find($event->game_id);
+
+    expect($game->is_transparent)->toBeTrue();
+    expect($game->state()->is_transparent)->toBeTrue();
+});

@@ -16,6 +16,10 @@ class Game extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'is_transparent' => 'boolean',
+    ];
+
     public function players()
     {
         return $this->hasMany(Player::class);

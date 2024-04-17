@@ -16,12 +16,15 @@ class GameCreated extends Event
 
     public $user_id;
 
+    public ?bool $is_transparent = false;
+
     public function apply(GameState $state)
     {
         $state->status = 'awaiting-players';
         $state->players = collect();
         $state->round_ids = collect();
         $state->template = 'tbd';
+        $state->is_transparent = $this->is_transparent;
     }
 
     public function fired()
@@ -46,6 +49,7 @@ class GameCreated extends Event
         Game::create([
             'id' => $this->game_id,
             'code' => rand(10000, 99999),
+            'is_transparent' => $this->is_transparent,
         ]);
     }
 }

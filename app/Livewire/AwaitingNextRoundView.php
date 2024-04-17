@@ -69,7 +69,7 @@ class AwaitingNextRoundView extends Component
                     'offer' => $o->netOffer(),
                     'awarded' => $o->awarded,
                     'is_blocked' => $o->is_blocked,
-                    'modifications' => $modification_description,
+                    'modifications' => $modification_description ?? '-',
                 ];
             })->sortByDesc('offer');
 

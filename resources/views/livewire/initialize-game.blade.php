@@ -19,6 +19,14 @@
                         >
                             New Game
                         </button>
+                        @if ($this->user->is_admin)
+                            <button 
+                                wire:click="createTransparentGame"
+                                class="rounded-md bg-teal px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            >
+                                New Transparent Game
+                            </button>
+                        @endif
                         <div x-data="{ open: false }">
                             <button 
                                 x-on:click="open = ! open"
