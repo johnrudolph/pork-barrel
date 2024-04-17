@@ -50,9 +50,11 @@ class InterestInchworm extends Bureaucrat
             amount: $amount,
         );
 
+        $new_rate = $round->game()->interest_rate * 100;
+
         $headline = $offer->data['choice'] === 'increase'
-            ? 'Interest Rates Increased to '.$round->game()->interest_rate.'%'
-            : 'Interest Rates Decreased to '.$round->game()->interest_rate.'%';
+            ? 'Interest Rates Increased to '.$new_rate.'%'
+            : 'Interest Rates Decreased to '.$new_rate.'%';
 
         $description = $offer->data['choice'] === 'increase'
             ? 'Money is expensive, and we like it that way. Bonds are the safest investment of all. Save, save, save!'
