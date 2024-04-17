@@ -22,7 +22,7 @@ class TreasuryChicken extends Bureaucrat
 
     const EFFECT = 'Invest your money in the treasury, then receive your money back with interest (rounded down) at the end of the game. The interest rate starts at 25%, but can change. This works, even if you do not have the top offer.';
 
-    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['on_round_ended'];
+    const HOOK_TO_APPLY_IN_FUTURE_ROUND = Bureaucrat::HOOKS['after_round_ends'];
 
     const HAS_WINNER = false;
 

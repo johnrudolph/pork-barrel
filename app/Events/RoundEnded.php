@@ -90,6 +90,16 @@ class RoundEnded extends Event
                 ))
             );
 
+        // apply any action from the previous round that affects this round
+        $state->offers_from_previous_rounds_that_resolve_this_round
+            ->map(fn ($o) => OfferState::load($o))
+            ->filter(fn ($o) => $o->bureaucrat::HOOK_TO_APPLY_IN_FUTURE_ROUND === Bureaucrat::HOOKS['after_round_ends'])
+            ->each(fn ($o) => $o->bureaucrat::handleInFutureRound(
+                PlayerState::load($o->player_id),
+                RoundState::load($this->round_id),
+                $o
+            ));
+
         if ($state->round_number === 8) {
             GameEnded::fire(game_id: $state->game_id);
         }

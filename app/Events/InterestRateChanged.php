@@ -19,7 +19,7 @@ class InterestRateChanged extends Event
 
     public function applyToGame(GameState $state)
     {
-        $state->interest_rate += $this->amount;
+        $state->interest_rate = round($state->interest_rate + $this->amount, 2);
     }
 
     public function applyToRound(RoundState $state)

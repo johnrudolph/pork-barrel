@@ -6,6 +6,8 @@ use App\Events\InterestRateChanged;
 use App\Models\Headline;
 use App\Models\Player;
 use App\Models\Round;
+use App\States\OfferState;
+use App\States\PlayerState;
 use App\States\RoundState;
 
 class InterestInchworm extends Bureaucrat
@@ -36,69 +38,31 @@ class InterestInchworm extends Bureaucrat
         ];
     }
 
-    public static function handleGlobalEffectOnRoundEnd(RoundState $round)
+    public static function handleOnRoundEnd(PlayerState $player, RoundState $round, OfferState $offer)
     {
-        $offers_for_inchworm = $round->offers()
-            ->filter(fn ($o) => $o->bureaucrat === static::class);
-
-        $top_offer = $offers_for_inchworm
-            ->max(fn ($o) => $o->netOffer());
-
-        $top_votes_for_increase = $offers_for_inchworm
-            ->filter(fn ($o) => $o->netOffer() === $top_offer
-                && $o->data['choice'] === 'increase'
-            )
-            ->count();
-
-        $top_votes_for_decrease = $offers_for_inchworm
-            ->filter(fn ($o) => $o->netOffer() === $top_offer
-                && $o->data['choice'] === 'decrease'
-            )
-            ->count();
-
-        if ($top_votes_for_increase === $top_votes_for_decrease) {
-            Headline::create([
-                'round_id' => $round->id,
-                'game_id' => $round->game()->id,
-                'headline' => 'Federal Reserve Stalemate',
-                'description' => 'The powers that be are deadlocked over whether to increase or decrease interest rates. So they will do neither!',
-            ]);
-
-            return;
-        }
-
-        if ($top_votes_for_increase > $top_votes_for_decrease) {
-            InterestRateChanged::fire(
-                game_id: $round->game_id,
-                round_id: $round->id,
-                amount: 0.1
-            );
-
-            $new_rate = $round->game()->interest_rate;
-
-            Headline::create([
-                'round_id' => $round->id,
-                'game_id' => $round->game()->id,
-                'headline' => 'Interest Rates Increased to '.$new_rate.'%.',
-                'description' => 'In an effort to slow down inflation, the brilliant minds at the Federal Reserve have increased rates. Buy those bonds!',
-            ]);
-
-            return;
-        }
+        $amount = $offer->data['choice'] === 'increase'
+            ? 0.1
+            : -0.1;
 
         InterestRateChanged::fire(
             game_id: $round->game_id,
             round_id: $round->id,
-            amount: -0.1
+            amount: $amount,
         );
 
-        $new_rate = $round->game()->interest_rate;
+        $headline = $offer->data['choice'] === 'increase'
+            ? 'Interest Rates Increased to '.$round->game()->interest_rate.'%'
+            : 'Interest Rates Decreased to '.$round->game()->interest_rate.'%';
+
+        $description = $offer->data['choice'] === 'increase'
+            ? 'Money is expensive, and we like it that way. Bonds are the safest investment of all. Save, save, save!'
+            : 'Money is cheap, and we like it that way. Do not bother with bonds. Stimulate the economy and spend, spend, spend!';
 
         Headline::create([
             'round_id' => $round->id,
             'game_id' => $round->game()->id,
-            'headline' => 'Interest Rates Decreased to '.$new_rate.'%',
-            'description' => 'Money is cheap, and we like it that way. Do not bother with bonds. Stimulate the economy and spend, spend, spend!',
+            'headline' => $headline,
+            'description' => $description,
         ]);
     }
 }
