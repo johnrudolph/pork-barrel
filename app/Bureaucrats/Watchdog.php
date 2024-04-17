@@ -53,13 +53,12 @@ class Watchdog extends Bureaucrat
         $acusee_id = (int) $offer->data['player'];
 
         $acused_bureaucrat = $offer->data['bureaucrat'];
-        
-        $acusee_won_bureaucrat = $round->offers()->filter(fn ($o) => 
-            $o->awarded === true
+
+        $acusee_won_bureaucrat = $round->offers()->filter(fn ($o) => $o->awarded === true
             && $o->bureaucrat === $acused_bureaucrat
             && $o->player_id === $acusee_id
         )->count() > 0;
-        
+
         if ($acusee_won_bureaucrat) {
             PlayerSpentMoney::fire(
                 player_id: (int) $offer->data['player'],

@@ -1,44 +1,44 @@
 <?php
 
-use App\States\OfferState;
-use App\Bureaucrats\CopyCat;
-use App\Bureaucrats\TiedHog;
-use App\Events\AuctionEnded;
-use App\Events\RoundStarted;
-use App\Bureaucrats\Watchdog;
-use App\Bureaucrats\IndexIbex;
-use App\Bureaucrats\PonziPony;
-use App\Bureaucrats\TaxTurkey;
-use Thunk\Verbs\Facades\Verbs;
+use App\Bureaucrats\BailoutBunny;
+use App\Bureaucrats\BearhugBrownBear;
+use App\Bureaucrats\BrinksmanshipBronco;
 use App\Bureaucrats\Bureaucrat;
-use App\Bureaucrats\FrozenFrog;
+use App\Bureaucrats\ConsolationCow;
+use App\Bureaucrats\CopyCat;
+use App\Bureaucrats\CronyCrocodile;
+use App\Bureaucrats\DoubleDonkey;
 use App\Bureaucrats\EqualityElk;
+use App\Bureaucrats\FeeCollectingFerret;
 use App\Bureaucrats\FocusedFoal;
 use App\Bureaucrats\ForecastFox;
-use App\Bureaucrats\GamblinGoat;
-use App\Bureaucrats\BailoutBunny;
-use App\Bureaucrats\DoubleDonkey;
-use App\Bureaucrats\SubsidySloth;
-use App\Bureaucrats\LoyaltyLocust;
-use App\Bureaucrats\ObstructionOx;
-use App\Bureaucrats\ConsolationCow;
-use App\Bureaucrats\CronyCrocodile;
+use App\Bureaucrats\FrozenFrog;
 use App\Bureaucrats\FrugalFruitFly;
-use App\Bureaucrats\TreasuryChicken;
-use App\Bureaucrats\BearhugBrownBear;
+use App\Bureaucrats\GamblinGoat;
+use App\Bureaucrats\IndexIbex;
 use App\Bureaucrats\InterestInchworm;
-use App\Bureaucrats\RejectedReindeer;
-use App\Events\PlayerAwaitingResults;
-use App\RoundTemplates\RoundTemplate;
-use App\RoundTemplates\CampaignSeason;
 use App\Bureaucrats\KickbackKingfisher;
+use App\Bureaucrats\LoyaltyLocust;
 use App\Bureaucrats\MajorityLeaderMare;
 use App\Bureaucrats\MinorityLeaderMink;
-use App\RoundTemplates\LameDuckSession;
-use App\Bureaucrats\BrinksmanshipBronco;
-use App\Bureaucrats\FeeCollectingFerret;
+use App\Bureaucrats\ObstructionOx;
+use App\Bureaucrats\PonziPony;
+use App\Bureaucrats\RejectedReindeer;
+use App\Bureaucrats\SubsidySloth;
+use App\Bureaucrats\TaxTurkey;
+use App\Bureaucrats\TiedHog;
+use App\Bureaucrats\TreasuryChicken;
+use App\Bureaucrats\Watchdog;
+use App\Events\AuctionEnded;
+use App\Events\PlayerAwaitingResults;
+use App\Events\RoundStarted;
 use App\RoundTemplates\AlwaysABridesmaid;
+use App\RoundTemplates\CampaignSeason;
+use App\RoundTemplates\LameDuckSession;
+use App\RoundTemplates\RoundTemplate;
+use App\States\OfferState;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Thunk\Verbs\Facades\Verbs;
 
 uses(DatabaseMigrations::class);
 
@@ -319,6 +319,8 @@ it('changes the interest rate with Interest Inchworm', function () {
 
     $this->endCurrentRound();
 
+    $this->assertEquals(0.35, $this->game->state()->interest_rate);
+
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 2,
@@ -328,9 +330,12 @@ it('changes the interest rate with Interest Inchworm', function () {
     );
 
     $this->john->submitOffer($this->game->currentRound(), TreasuryChicken::class, 5);
-    $this->jacob->submitOffer($this->game->currentRound(), InterestInchworm::class, 1, ['choice' => 'increase']);
+    $this->jacob->submitOffer($this->game->currentRound(), InterestInchworm::class, 1, ['choice' => 'decrease']);
+    $this->john->submitOffer($this->game->currentRound(), InterestInchworm::class, 1, ['choice' => 'increase']);
 
     $this->endCurrentRound();
+
+    $this->assertEquals(0.35, $this->game->state()->interest_rate);
 
     RoundStarted::fire(
         game_id: $this->game->id,
@@ -341,13 +346,17 @@ it('changes the interest rate with Interest Inchworm', function () {
     );
 
     $this->jacob->submitOffer($this->game->currentRound(), InterestInchworm::class, 1, ['choice' => 'decrease']);
+    $this->john->submitOffer($this->game->currentRound(), InterestInchworm::class, 1, ['choice' => 'increase']);
+    $this->daniel->submitOffer($this->game->currentRound(), InterestInchworm::class, 1, ['choice' => 'increase']);
 
     $this->endGame($this->game);
 
+    $this->assertEquals(0.45, $this->game->state()->interest_rate);
+
     $this->assertEquals(
-        13,
+        14,
         $this->john->state()->money_history
-            ->filter(fn ($entry) => $entry->description === 'Received 35% return on money saved in treasury')
+            ->filter(fn ($entry) => $entry->description === 'Received 45% return on money saved in treasury')
             ->first()
             ->amount
     );
@@ -1164,7 +1173,7 @@ it('regression test for interaction of Watchdog and Tied Hog', function () {
     $this->assertEquals(9, $this->daniel->state()->availableMoney());
 });
 
-it('regression test for minority leader not working in specific game', function() {
+it('regression test for minority leader not working in specific game', function () {
     RoundStarted::fire(
         game_id: $this->game->id,
         round_number: 1,
@@ -1202,7 +1211,6 @@ it('regression test for minority leader not working in specific game', function(
         ],
         round_template: CampaignSeason::class,
     );
-
 
     $this->daniel->submitOffer($this->game->currentRound(), FocusedFoal::class, 1);
     $this->daniel->submitOffer($this->game->currentRound(), FeeCollectingFerret::class, 2);
